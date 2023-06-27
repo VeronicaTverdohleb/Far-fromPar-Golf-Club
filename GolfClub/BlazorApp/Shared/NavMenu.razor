@@ -1,0 +1,81 @@
+﻿<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">Far From Par G 
+            <img src="img/golfball.png" class="golfball" alt="Golf Ball"/>
+             lf Club</a>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</div>
+
+<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
+    <nav class="flex-column">
+        <AuthorizeView Policy="MustBeMember">
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="AddScore">
+                    <span class="oi oi-plus" aria-hidden="true"></span> Add Score
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="RentEquipment">
+                    <span class="oi oi-plus" aria-hidden="true"></span> Rent Equipment
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="SeeStatistics">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> See Statistics
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="BookLesson">
+                    <span class="oi oi-plus" aria-hidden="true"></span> Book Lesson
+                </NavLink>
+            </div>
+        </AuthorizeView>
+        <AuthorizeView Policy="MustBeEmployee">
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="SeeStatistics">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> See Statistics
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="AddScore">
+                    <span class="oi oi-plus" aria-hidden="true"></span> Add Score
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="DeleteScore">
+                    <span class="oi oi-pencil" aria-hidden="true"></span> Delete Score
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="ManageEquipment">
+                    <span class="oi oi-list" aria-hidden="true"></span> Manage Equipment
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="ManageMember">
+                    <span class="oi oi-pencil" aria-hidden="true"></span> Manage Member
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="ManageTournament">
+                    <span class="oi oi-pencil" aria-hidden="true"></span> Manage Tournament
+                </NavLink>
+            </div>
+        </AuthorizeView>
+    </nav>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+
+}

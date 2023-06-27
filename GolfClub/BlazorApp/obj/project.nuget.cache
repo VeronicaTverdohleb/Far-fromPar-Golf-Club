@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "dgSpecHash": "e9oQVmnH5Tgpx/zbxNkqPK9itTpveNL1Q0bmbHhMohe8lXUn3eje2kM1fJSGC3TtnL6E5xShzheFoK3wshWvBg==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Petra\\OneDrive\\Desktop\\School\\VIA\\3rd semester\\Code repos\\SEP3Vol2\\GolfClub\\BlazorApp\\BlazorApp.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Petra\\.nuget\\packages\\microsoft.aspnetcore.authorization\\7.0.8\\microsoft.aspnetcore.authorization.7.0.8.nupkg.sha512",
+    "C:\\Users\\Petra\\.nuget\\packages\\microsoft.aspnetcore.metadata\\7.0.8\\microsoft.aspnetcore.metadata.7.0.8.nupkg.sha512",
+    "C:\\Users\\Petra\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\7.0.0\\microsoft.extensions.dependencyinjection.abstractions.7.0.0.nupkg.sha512",
+    "C:\\Users\\Petra\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\7.0.1\\microsoft.extensions.logging.abstractions.7.0.1.nupkg.sha512",
+    "C:\\Users\\Petra\\.nuget\\packages\\microsoft.extensions.options\\7.0.1\\microsoft.extensions.options.7.0.1.nupkg.sha512",
+    "C:\\Users\\Petra\\.nuget\\packages\\microsoft.extensions.primitives\\7.0.0\\microsoft.extensions.primitives.7.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}
