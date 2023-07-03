@@ -6,4 +6,6 @@ public class Tournament
     public DateOnly StartDate { get; set; }
     public DateOnly EndDate { get; set; }
     public ICollection<Game> Games { get; set; }
+    
+    private Tournament() {}
 }

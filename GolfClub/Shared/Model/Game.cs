@@ -7,4 +7,6 @@ public class Game
     public ICollection<Hole> Holes { get; set; }
     public ICollection<Equipment> Equipments { get; set; }
     public ICollection<User> Players { get; set; }
+    
+    private Game() {}
 }
