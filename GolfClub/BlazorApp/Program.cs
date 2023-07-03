@@ -1,6 +1,8 @@
 using BlazorApp.Auth;
 using BlazorApp.Services;
 using BlazorApp.Services.Http;
+using HttpClients.ClientInterfaces;
+using HttpClients.Implementations;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
@@ -12,6 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
+builder.Services.AddScoped<ITournamentService, TournamentHttpClient>();
 builder.Services.AddScoped<IJavaSocketConnection, JavaSocketConnection>();
 builder.Services.AddScoped<IAuthService, JwtAuthService>();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthProvider>();

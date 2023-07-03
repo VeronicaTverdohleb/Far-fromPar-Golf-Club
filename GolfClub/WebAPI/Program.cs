@@ -1,5 +1,7 @@
 using System.Text;
 using Application.DaoInterfaces;
+using Application.Logic;
+using Application.LogicInterfaces;
 using DataAccess;
 using DataAccess.DAOs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -19,6 +21,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<DataContext>();
 
 builder.Services.AddScoped<IUserDao, UserDao>();
+builder.Services.AddScoped<ITournamentDao, TournamentDao>();
+builder.Services.AddScoped<ITournamentLogic,TournamentLogic>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {

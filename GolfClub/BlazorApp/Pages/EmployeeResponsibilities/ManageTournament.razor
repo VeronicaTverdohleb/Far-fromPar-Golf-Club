@@ -1,6 +1,35 @@
 ﻿@page "/ManageTournament"
+@using HttpClients.ClientInterfaces
+@using global::Shared.Dtos.TournamentDto
+@inject ITournamentService TournamentService;
+@inject NavigationManager navMgr;
 <h3>ManageTournament</h3>
-
+<label>tournament name:</label>
+<input type="text" @bind="tournamentName"/><br/><br/>
+<label>start date:</label>
+<input type="date" @bind="startDate"/><br/><br/>
+<label>end date:</label>
+<input type="date" @bind="endDate"/><br/><br/>
+<button @onclick="CreateTournament">Create Tournament</button><br/><br/>
+<p>@msg</p>
 @code {
-    
+    private string tournamentName;
+    private DateOnly startDate = DateOnly.FromDateTime(DateTime.Today);
+    private DateOnly endDate = DateOnly.FromDateTime(DateTime.Today);
+    private string msg = "";
+
+    private async Task CreateTournament()
+    {
+        CreateTournamentDto dto = new CreateTournamentDto(tournamentName, startDate, endDate);
+        try
+        {
+            await TournamentService.CreateTournamentAsync(dto);
+        }
+        catch (Exception e)
+        {
+            msg = e.Message;
+        }
+        msg = "tournament created";
+        navMgr.NavigateTo($"ManageTournament/{tournamentName}");
+    }
 }
