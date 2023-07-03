@@ -23,7 +23,7 @@ public class DataContext : DbContext
     // This method configures property constraints in the database
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<User>().HasKey(user => user.Id); // Setting Id to be the primary key
+        modelBuilder.Entity<User>().HasKey(user => user.UserName); // Setting Id to be the primary key
         modelBuilder.Entity<Equipment>().HasKey(equipment => equipment.Id);
         modelBuilder.Entity<Game>().HasKey(game => game.Id);
         modelBuilder.Entity<Hole>().HasKey(hole => hole.Number); 

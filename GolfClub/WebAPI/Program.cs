@@ -23,6 +23,11 @@ builder.Services.AddDbContext<DataContext>();
 builder.Services.AddScoped<IUserDao, UserDao>();
 builder.Services.AddScoped<ITournamentDao, TournamentDao>();
 builder.Services.AddScoped<ITournamentLogic,TournamentLogic>();
+builder.Services.AddScoped<IScoreDao, ScoreDao>();
+builder.Services.AddScoped<IScoreLogic, ScoreLogic>();
+builder.Services.AddScoped<IHoleLogic, HoleLogic>();
+builder.Services.AddScoped<IHoleDao, HoleDao>();
+
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
