@@ -24,7 +24,7 @@ public class DataContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<User>().HasKey(user => user.Id); // Setting Id to be the primary key
-        modelBuilder.Entity<Equipment>().HasKey(equipment => equipment.Name);
+        modelBuilder.Entity<Equipment>().HasKey(equipment => equipment.Id);
         modelBuilder.Entity<Game>().HasKey(game => game.Id);
         modelBuilder.Entity<Hole>().HasKey(hole => hole.Number); 
         modelBuilder.Entity<Lesson>().HasKey(lesson => lesson.Id);
