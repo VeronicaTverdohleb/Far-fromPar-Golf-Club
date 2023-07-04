@@ -1,10 +1,100 @@
 ﻿@page "/AddScore"
 @using HttpClients.ClientInterfaces
+@using global::Shared.Model
 @inject IScoreService ScoreService
 @inject IHoleService HoleService
 
+@if (holes != null && holes.Any())
+{
+    <table>
+        <tr>
+            <th>Hole</th>
+            @foreach (Hole hole in holes)
+            {
+                <th>@hole.Number</th>
+            }
+        </tr>
+        <tr>
+            <th>Par</th>
+            @foreach (Hole hole in holes)
+            {
+                <th>@hole.Par</th>
+            }
+        </tr>
+        <tr>
+            <th>
+                <input type="text" placeholder="Player's username" @bind="scores[0][0].PlayerUsername"/>
+            </th>
+            @for (int i = 0; i < holes.Count; i++)
+            {
+                <th>
+                    <input type="number" class="hole_number" @bind="scores[0][i].Strokes"/>
+                </th>
+            }
+        </tr>
+            
+        @if (AddPlayerRow)
+        {
+            <tr>
+                <th>
+                    <input type="text" placeholder="Player's username" @bind="scores[scores.Count-1][0].PlayerUsername"/>
+                </th>
+                @for (int j = 0; j < scores[0].Count; j++)
+                {
+                    <th>
+                        <input type="number" class="hole_number" @bind="scores[scores.Count-1][j].Strokes"/>
+                    </th>
+                }
+            </tr>
+        }
+    </table>
+    <div class="add_player">
+        <h6>Add Players</h6>
+        <img src="img/add.png" class="plus" alt="Plus Sign" @onclick="AddPlayer"/>
+    </div>
+    @if (!string.IsNullOrEmpty(holeErrorMsg))
+    {
+        <p class="error-message">@holeErrorMsg</p>
+    }
+}
 
 
 @code {
+    private string holeErrorMsg = "";
+    private ICollection<Hole> holes;
+    private List<List<Score>> scores = new List<List<Score>>();
+    private bool AddPlayerRow = false;
+
+    /// Method that loads holes and pars
+    protected override async Task OnInitializedAsync()
+    {
+        holeErrorMsg = "";
+        try
+        {
+            holes = await HoleService.GetAllHolesAsync();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            holeErrorMsg = e.Message;
+        }
+        List<Score> newScores = new List<Score>();
+        for (int i = 0; i < holes.Count; i++)
+        {
+            newScores.Add(new Score("", holes.ElementAt(i), 0));
+        }
+        scores.Add(newScores);
+    }
+
+    private void AddPlayer()
+    {
+        List<Score> newScores = new List<Score>();
+        for (int i = 0; i < holes.Count; i++)
+        {
+            newScores.Add(new Score("", holes.ElementAt(i), 0));
+        }
+        scores.Add(newScores);
+        AddPlayerRow = true;
+    }
 
 }
