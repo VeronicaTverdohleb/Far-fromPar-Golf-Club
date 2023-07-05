@@ -32,3 +32,12 @@ table {
     display: flex;
     justify-content: left;
 }
+
+.savebtn {
+    margin-left: 250px;
+    background-color: darkorange;
+    width: 150px;
+    height: 50px;
+    font-size: large;
+    border-radius: 10px;
+}

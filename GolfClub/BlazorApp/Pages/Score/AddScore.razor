@@ -7,6 +7,7 @@
 @if (holes != null && holes.Any())
 {
     <table>
+        <thead>
         <tr>
             <th>Hole</th>
             @foreach (Hole hole in holes)
@@ -21,51 +22,49 @@
                 <th>@hole.Par</th>
             }
         </tr>
-        <tr>
-            <th>
-                <input type="text" placeholder="Player's username" @bind="scores[0][0].PlayerUsername"/>
-            </th>
-            @for (int i = 0; i < holes.Count; i++)
-            {
-                <th>
-                    <input type="number" class="hole_number" @bind="scores[0][i].Strokes"/>
-                </th>
-            }
-        </tr>
-            
-        @if (AddPlayerRow)
+        </thead>
+        <tbody>
+        @foreach (List<Score> playerScores in scores)
         {
             <tr>
                 <th>
-                    <input type="text" placeholder="Player's username" @bind="scores[scores.Count-1][0].PlayerUsername"/>
+                    <input type="text" placeholder="Player's username" @bind="playerScores.ElementAt(0).PlayerUsername"/>
                 </th>
-                @for (int j = 0; j < scores[0].Count; j++)
+                @for (int i = 0; i < holes.Count; i++)
                 {
+                    Console.WriteLine($"The strokes for the player: {playerScores.ElementAt(i).Strokes}");
                     <th>
-                        <input type="number" class="hole_number" @bind="scores[scores.Count-1][j].Strokes"/>
+                        
+                        <input type="number" class="hole_number" placeholder="0" min="0" max="23" @onchange="ChangeStrokes"/>
+                        @{
+                            ChangePlayersStrokes(playerScores, i);
+                        }
                     </th>
                 }
             </tr>
         }
+        </tbody>
     </table>
     <div class="add_player">
         <h6>Add Players</h6>
-        <img src="img/add.png" class="plus" alt="Plus Sign" @onclick="AddPlayer"/>
+        <img src="img/add.png" class="plus" alt="Plus Sign" onclick="@AddPlayer"/>
+        <button class="savebtn" onclick="@SaveScores">Save All Scores</button>
     </div>
     @if (!string.IsNullOrEmpty(holeErrorMsg))
     {
         <p class="error-message">@holeErrorMsg</p>
     }
 }
+    
 
 
 @code {
     private string holeErrorMsg = "";
     private ICollection<Hole> holes;
     private List<List<Score>> scores = new List<List<Score>>();
-    private bool AddPlayerRow = false;
+    private int strokes;
 
-    /// Method that loads holes and pars
+    /// Initial method that loads holes and pars
     protected override async Task OnInitializedAsync()
     {
         holeErrorMsg = "";
@@ -83,9 +82,12 @@
         {
             newScores.Add(new Score("", holes.ElementAt(i), 0));
         }
+        Console.WriteLine($"The size of scores for the first player is: {newScores.Count}");
         scores.Add(newScores);
+        Console.WriteLine($"The size of scores list with all scores is: {scores.Count}");
     }
 
+    /// Whenever a user clicks on the "+" sign to add a player, a new List of Scores gets added List<Score> scores 
     private void AddPlayer()
     {
         List<Score> newScores = new List<Score>();
@@ -94,7 +96,38 @@
             newScores.Add(new Score("", holes.ElementAt(i), 0));
         }
         scores.Add(newScores);
-        AddPlayerRow = true;
     }
 
+    // Add "async Task" later 
+    /// Calls CreateAsync method in the ScoreService which send a request to to the Web API and adds scores to the database
+    private void SaveScores()
+    {
+        foreach (List<Score> list in scores)
+        {
+            foreach (Score score in list)
+            {
+                Console.WriteLine($"Strokes: {score.Strokes}");
+            }
+        }
+    }
+
+    /// Whenever there is a change in the hole number pickers, the value gets assigned to strokes global variable
+    /// The below function happens afterwards
+    private void ChangeStrokes(ChangeEventArgs e)
+    {
+        strokes = int.Parse(e.Value.ToString());
+    }
+    
+    /// This function is supposed to assign the strokes value to the exact Score in the Score list of the user - DOES NOT WORK FOR NOW
+    private void ChangePlayersStrokes(List<Score> playerScores, int indexOfScore)
+    {
+        foreach (List<Score> list in scores)
+        {
+            if (list.Equals(playerScores))
+            {
+                list.ElementAt(indexOfScore).Strokes = strokes;
+            }
+        }            
+        strokes = 0;
+    }
 }
