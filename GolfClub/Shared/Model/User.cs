@@ -21,4 +21,12 @@ public class User
     }
     
     private User() { }
+
+    public User(string Name, string UserName, string Password)
+    {
+        this.Name = Name;
+        this.UserName = UserName;
+        this.Password = Password;
+        Role = "Member";
+    }
 }
