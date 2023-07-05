@@ -17,6 +17,7 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<IHoleService, HoleHttpClient>();
 builder.Services.AddScoped<IScoreService, ScoreHttpClient>();
 builder.Services.AddScoped<ITournamentService, TournamentHttpClient>();
+builder.Services.AddScoped<IEquipmentService, EquipmentHttpClient>();
 builder.Services.AddScoped<IJavaSocketConnection, JavaSocketConnection>();
 builder.Services.AddScoped<IAuthService, JwtAuthService>();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthProvider>();

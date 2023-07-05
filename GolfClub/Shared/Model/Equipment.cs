@@ -10,5 +10,12 @@ public class Equipment
     [JsonIgnore]
     public ICollection<Game>? Games { get; set; }
 
+    public Equipment(string name)
+    {
+        Name = name;
+    }
+
     private Equipment() {}
+
+    
 }
