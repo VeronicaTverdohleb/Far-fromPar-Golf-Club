@@ -1,9 +1,11 @@
 ﻿@page "/ManageTournament"
 @using HttpClients.ClientInterfaces
 @using global::Shared.Dtos.TournamentDto
+@using global::Shared.Model
 @inject ITournamentService TournamentService;
 @inject NavigationManager navMgr;
 <h3>ManageTournament</h3>
+<h4>Create new tournament</h4>
 <label>tournament name:</label>
 <input type="text" @bind="tournamentName"/><br/><br/>
 <label>start date:</label>
@@ -11,12 +13,34 @@
 <label>end date:</label>
 <input type="date" @bind="endDate"/><br/><br/>
 <button @onclick="CreateTournament">Create Tournament</button><br/><br/>
+<h4>Manage existing tournament</h4>
+<label>Select tournament:</label>
+<select name="chooseTournament" id="chooseTournament" @onchange="SetSelectedTournament">
+    <option selected="selected">choose:</option>
+    @foreach (var tournament in tournaments)
+    {
+        <option value="@tournament.Name">@tournament.Name</option>
+    }
+</select>
+<button @onclick="NavigateToTournament">Select Tournament</button>
+
 <p>@msg</p>
+
+
+
 @code {
     private string tournamentName;
+    private string chosenTournamentName;
     private DateOnly startDate = DateOnly.FromDateTime(DateTime.Today);
     private DateOnly endDate = DateOnly.FromDateTime(DateTime.Today);
+    private ICollection<Tournament> tournaments = new List<Tournament>();
     private string msg = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var tournamentCollection = await TournamentService.GetAllTournamentsAsync();
+        tournaments = tournamentCollection.OrderBy(t => t.Name).ToList();
+    }
 
     private async Task CreateTournament()
     {
@@ -31,5 +55,22 @@
         }
         msg = "tournament created";
         navMgr.NavigateTo($"ManageTournament/{tournamentName}");
+    }
+
+    private void SetSelectedTournament(ChangeEventArgs e)
+    {
+        if (!string.IsNullOrEmpty(e.Value.ToString()))
+        {
+            string selectedTournamentName = e.Value.ToString();
+            chosenTournamentName = selectedTournamentName;
+        }
+    }
+
+    private void NavigateToTournament()
+    {
+        if (!string.IsNullOrEmpty(chosenTournamentName))
+        {
+            navMgr.NavigateTo($"ManageTournament/{chosenTournamentName}");
+        }
     }
 }
