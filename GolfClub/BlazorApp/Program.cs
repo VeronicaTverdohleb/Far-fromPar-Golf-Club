@@ -14,7 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
-builder.Services.AddScoped<IHoleService, HoleHttpClient>();
+builder.Services.AddScoped<IGameService, GameHttpClient>();
 builder.Services.AddScoped<IScoreService, ScoreHttpClient>();
 builder.Services.AddScoped<ITournamentService, TournamentHttpClient>();
 builder.Services.AddScoped<IEquipmentService, EquipmentHttpClient>();

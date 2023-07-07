@@ -3,7 +3,6 @@
 @using global::Shared.Model
 @using System.Globalization
 @inject IScoreService ScoreService
-@inject IHoleService HoleService
 
 @if (holes != null && holes.Any())
 {

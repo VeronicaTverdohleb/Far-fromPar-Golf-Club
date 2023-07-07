@@ -32,7 +32,7 @@ public class ScoreLogic : IScoreLogic
         if (dto.Strokes == 0 || dto.Strokes > 23)
             dto.Strokes = 23;
 
-        Score score = new Score(dto.PlayerUsername, dto.Hole, dto.Strokes);
+        Score score = new Score(dto.PlayerUsername, dto.HoleNumber, dto.Strokes);
         Score created = await scoreDao.CreateAsync(score);
         return created;
     }
