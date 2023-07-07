@@ -1,0 +1,82 @@
+﻿@page "/CreateGame"
+@using global::Shared.Model
+@using HttpClients.ClientInterfaces
+@using global::Shared.Dtos.GameDto
+@inject IUserService UserService;
+@inject IGameService GameService;
+
+
+<h3>Create Game</h3>
+
+<label>Select players to add to the game:</label>
+<select name="selectPlayers" id="selectPlayers" @onchange="SetSelectedPlayer">
+    @foreach (User player in players)
+    {
+        <option value="@player.UserName">@player.UserName</option>
+    }
+</select>
+Players added:
+@foreach (string playerUsername in playerUsernames)
+{
+    <p>@playerUsername</p>
+}
+<button class="createbtn" @onclick="@DeleteAllPlayers">Delete All Players</button>
+<button class="createbtn" @onclick="@CreateNewGame">Create Game</button>
+
+@code {
+    private ICollection<User> players = new List<User>();
+    private string error = "";
+    private List<string> playerUsernames = new List<string>();
+    private ICollection<User> selectedPlayers = new List<User>();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        error = "";
+        try
+        {
+            players = await UserService.getAllUsersAsync();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            error = e.Message;
+        }
+    }
+
+    private async Task CreateNewGame()
+    {
+        error = "";
+        try
+        {
+            await GameService.CreateAsync(new GameBasicDto(null, null, selectedPlayers));
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            error = e.Message;
+        }
+        
+    }
+
+    private void DeleteAllPlayers()
+    {
+        playerUsernames = new List<string>();
+    }
+    
+    private void SetSelectedPlayer(ChangeEventArgs e)
+    {
+        if (!string.IsNullOrEmpty(e.Value.ToString()))
+        {
+            playerUsernames.Add(e.Value.ToString()!);
+        }
+        foreach (User player in players)
+        {
+            if (player.UserName.Equals(e.Value.ToString()!))
+                selectedPlayers.Add(player);
+        }
+    }
+    
+    
+
+}

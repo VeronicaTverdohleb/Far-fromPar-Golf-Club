@@ -9,10 +9,9 @@ public class GameHttpClient : IGameService
     private readonly HttpClient client;
     private IGameService gameService;
 
-    public GameHttpClient(HttpClient client, IGameService gameService)
+    public GameHttpClient(HttpClient client)
     {
         this.client = client;
-        this.gameService = gameService;
     }
 
     public async Task CreateAsync(GameBasicDto dto)
