@@ -9,6 +9,22 @@ public class UserLogic : IUserLogic
 {
     private readonly IUserDao _userDao;
 
+    public UserLogic(IUserDao _userDao)
+    {
+        this._userDao = _userDao;
+    }
+
+    public async Task<User> GetByUsernameAsync(string userName)
+    {
+        User? retrieved = await _userDao.GetByUsernameAsync(userName);
+        if (retrieved == null)
+        {
+            throw new Exception($"Ingredient with name {userName} not found");
+        }
+
+        return retrieved;
+    }
+
     public Task<IEnumerable<User>> GetAllUsersAsync()
     {
         return _userDao.GetAllUsersAsync();
@@ -16,7 +32,7 @@ public class UserLogic : IUserLogic
 
     public async Task<User> CreateAsync(UserCreationDto user)
     {
-        User returned = await _userDao.GetByUsernameAsync(user.Username);
+        User? returned = await _userDao.GetByUsernameAsync(user.Username);
         if (returned != null)
         {
             throw new Exception("User already exists!");

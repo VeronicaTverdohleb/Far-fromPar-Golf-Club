@@ -16,7 +16,7 @@ public class UserDao : IUserDao
 
     public Task<IEnumerable<User>> GetAllUsersAsync()
     {
-        IEnumerable<User> list = context.Users.ToList();
+        IEnumerable<User> list = context.Users.Where(u => u.Role == "Member").ToList();
         return Task.FromResult(list);
     }
 

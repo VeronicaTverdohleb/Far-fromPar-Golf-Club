@@ -20,6 +20,7 @@ builder.Services.AddScoped<ITournamentService, TournamentHttpClient>();
 builder.Services.AddScoped<IJavaSocketConnection, JavaSocketConnection>();
 builder.Services.AddScoped<IAuthService, JwtAuthService>();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthProvider>();
+builder.Services.AddScoped<IUserService, UserHttpClient>();
 
 AuthorizationPolicies.AddPolicies(builder.Services);
 
