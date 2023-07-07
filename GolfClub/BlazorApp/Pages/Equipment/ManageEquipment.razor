@@ -1,5 +1,58 @@
-﻿<h3>ManageEquipment</h3>
-
+﻿@page "/ManageEquipment"
+@using global::Shared.Dtos.EquipmentDto
+@using global::Shared.Model
+@using HttpClients.ClientInterfaces
+@inject IEquipmentService EquipmentService
+<h3>ManageEquipment</h3>
+@if (equipmetsounts != null)
+{
+    <table>
+<thead>
+<tr>
+    <th>Name</th>
+    <th>Count</th>
+</tr>
+</thead>
+<tbody>
+@foreach (var e in equipmetsounts)
+{
+    <tr>
+        <td>@e.Name</td>
+        <td>@e.Amount</td>
+    </tr>
+}
+ </tbody>
+</table>
+}
 @code {
+    private ICollection<EquipmentBasicDto> equipmetsounts;
+    private ICollection<Equipment> equipments;
+    private ICollection<int> amounts;
+    private int amount;
+    private string name;
+
+    protected override async Task OnInitializedAsync()
+    {
+        equipments = await EquipmentService.getAllEquipmentAsync(null);
+        
+        equipmetsounts = equipments.GroupBy(e => e.Name).Select(e => new EquipmentBasicDto { Name = e.Key, Amount = e.Count() }).ToList();
+       
+    }
     
+   /* private async Task<List<EquipmentBasicDto>> GetEquipmentData()
+    {
+        ICollection<EquipmentBasicDto> equipmentList = await  EquipmentService.getAllEquipmentAsync(null);
+
+        var equipmentData = new List<EquipmentBasicDto>();
+        foreach (var equipment in equipmentList)
+        {
+           int amount= await EquipmentService.CountOfEquipment(equipment.Name);
+            equipmentData.Add(new EquipmentBasicDto{Name=equipment.Name, Amount = amount});
+        }
+
+        return equipmentData;
+    }*/
+    
+   
+
 }

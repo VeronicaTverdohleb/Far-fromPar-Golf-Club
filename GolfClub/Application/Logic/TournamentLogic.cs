@@ -31,4 +31,19 @@ public class TournamentLogic:ITournamentLogic
 
         return tournament;
     }
+
+    public async Task DeleteTournamentAsync(string name)
+    {
+        Tournament? tournament = await tournamentDao.GetTournamentByNameAsync(name);
+        if (tournament == null)
+        {
+            throw new Exception($"Tournament with name {name} doesn't exist");
+        }
+        await tournamentDao.DeleteTournamentAsync(name);
+    }
+
+    public Task<IEnumerable<Tournament>> GetAllTournamentsAsync()
+    {
+        return tournamentDao.GetAllTournamentsAsync();
+    }
 }

@@ -29,6 +29,8 @@ builder.Services.AddScoped<IHoleLogic, HoleLogic>();
 builder.Services.AddScoped<IHoleDao, HoleDao>();
 builder.Services.AddScoped<IUserDao, UserDao>();
 builder.Services.AddScoped<IUserLogic, UserLogic>();
+builder.Services.AddScoped<IEquipmentDao, EquipmentDao>();
+builder.Services.AddScoped<IEquipmentLogic, EquipmentLogic>();
 
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>

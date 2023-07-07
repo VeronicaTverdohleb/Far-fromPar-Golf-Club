@@ -1,6 +1,7 @@
 ﻿@page "/AddScore"
 @using HttpClients.ClientInterfaces
 @using global::Shared.Model
+@using System.Globalization
 @inject IScoreService ScoreService
 @inject IHoleService HoleService
 
@@ -28,16 +29,23 @@
         {
             <tr>
                 <th>
-                    <input type="text" placeholder="Player's username" @bind="playerScores.ElementAt(0).PlayerUsername"/>
+                    <input type="text" placeholder="Player's username" @onchange="ChangeUsername"/>
+                    @{
+                        if (username != "")
+                        {
+                            Console.WriteLine($"Index of username: {scores.IndexOf(playerScores)}");
+                            ChangePlayersUsername(scores.IndexOf(playerScores));
+                        }
+                    }
+                    
                 </th>
                 @for (int i = 0; i < holes.Count; i++)
                 {
-                    Console.WriteLine($"The strokes for the player: {playerScores.ElementAt(i).Strokes}");
                     <th>
-                        
-                        <input type="number" class="hole_number" placeholder="0" min="0" max="23" @onchange="ChangeStrokes"/>
+                        <input type="number" class="hole_number" placeholder="0" min="1" max="23" @onchange="ChangeStrokes"/>
                         @{
-                            ChangePlayersStrokes(playerScores, i);
+                            if (strokes != 0)
+                                ChangePlayersStrokes(playerScores, i);
                         }
                     </th>
                 }
@@ -63,7 +71,8 @@
     private ICollection<Hole> holes;
     private List<List<Score>> scores = new List<List<Score>>();
     private int strokes;
-
+    private string username = "";
+ 
     /// Initial method that loads holes and pars
     protected override async Task OnInitializedAsync()
     {
@@ -106,7 +115,7 @@
         {
             foreach (Score score in list)
             {
-                Console.WriteLine($"Strokes: {score.Strokes}");
+                //Console.WriteLine($"Strokes: {score.Strokes}");
             }
         }
     }
@@ -121,13 +130,46 @@
     /// This function is supposed to assign the strokes value to the exact Score in the Score list of the user - DOES NOT WORK FOR NOW
     private void ChangePlayersStrokes(List<Score> playerScores, int indexOfScore)
     {
+        if (playerScores.ElementAt(0).PlayerUsername.Equals(""))
+        {
+            holeErrorMsg = "Please fill out the username first";
+        }
+        else
+        {
+            foreach (List<Score> list in scores)
+            {
+                if (list.Equals(playerScores))
+                {
+                    if (list.ElementAt(0).PlayerUsername == "")
+                    {
+                    
+                    }
+                    list.ElementAt(indexOfScore).Strokes = strokes;
+                    Console.WriteLine($"Strokes rn: {list.ElementAt(indexOfScore).Strokes}");
+                }
+            }   
+        }
+        strokes = 0;
+    }
+
+    private void ChangeUsername(ChangeEventArgs e)
+    {
+        username = e.Value?.ToString()!;
+        Console.WriteLine($"Username is: {username}");
+    }
+
+    private void ChangePlayersUsername(int index)
+    {
         foreach (List<Score> list in scores)
         {
-            if (list.Equals(playerScores))
+            if (scores.IndexOf(list) == index)
             {
-                list.ElementAt(indexOfScore).Strokes = strokes;
+                foreach (Score score in list)
+                {
+                    score.PlayerUsername = username;
+                    Console.WriteLine($"Username of the player: {score.PlayerUsername}");
+                }
             }
-        }            
-        strokes = 0;
+        }
     }
 }
