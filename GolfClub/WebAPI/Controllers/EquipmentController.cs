@@ -91,12 +91,12 @@ public class EquipmentController: ControllerBase
             return StatusCode(500, e.Message);
         }
     }
-    [HttpDelete("{id:int}")]
-    public async Task<ActionResult> DeleteEquipmentAsync([FromRoute] int id)
+    [HttpDelete("{name:required}")]
+    public async Task<ActionResult> DeleteEquipmentAsync([FromRoute] IEnumerable<string> names)
     {
         try
         {
-            await equipmentLogic.DeleteEquipmentAsync(id);
+            await equipmentLogic.DeleteEquipmentAsync(names);
             return Ok();
         }
         catch (Exception e)

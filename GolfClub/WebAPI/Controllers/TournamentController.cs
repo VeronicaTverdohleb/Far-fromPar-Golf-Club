@@ -46,4 +46,34 @@ public class TournamentController:ControllerBase
             return StatusCode(500, e.Message);
         }
     }
+
+    [HttpDelete("/Tournament/{name}")]
+    public async Task<ActionResult> DeleteTournamentAsync([FromRoute]string name)
+    {
+        try
+        {
+            await tournamentLogic.DeleteTournamentAsync(name);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(500, e.Message);
+        }
+    }
+
+    [HttpGet("/Tournament")]
+    public async Task<ActionResult<IEnumerable<Tournament>>> GetAllTournamentsAsync()
+    {
+        try
+        {
+            var tournaments = await tournamentLogic.GetAllTournamentsAsync();
+            return Ok(tournaments);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(500, e.Message);
+        }
+    }
 }

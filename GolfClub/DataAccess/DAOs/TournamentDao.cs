@@ -24,8 +24,25 @@ public class TournamentDao:ITournamentDao
 
     public Task<Tournament?> GetTournamentByNameAsync(string name)
     {
-        Tournament? existing = context.Tournaments.Include(tournament => tournament.Games)
-            .ThenInclude(game => game.Players).FirstOrDefault(tournament => tournament.Name.Equals(name));
+        Tournament? existing = context.Tournaments.Include(tournament => tournament.Games).FirstOrDefault(tournament => tournament.Name.Equals(name));
         return Task.FromResult(existing);
+    }
+
+    public async Task DeleteTournamentAsync(string name)
+    {
+        Tournament? existing = await GetTournamentByNameAsync(name);
+        if (existing==null)
+        {
+            throw new Exception($"Tournament with name {name} doesn't exist");
+        }
+
+        context.Tournaments.Remove(existing);
+        await context.SaveChangesAsync();
+    }
+
+    public Task<IEnumerable<Tournament>> GetAllTournamentsAsync()
+    {
+        IEnumerable<Tournament> tournaments = context.Tournaments.AsEnumerable();
+        return Task.FromResult(tournaments);
     }
 }

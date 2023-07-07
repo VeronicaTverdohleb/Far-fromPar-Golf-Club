@@ -2,6 +2,7 @@
 @using global::Shared.Model
 @using HttpClients.ClientInterfaces
 @inject ITournamentService TournamentService
+@inject NavigationManager navMgr
 <h3>@tournamentName</h3>
 
 @if (tournament == null)
@@ -15,6 +16,14 @@ else
     <p>@tournament.Name</p>
     <p>@tournament.StartDate - @tournament.EndDate</p>
     <p></p>
+    
+    <button @onclick="SwitchDeleteBool">Delete Tournament</button>
+    @if (delete)
+    {
+        <p>Are you sure? this will delete the tournament</p>
+        <button @onclick="DeleteTournament">Yes</button>
+        <button @onclick="SwitchDeleteBool">No</button>
+    }
 }
 
 
@@ -24,6 +33,7 @@ else
     [Parameter] 
     public string tournamentName { get; set; }
 
+    private bool delete = false;
     private Tournament tournament;
     private string msg;
 
@@ -39,5 +49,16 @@ else
             Console.WriteLine(e);
             msg = e.Message;
         }
+    }
+
+    private void SwitchDeleteBool()
+    {
+        delete = !delete;
+    }
+
+    private async void DeleteTournament()
+    {
+       await TournamentService.DeleteTournamentAsync(tournamentName);
+        navMgr.NavigateTo($"/ManageTournament");
     }
 }
