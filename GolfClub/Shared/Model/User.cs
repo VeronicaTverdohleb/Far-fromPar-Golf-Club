@@ -21,12 +21,4 @@ public class User
         Password = password;
         Role = role;
     }
-    
-    public User(string Name, string UserName, string Password)
-    {
-        this.Name = Name;
-        this.UserName = UserName;
-        this.Password = Password;
-        Role = "Member";
-    }
 }
