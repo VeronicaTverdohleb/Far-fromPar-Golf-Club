@@ -1,0 +1,17 @@
+﻿.addplayerbtn {
+    margin-left: 250px;
+    background-color: darkorange;
+    width: 150px;
+    height: 50px;
+    font-size: large;
+    border-radius: 10px;
+}
+
+.createbtn {
+    margin-left: 250px;
+    background-color: darkorange;
+    width: 150px;
+    height: 50px;
+    font-size: large;
+    border-radius: 10px;
+}
