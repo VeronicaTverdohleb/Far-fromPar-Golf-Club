@@ -35,13 +35,14 @@ Players added:
         error = "";
         try
         {
-            players = await UserService.getAllUsersAsync();
+            players = await UserService.GetAllUsersAsync();
         }
         catch (Exception e)
         {
             Console.WriteLine(e.Message);
             error = e.Message;
         }
+        Console.WriteLine($"Amount of Members: {players.Count}");
     }
 
     private async Task CreateNewGame()

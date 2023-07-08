@@ -38,7 +38,7 @@ public class UserLogic : IUserLogic
             throw new Exception("User already exists!");
         }
 
-        User todo = new User(user.Name, user.Username, user.Password);
+        User todo = new User(user.Name, user.Username, user.Password, "Member");
         User created = await _userDao.CreateAsync(todo);
 
         return created;

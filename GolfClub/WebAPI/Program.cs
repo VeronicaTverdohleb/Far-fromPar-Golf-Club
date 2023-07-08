@@ -21,6 +21,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<DataContext>();
 
 builder.Services.AddScoped<IUserDao, UserDao>();
+builder.Services.AddScoped<IUserLogic, UserLogic>();
 builder.Services.AddScoped<ITournamentDao, TournamentDao>();
 builder.Services.AddScoped<ITournamentLogic,TournamentLogic>();
 builder.Services.AddScoped<IScoreDao, ScoreDao>();

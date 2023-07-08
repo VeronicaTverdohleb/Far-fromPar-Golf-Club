@@ -17,7 +17,7 @@ public class UserHttpClient : IUserService
     
     public async Task<ICollection<User>> GetAllUsersAsync()
     {
-        HttpResponseMessage response = await client.GetAsync("/Users");
+        HttpResponseMessage response = await client.GetAsync("/User");
         string content = await response.Content.ReadAsStringAsync();
         if (!response.IsSuccessStatusCode)
         {
@@ -28,12 +28,13 @@ public class UserHttpClient : IUserService
         {
             PropertyNameCaseInsensitive = true
         })!;
+        Console.WriteLine($"Size of array received from WebAPI: {users.Count}");
         return users;
     }
 
     public async Task<User> GetByUsernameAsync(string username)
     {
-        HttpResponseMessage response = await client.GetAsync($"/Users/{username}");
+        HttpResponseMessage response = await client.GetAsync($"/User/{username}");
         string content = await response.Content.ReadAsStringAsync();
         if (!response.IsSuccessStatusCode)
         {
@@ -51,7 +52,7 @@ public class UserHttpClient : IUserService
 
     public async Task CreateAsync(UserCreationDto user)
     {
-        HttpResponseMessage response = await client.PostAsJsonAsync("/Users", user);
+        HttpResponseMessage response = await client.PostAsJsonAsync("/User", user);
         if (!response.IsSuccessStatusCode)
         {
             string content = await response.Content.ReadAsStringAsync();
@@ -61,7 +62,7 @@ public class UserHttpClient : IUserService
 
     public async Task DeleteAsync(string username)
     {
-        HttpResponseMessage response = await client.DeleteAsync($"Users/{username}");
+        HttpResponseMessage response = await client.DeleteAsync($"User/{username}");
         if (!response.IsSuccessStatusCode)
         {
             string content = await response.Content.ReadAsStringAsync();
