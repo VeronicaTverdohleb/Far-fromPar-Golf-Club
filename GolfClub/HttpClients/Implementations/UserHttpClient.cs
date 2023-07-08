@@ -15,7 +15,7 @@ public class UserHttpClient : IUserService
         this.client = client;
     }
     
-    public async Task<ICollection<User>> getAllUsersAsync()
+    public async Task<ICollection<User>> GetAllUsersAsync()
     {
         HttpResponseMessage response = await client.GetAsync("/Users");
         string content = await response.Content.ReadAsStringAsync();

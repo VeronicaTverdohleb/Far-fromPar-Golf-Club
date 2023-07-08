@@ -48,7 +48,7 @@ else
     {
         try
         {
-            users = await UserService.getAllUsersAsync();
+            users = await UserService.GetAllUsersAsync();
         }
         catch (Exception e)
         {
@@ -64,7 +64,7 @@ else
         {
             UserCreationDto creationDto = new(name, username, password);
             await UserService.CreateAsync(creationDto);
-            users = await UserService.getAllUsersAsync();
+            users = await UserService.GetAllUsersAsync();
         }
         catch (Exception e)
         {
