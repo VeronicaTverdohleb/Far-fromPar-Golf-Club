@@ -6,6 +6,10 @@ using Shared.Model;
 
 namespace DataAccess.DAOs;
 
+/// <summary>
+/// Data Access Object responsible for interacting with the database
+/// Used in GameDao
+/// </summary>
 public class GameDao : IGameDao
 {
     private readonly DataContext context;
@@ -39,11 +43,30 @@ public class GameDao : IGameDao
         }
 
         Game newGame = new Game(null, null, players);
-        EntityEntry<Game> added = await context.Games.AddAsync(newGame);
+        EntityEntry<Game> addedGame = await context.Games.AddAsync(newGame);
         await context.SaveChangesAsync();
-        return added.Entity;
+        
+        // If TournamentName in GameBasicDto is not null, add the new Game to the Tournament
+        if (game.TournamentName != null || !game.TournamentName!.Equals(""))
+        {
+            Tournament? tournament = context.Tournaments.FirstOrDefault(t => t.Name == game.TournamentName);
+            ICollection<Game> gamesToTourey = new List<Game>();
+            gamesToTourey.Add(newGame);
+            
+            tournament!.Games = gamesToTourey;
+            context.Tournaments.Update(tournament);
+            await context.SaveChangesAsync();
+        }
+        
+        return addedGame.Entity;
     }
 
+    
+    /// <summary>
+    /// Method that fetches a Game based on a username
+    /// </summary>
+    /// <param name="username"></param>
+    /// <returns></returns>
     public Task<IEnumerable<Game>> GetGamesByUsername(string username)
     {
         User? user = context.Users.FirstOrDefault(user => user.UserName == username);
