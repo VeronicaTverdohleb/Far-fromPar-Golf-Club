@@ -41,4 +41,20 @@ public class GameLogic : IGameLogic
         Game created = await gameDao.CreateAsync(dto);
         return created;
     }
+
+    public Task<Game?> GetActiveGameByUsernameAsync(string username)
+    {
+        Task<IEnumerable<Game>> games = gameDao.GetGamesByUsername(username);
+        Game gameToBeReturned = null;
+        foreach (Game game in games.Result)
+        {
+            if (game.Scores == null || game.Scores.Count == 0)
+            {
+                gameToBeReturned = game;
+                break;
+            }
+        }
+
+        return Task.FromResult(gameToBeReturned);
+    }
 }

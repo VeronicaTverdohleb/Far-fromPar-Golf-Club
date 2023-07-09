@@ -31,4 +31,22 @@ public class GameController : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
+    
+    
+    [HttpGet,Route("/Game/{username}")]
+    public async Task<ActionResult<Tournament>> GetActiveGameByUsernameAsync([FromRoute] string username)
+    {
+        try
+        {
+            Game game = await gameLogic.GetActiveGameByUsernameAsync(username);
+            return Ok(game);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(500, e.Message);
+        }
+    }
+    
+    
 }

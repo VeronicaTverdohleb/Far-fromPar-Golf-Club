@@ -1,5 +1,6 @@
 ﻿using Application.DaoInterfaces;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Shared.Dtos.ScoreDto;
 using Shared.Model;
 
 namespace DataAccess.DAOs;
@@ -22,10 +23,14 @@ public class ScoreDao : IScoreDao
     /// </summary>
     /// <param name="score"></param>
     /// <returns></returns>
-    public async Task<Score> CreateAsync(Score score)
+    public async Task<Score> CreateAsync(ScoreBasicDto score)
     {
-        EntityEntry<Score> added = await context.Scores.AddAsync(score);
-        await context.SaveChangesAsync();
-        return added.Entity;
+        EntityEntry<Score> added = null!;
+        for (int i = 0; i < 18; i++)
+        {
+            added = await context.Scores.AddAsync(new Score(score.PlayerUsername, i+1, score.Strokes[i]));
+            await context.SaveChangesAsync();
+        }
+        return added!.Entity;
     }
 }

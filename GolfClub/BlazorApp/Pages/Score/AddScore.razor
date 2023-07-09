@@ -1,0 +1,151 @@
+﻿@page "/AddScore"
+@using HttpClients.ClientInterfaces
+@using global::Shared.Model
+@using System.Security.Claims
+@using global::Shared.Dtos.ScoreDto
+@inject IScoreService ScoreService
+@inject IGameService GameService
+@inject IJSRuntime JsRuntime
+
+@if (activeGame != null)
+{
+    <table>
+        <thead>
+        <tr>
+            <th>Hole</th>
+            @for (int i = 1; i <= 18; i++)
+            {
+                <th>@i</th>
+            }
+        </tr>
+        <tr>
+            <th>Par</th>
+            @foreach (int par in pars)
+            {
+                <th>@par</th>
+            }
+        </tr>
+        </thead>
+        <tbody>
+
+        <tr>
+            <th>@loggedInMemberUsername</th>
+
+            @for (int i = 0; i < 18; i++)
+            {
+                <th>
+                    <input type="number" class="hole_number" placeholder="0" min="1" max="23" @bind="@scores[i]"/>
+                </th>
+            }
+        </tr>
+
+        </tbody>
+    </table>
+
+    <button class="savebtn" @onclick="@SaveScores">Save Score</button>
+@if (!string.IsNullOrEmpty(error))
+{
+    <p class="error-message">@error</p>
+}
+}
+
+
+
+@code {
+    private string error = "";
+    private List<int> pars = new List<int>();
+    private List<int> scores = new List<int>(18);
+    private int strokes;
+    private string username = "";
+    private Random random = new Random();
+
+    // Variables regarding getting the logged in Member
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthState { get; set; } = null!;
+
+    private IEnumerable<Claim>? userClaims;
+    private string loggedInMemberUsername = "";
+    private Game? activeGame;
+
+
+    /// Initial method that loads player's scorecard
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthState;
+        var user = authState.User;
+
+        userClaims = user.Claims;
+        foreach (var claim in userClaims!)
+        {
+            if (claim.Type.Equals("Username"))
+                loggedInMemberUsername = claim.Value;
+        }
+
+        error = "";
+        try
+        {
+            activeGame = await GameService.GetActiveGameByUsernameAsync(loggedInMemberUsername)!;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            error = e.Message;
+        }
+        if (activeGame == null)
+            await JsRuntime.InvokeVoidAsync("alertAction", "ALERT: You currently do not have any started game to add a score to. " +
+                                                           "\nTo start a game, please reach out to our employees.");
+        
+        for (int i = 0; i < 18; i++)
+            pars.Add(random.Next(2, 8));
+
+
+        for (int i = 1; i <= 18; i++)
+            scores.Add(0);
+    }
+
+    /// Calls CreateAsync method in the ScoreService which send a request to to the Web API and adds scores to the database
+    private async Task SaveScores()
+    {
+        for (int i = 0; i < 18; i++)
+        {
+            if (scores.ElementAt(i) == 0)
+            {
+                error = "Please fill out scores for all holes before submitting the scorecard";
+                return;
+            }
+        }
+        
+        try
+        {
+            ScoreBasicDto dto = new ScoreBasicDto(loggedInMemberUsername, scores, activeGame!.Id);
+            await ScoreService.CreateAsync(dto);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            error = e.Message;
+        }
+        
+        if (error.Equals(""))
+            await JsRuntime.InvokeVoidAsync("alertAction", "Score submitted successfully");
+        
+    }
+
+    /// Whenever there is a change in the stroke number-picker, the value gets assigned to "strokes" global variable
+    private void ChangeStrokes(ChangeEventArgs e)
+    {
+        strokes = int.Parse(e.Value.ToString());
+        for (int i = 0; i < 18; i++)
+            Console.WriteLine($"Score for hole {i+1}: {scores[i]}");
+        }
+
+    /// "strokes" global variable holds the last picked value in the last stroke number-picker
+    /// This method is ran right after ChangeStrokes(ChangeEventArgs e),
+    /// and it assigns the "strokes" variable's value to the List<int> "scores"
+    /// under the corresponding index
+    private void ChangePlayersStrokes(int indexOfScore)
+    {
+        scores[indexOfScore] = strokes;
+        strokes = 0;
+    }
+}
