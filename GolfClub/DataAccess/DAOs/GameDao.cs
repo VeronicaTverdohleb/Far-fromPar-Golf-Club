@@ -32,7 +32,7 @@ public class GameDao : IGameDao
          Functionality of the method:
          1. Fetch players based on the usernames in the GameBasicDto
          2. Add the new Game to database
-         3. If TournamentName in GameDto, ddd the Game to a Tournament
+         3. If TournamentName in GameDto, add the Game to a Tournament
          4. Return Task<Game>
          */
         ICollection<User> players = new List<User>();
@@ -45,23 +45,26 @@ public class GameDao : IGameDao
         Game newGame = new Game(null, null, players);
         EntityEntry<Game> addedGame = await context.Games.AddAsync(newGame);
         await context.SaveChangesAsync();
-        
+
         // If TournamentName in GameBasicDto is not null, add the new Game to the Tournament
         if (game.TournamentName != null || !game.TournamentName!.Equals(""))
         {
             Tournament? tournament = context.Tournaments.FirstOrDefault(t => t.Name == game.TournamentName);
-            ICollection<Game> gamesToTourey = new List<Game>();
-            gamesToTourey.Add(newGame);
-            
-            tournament!.Games = gamesToTourey;
-            context.Tournaments.Update(tournament);
-            await context.SaveChangesAsync();
+            if (tournament != null)
+            {
+                ICollection<Game> gamesToTourey = new List<Game>();
+                gamesToTourey.Add(newGame);
+
+                tournament.Games = gamesToTourey;
+                context.Tournaments.Update(tournament);
+                await context.SaveChangesAsync();
+            }
         }
-        
+
         return addedGame.Entity;
     }
 
-    
+
     /// <summary>
     /// Method that fetches a Game based on a username
     /// </summary>
@@ -70,14 +73,14 @@ public class GameDao : IGameDao
     public Task<IEnumerable<Game>> GetGamesByUsername(string username)
     {
         User? user = context.Users.FirstOrDefault(user => user.UserName == username);
-        
+
         IEnumerable<Game> games = context.Games
             .Include(game => game.Scores)
             .Include(game => game.Equipments)
             .Include(game => game.Players)
             .Where(game => game.Players.Contains(user!))
             .AsEnumerable();
-        
+
         return Task.FromResult(games);
     }
 }

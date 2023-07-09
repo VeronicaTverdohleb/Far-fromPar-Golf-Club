@@ -61,6 +61,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        playerUsernames = new List<string>();
         error = "";
         try
         {
@@ -89,10 +90,15 @@
             {
                 Console.WriteLine(e.Message);
                 error = e.Message;
+                playerUsernames = new List<string>();
             }
         }
         if (error.Equals(""))
+        {
             await JsRuntime.InvokeVoidAsync("alertAction", "Game Successfully Created");
+            await OnInitializedAsync();
+        }
+            
     }
 
     private void DeleteAllPlayers()

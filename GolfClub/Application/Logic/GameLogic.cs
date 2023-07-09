@@ -24,16 +24,8 @@ public class GameLogic : IGameLogic
             {
                 foreach (Game game in games.ToList())
                 {
-                    if (game.Scores != null)
-                    {
-                        foreach (Score score in game.Scores)
-                        {
-                            if (score.Strokes == 0)
-                            {
-                                throw new Exception($"User with username {score.PlayerUsername} has an unfinished game. Cannot create a new game.");
-                            }
-                        }
-                    }
+                    if (game.Scores == null || !game.Scores.Any())
+                        throw new Exception($"User with username {playerUsername} has an unfinished game. Cannot create a new game with this user.");
                 }
             }
         }
