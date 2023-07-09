@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Json;
+using System.Text;
 using System.Text.Json;
 using HttpClients.ClientInterfaces;
 using Shared.Dtos.TournamentDto;
@@ -67,5 +68,35 @@ public class TournamentHttpClient:ITournamentService
                 PropertyNameCaseInsensitive = true
             })!;
         return tournaments;
+    }
+
+    public async Task<ICollection<User>> GetAllTournamentPlayersAsync(string name)
+    {
+        HttpResponseMessage response = await client.GetAsync($"/Tournament/{name}/Players");
+        string content = await response.Content.ReadAsStringAsync();
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception(content);
+        }
+
+        ICollection<User> players = JsonSerializer.Deserialize<ICollection<User>>(content,
+            new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            })!;
+        return players;
+    }
+
+    public async Task AddPlayerAsync(RegisterPlayerDto dto)
+    {
+        string dtoAsJson = JsonSerializer.Serialize(dto);
+        StringContent body = new StringContent(dtoAsJson, Encoding.UTF8, "application/json");
+        
+        HttpResponseMessage response = await client.PatchAsync("/Tournament", body);
+        if (!response.IsSuccessStatusCode)
+        {
+            string content = await response.Content.ReadAsStringAsync();
+            throw new Exception(content);
+        }
     }
 }

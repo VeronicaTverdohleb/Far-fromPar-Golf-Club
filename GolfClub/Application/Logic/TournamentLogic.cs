@@ -46,4 +46,23 @@ public class TournamentLogic:ITournamentLogic
     {
         return tournamentDao.GetAllTournamentsAsync();
     }
+
+    public Task<IEnumerable<User>> GetAllTournamentPlayersAsync(string name)
+    {
+        return tournamentDao.GetAllTournamentPlayersAsync(name);
+    }
+
+    public async Task RegisterPlayerAsync(RegisterPlayerDto dto)
+    {
+        IEnumerable<User> registeredPlayers = await tournamentDao.GetAllTournamentPlayersAsync(dto.TournamentName);
+        foreach (var player in registeredPlayers)
+        {
+            if (player.Name.Equals(dto.PlayerName))
+            {
+                throw new Exception("This player is already registered!");
+            }
+        }
+
+        await tournamentDao.RegisterPlayerAsync(dto);
+    }
 }
