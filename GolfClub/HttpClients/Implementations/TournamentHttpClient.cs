@@ -96,6 +96,10 @@ public class TournamentHttpClient:ITournamentService
         if (!response.IsSuccessStatusCode)
         {
             string content = await response.Content.ReadAsStringAsync();
+            if (content==null)
+            {
+                throw new Exception("content was null!");
+            }
             throw new Exception(content);
         }
     }

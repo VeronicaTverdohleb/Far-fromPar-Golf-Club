@@ -15,10 +15,10 @@
     }
 else
 {
-    <p>@tournament.Name</p>
-    <p>@tournament.StartDate - @tournament.EndDate</p>
+    <p>Tournament starts on: @tournament.StartDate</p>
+    <p>Tournament ends on:   @tournament.EndDate</p>
     <p></p>
-    <h3>players:</h3>
+    <h3>Registered players:</h3>
     foreach (var player in players)
     {
         <p>@player.Name</p>
@@ -32,7 +32,7 @@ else
         }
     </select>
     <button @onclick="AddPlayer">register player</button>
-    
+    <br/><br/>
     <button @onclick="SwitchDeleteBool">Delete Tournament</button>
     @if (delete)
     {
@@ -42,8 +42,8 @@ else
     }
 }
 
-
-<label>@msg</label>
+<br/><br/>
+<label style="color:red;">@msg</label>
 
 @code {
     [Parameter] 
@@ -84,10 +84,23 @@ else
         navMgr.NavigateTo($"/ManageTournament");
     }
 
-    private async void AddPlayer()
+    private async Task AddPlayer()
     {
-        RegisterPlayerDto update = new RegisterPlayerDto(chosenPlayerName, tournamentName);
-        await TournamentService.AddPlayerAsync(update);
+        if (string.IsNullOrEmpty(chosenPlayerName)||chosenPlayerName.Equals("choose:"))
+        {
+            msg = "Select a player first!";
+        }
+        else if (players.Any(u =>u.Name.ToLower().Equals(chosenPlayerName.ToLower())))
+        {
+            msg = "Player is already registered";
+        }
+        else
+        {
+            Console.WriteLine("the chosen playername was: "+chosenPlayerName);
+            RegisterPlayerDto update = new RegisterPlayerDto(chosenPlayerName, tournamentName);
+            await TournamentService.AddPlayerAsync(update);
+            await OnInitializedAsync();
+        }
     }
 
     private void SetSelectedPlayer(ChangeEventArgs e)

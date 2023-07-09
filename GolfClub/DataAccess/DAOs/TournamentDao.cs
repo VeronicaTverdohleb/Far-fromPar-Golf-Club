@@ -69,6 +69,11 @@ public class TournamentDao:ITournamentDao
         {
             throw new Exception("This player does not exist");
         }
+        if (existing.Players==null)
+        {
+            Console.WriteLine("players was null");
+            existing.Players = new List<User>();
+        }
         existing.Players.Add(player);
         await context.SaveChangesAsync();
     }
