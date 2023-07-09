@@ -62,7 +62,7 @@ public class UserHttpClient : IUserService
 
     public async Task DeleteAsync(string userName)
     {
-        HttpResponseMessage response = await client.DeleteAsync($"$User/{userName}");
+        HttpResponseMessage response = await client.DeleteAsync($"/User/{userName}");
         if (!response.IsSuccessStatusCode)
         {
             string content = await response.Content.ReadAsStringAsync();

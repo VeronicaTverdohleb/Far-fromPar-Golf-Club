@@ -62,8 +62,8 @@ public class UserController : ControllerBase
         }
     }
     
-    [HttpDelete]
-    public async Task<ActionResult> DeleteAsync([FromQuery] string userName)
+    [HttpDelete("/User/{userName}")]
+    public async Task<ActionResult> DeleteAsync([FromRoute] string userName)
     {
         try
         {
