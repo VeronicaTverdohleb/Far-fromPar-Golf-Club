@@ -63,7 +63,7 @@ public class UserController : ControllerBase
     }
     
     [HttpDelete]
-    public async Task<ActionResult> DeleteAsync([FromRoute] string userName)
+    public async Task<ActionResult> DeleteAsync([FromQuery] string userName)
     {
         try
         {
