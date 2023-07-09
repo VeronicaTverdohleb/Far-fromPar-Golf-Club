@@ -44,14 +44,14 @@ public class UserLogic : IUserLogic
         return created;
     }
 
-    public async Task DeleteAsync(User user)
+    public async Task DeleteAsync(string userName)
     {
-        User? received = await _userDao.GetByUsernameAsync(user.UserName);
+        User? received = await _userDao.GetByUsernameAsync(userName);
         if (received == null)
         {
-            throw new Exception($"User with the Username {user.UserName} does not exist");
+            throw new Exception($"User with the Username {userName} does not exist");
         }
 
-        await _userDao.DeleteAsync(user);
+        await _userDao.DeleteAsync(userName);
     }
 }

@@ -39,9 +39,9 @@ else
     </table>
 }
 <div class="filter-bar">
-        <h2>Create</h2>
+        <h3 class="create-head">Create</h3>
         <div class="filters-container">
-            <img src="icons/@(doShowFilters ? "clear_" : "")add.png" class="funnel" @onclick="@(() => doShowFilters = !doShowFilters)" alt="Funnel"/>
+            <img src="img/@(doShowFilters ? "clear_" : "")add.png" class="funnel" @onclick="@(() => doShowFilters = !doShowFilters)" alt="Funnel"/>
             @if (doShowFilters)
             {
                 <div class="form-group field">
@@ -108,10 +108,7 @@ else
         try
         {
             await UserService.DeleteAsync(Username);
-        
-            var list = new List<User>(users!);
-            list.RemoveAll(i => i.UserName == Username);
-            users = list.AsEnumerable();
+            await OnInitializedAsync();
         }
         catch (Exception e)
         {

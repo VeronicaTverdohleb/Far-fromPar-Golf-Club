@@ -16,7 +16,7 @@ public class UserController : ControllerBase
         this.userLogic = userLogic;
     }
     
-    [HttpPost]
+    [HttpPost("/User")]
     public async Task<ActionResult<User>> CreateAsync(UserCreationDto dto)
     {
         try
@@ -47,7 +47,7 @@ public class UserController : ControllerBase
         }
     }
     
-    [HttpGet("{name:required}")]
+    [HttpGet("{userName:required}")]
     public async Task<ActionResult<User>> GetByUsernameAsync([FromRoute] string userName)
     {
         try
@@ -62,12 +62,12 @@ public class UserController : ControllerBase
         }
     }
     
-    [HttpDelete("{id:int}")]
-    public async Task<ActionResult> DeleteAsync([FromRoute] User user)
+    [HttpDelete]
+    public async Task<ActionResult> DeleteAsync([FromRoute] string userName)
     {
         try
         {
-            await userLogic.DeleteAsync(user);
+            await userLogic.DeleteAsync(userName);
             return Ok();
         }
         catch (Exception e)

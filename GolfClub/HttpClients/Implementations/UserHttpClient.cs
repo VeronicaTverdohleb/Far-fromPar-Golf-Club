@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Json;
+using System.Text;
 using System.Text.Json;
 using HttpClients.ClientInterfaces;
 using Shared.Dtos;
@@ -59,9 +60,9 @@ public class UserHttpClient : IUserService
         }
     }
 
-    public async Task DeleteAsync(string username)
+    public async Task DeleteAsync(string userName)
     {
-        HttpResponseMessage response = await client.DeleteAsync($"User/{username}");
+        HttpResponseMessage response = await client.DeleteAsync($"$User/{userName}");
         if (!response.IsSuccessStatusCode)
         {
             string content = await response.Content.ReadAsStringAsync();

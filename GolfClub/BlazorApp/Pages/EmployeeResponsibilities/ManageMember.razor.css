@@ -1,0 +1,27 @@
+.deletebtn {
+    margin-left: 30px;
+    background-color: palevioletred;
+    width: 150px;
+    height: 40px;
+    font-size: small;
+    border-radius: 10px;
+}
+
+.createbtn {
+    background-color: greenyellow;
+    width: 150px;
+    height: 50px;
+    font-size: large;
+    border-radius: 10px;
+}
+.funnel{
+    width:30px;
+    height:30px;
+    cursor: pointer;
+}
+
+.head{
+    margin: auto;
+    width: 30%;
+    border-radius: 5px;
+}
