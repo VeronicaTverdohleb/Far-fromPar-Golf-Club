@@ -3,9 +3,7 @@ using BlazorApp.Services;
 using BlazorApp.Services.Http;
 using HttpClients.ClientInterfaces;
 using HttpClients.Implementations;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.Web;
 using Shared.Auth;
 
 var builder = WebApplication.CreateBuilder(args);

@@ -17,9 +17,9 @@ public class GameLogic : IGameLogic
     public async Task<Game> CreateAsync(GameBasicDto dto)
     {
         // If there is a player with unfinished game, the game will not be created and exception is thrown
-        foreach (User player in dto.Players)
+        foreach (string playerUsername in dto.PlayerUsernames)
         {
-            IEnumerable<Game> games = await gameDao.GetGamesByUser(player);
+            IEnumerable<Game> games = await gameDao.GetGamesByUsername(playerUsername);
             if (games.Any())
             {
                 foreach (Game game in games.ToList())
@@ -38,8 +38,7 @@ public class GameLogic : IGameLogic
             }
         }
 
-        Game newGame = new Game(dto.Scores, dto.Equipments, dto.Players);
-        Game created = await gameDao.CreateAsync(newGame);
+        Game created = await gameDao.CreateAsync(dto);
         return created;
     }
 }

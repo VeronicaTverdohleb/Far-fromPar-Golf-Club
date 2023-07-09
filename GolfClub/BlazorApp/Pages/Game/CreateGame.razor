@@ -4,30 +4,59 @@
 @using global::Shared.Dtos.GameDto
 @inject IUserService UserService;
 @inject IGameService GameService;
+@inject ITournamentService TournamentService;
+@inject IJSRuntime JsRuntime;
 
+<div class="headline_box">
+    <img src="img/golfball.png" class="golfball" alt="Golf Ball"/>
+    <h3 class="headline"> Create Game </h3>
+    <img src="img/golfball.png" class="golfball" alt="Golf Ball"/>
+</div>
 
-<h3>Create Game</h3>
-
-<label>Select players to add to the game:</label>
-<select name="selectPlayers" id="selectPlayers" @onchange="SetSelectedPlayer">
+<label>
+    <h5>Select players to add to the game:</h5>
+</label>
+<select class="select_smth" name="selectPlayers" id="selectPlayers" @onchange="SetSelectedPlayer">
+    <option value=""></option>
     @foreach (User player in players)
     {
         <option value="@player.UserName">@player.UserName</option>
     }
 </select>
-Players added:
+<hr>
+
+<label>
+    <h5>Players added to the game: </h5>
+</label>
+<button class="deletebtn" @onclick="@DeleteAllPlayers">Delete All Players</button>
 @foreach (string playerUsername in playerUsernames)
 {
     <p>@playerUsername</p>
 }
-<button class="createbtn" @onclick="@DeleteAllPlayers">Delete All Players</button>
+<hr>
+
+<label>
+    <h5>Select a tournament to add the game to: </h5>
+</label>
+<select class="select_smth" name="selectTournament" id="selectTournament" @onchange="SetSelectedTournament">
+    <option value=""></option>
+    @foreach (Tournament tournament in tournaments)
+    {
+        <option value="@tournament.Name">@tournament.Name</option>
+    }
+</select>
+<h7 class="note">NOTE: You can leave this blank</h7>
+<hr>
+
+<h7 class="error">@error</h7>
 <button class="createbtn" @onclick="@CreateNewGame">Create Game</button>
 
 @code {
     private ICollection<User> players = new List<User>();
     private string error = "";
     private List<string> playerUsernames = new List<string>();
-    private ICollection<User> selectedPlayers = new List<User>();
+    private ICollection<Tournament> tournaments = new List<Tournament>();
+    private string selectedTournament = "";
 
 
     protected override async Task OnInitializedAsync()
@@ -36,48 +65,56 @@ Players added:
         try
         {
             players = await UserService.GetAllUsersAsync();
+            tournaments = await TournamentService.GetAllTournamentsAsync();
         }
         catch (Exception e)
         {
             Console.WriteLine(e.Message);
             error = e.Message;
         }
-        Console.WriteLine($"Amount of Members: {players.Count}");
     }
 
     private async Task CreateNewGame()
     {
         error = "";
-        try
+        bool confirmed = await JsRuntime.InvokeAsync<bool>("confirmAction", "Do you wish to proceed and create a new game");
+
+        if (confirmed)
         {
-            await GameService.CreateAsync(new GameBasicDto(null, null, selectedPlayers));
+            try
+            {
+                await GameService.CreateAsync(new GameBasicDto(null, null, playerUsernames, selectedTournament));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                error = e.Message;
+            }
         }
-        catch (Exception e)
-        {
-            Console.WriteLine(e.Message);
-            error = e.Message;
-        }
-        
+        if (error.Equals(""))
+            await JsRuntime.InvokeVoidAsync("alertAction", "Game Successfully Created");
     }
 
     private void DeleteAllPlayers()
     {
         playerUsernames = new List<string>();
     }
-    
+
+
     private void SetSelectedPlayer(ChangeEventArgs e)
     {
         if (!string.IsNullOrEmpty(e.Value.ToString()))
         {
             playerUsernames.Add(e.Value.ToString()!);
         }
-        foreach (User player in players)
+    }
+
+    private void SetSelectedTournament(ChangeEventArgs e)
+    {
+        if (!string.IsNullOrEmpty(e.Value.ToString()))
         {
-            if (player.UserName.Equals(e.Value.ToString()!))
-                selectedPlayers.Add(player);
+            selectedTournament = e.Value.ToString()!;
         }
     }
-    
-    
 
 }

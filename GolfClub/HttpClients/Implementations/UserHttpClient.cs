@@ -28,7 +28,6 @@ public class UserHttpClient : IUserService
         {
             PropertyNameCaseInsensitive = true
         })!;
-        Console.WriteLine($"Size of array received from WebAPI: {users.Count}");
         return users;
     }
 
