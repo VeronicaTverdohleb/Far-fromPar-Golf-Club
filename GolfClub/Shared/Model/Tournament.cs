@@ -10,6 +10,8 @@ public class Tournament
     
     [JsonIgnore]
     public ICollection<Game>? Games { get; set; }
+    [JsonIgnore]
+    public ICollection<User>? Players { get; set;}
 
     public Tournament(string name, DateOnly startDate, DateOnly endDate)
     {
@@ -17,6 +19,7 @@ public class Tournament
         StartDate = startDate;
         EndDate = endDate;
         Games = new List<Game>();
+        Players = new List<User>();
     }
     private Tournament() {}
 }

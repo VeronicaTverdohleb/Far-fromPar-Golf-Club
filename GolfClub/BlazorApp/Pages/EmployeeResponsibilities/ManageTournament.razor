@@ -24,7 +24,7 @@
 </select>
 <button @onclick="NavigateToTournament">Select Tournament</button>
 
-<p>@msg</p>
+<p style="color: red;">@msg</p>
 
 
 
@@ -45,16 +45,24 @@
     private async Task CreateTournament()
     {
         CreateTournamentDto dto = new CreateTournamentDto(tournamentName, startDate, endDate);
-        try
+        if (tournaments.Any(t => t.Name.ToLower().Equals(dto.Name.ToLower())))
         {
-            await TournamentService.CreateTournamentAsync(dto);
+            msg = "This tournament already exists!";
         }
-        catch (Exception e)
+        else
         {
-            msg = e.Message;
+            try
+            {
+                await TournamentService.CreateTournamentAsync(dto);
+            }
+            catch (Exception e)
+            {
+                msg = e.Message;
+            }
+            msg = "tournament created";
+            navMgr.NavigateTo($"ManageTournament/{tournamentName}");
         }
-        msg = "tournament created";
-        navMgr.NavigateTo($"ManageTournament/{tournamentName}");
+        
     }
 
     private void SetSelectedTournament(ChangeEventArgs e)
