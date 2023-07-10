@@ -6,8 +6,8 @@ namespace HttpClients.ClientInterfaces;
 public interface IEquipmentService
 {
     Task<ICollection<Equipment>> getAllEquipmentAsync(string? name);
-    Task CreateEquipmentAsync(EquipmentBasicDto dto);
-    Task UpdateEquipmentAmount(EquipmentBasicDto dto);
+    Task CreateEquipmentAsync(IEnumerable<EquipmentBasicDto>  equipment, int amount);
+    Task UpdateEquipmentAmount(string name, int amount);
     Task<Equipment?> GetEquipmentByNameAsync(string name);
     Task DeleteEquipmentAsync(string name);
 

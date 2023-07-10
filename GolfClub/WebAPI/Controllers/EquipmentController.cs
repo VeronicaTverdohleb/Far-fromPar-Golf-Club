@@ -17,13 +17,15 @@ public class EquipmentController: ControllerBase
         this.equipmentLogic = equipmentLogic;
     }
     
-     [HttpPost]
-    public async Task<ActionResult<Equipment>> CreateEquipmentAsync(Equipment equipment)
+     [HttpPost("/Equipment")]
+    public async Task<ActionResult<IEnumerable<Equipment>>> CreateEquipmentAsync(IEnumerable<EquipmentBasicDto>  equipment, int amount)
     {
         try
         {
-            Equipment equipment1 = await equipmentLogic.CreateEquipmentAsync(equipment);
-            return Created($"/equipment/{equipment1.Id}", equipment1);
+            IEnumerable<Equipment> equipmentToCreate = await equipmentLogic.CreateEquipmentAsync(equipment, amount);
+            return Created("/equipments", equipmentToCreate);
+            
+           
 
         }
         catch (Exception e)
@@ -33,11 +35,12 @@ public class EquipmentController: ControllerBase
         }
     }
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Equipment>>> GetEquipmentAsync()
+    public async Task<ActionResult<IEnumerable<Equipment>>> GetEquipmentAsync([FromQuery] string? name)
     {
         try
         {
-            var equipments = await equipmentLogic.GetEquipmentAsync();
+            SearchEquipmentDto parameter = new SearchEquipmentDto(name);
+            var equipments = await equipmentLogic.GetEquipmentAsync(parameter);
             return Ok(equipments);
         }
         catch (Exception e)
@@ -77,12 +80,12 @@ public class EquipmentController: ControllerBase
         }
     }
 
-    [HttpPatch]
-    public async Task<ActionResult> UpdateAsync([FromBody] EquipmentBasicDto dto)
+    [HttpDelete ("{name:required}/{amount:int}")]
+    public async Task<ActionResult> UpdateAsync(string name, int amount)
     {
         try
         {
-            await equipmentLogic.UpdateEquipmentAmount(dto);
+            await equipmentLogic.UpdateEquipmentAsync(name, amount);
             return Ok();
         }
         catch (Exception e)
@@ -91,12 +94,12 @@ public class EquipmentController: ControllerBase
             return StatusCode(500, e.Message);
         }
     }
-    [HttpDelete("{name:required}")]
-    public async Task<ActionResult> DeleteEquipmentAsync([FromRoute] IEnumerable<string> names)
+    [HttpDelete ("{name:required}")]
+    public async Task<ActionResult> DeleteEquipmentAsync([FromRoute] string name)
     {
         try
         {
-            await equipmentLogic.DeleteEquipmentAsync(names);
+            await equipmentLogic.DeleteEquipmentAsync(name);
             return Ok();
         }
         catch (Exception e)

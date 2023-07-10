@@ -3,26 +3,101 @@
 @using global::Shared.Model
 @using HttpClients.ClientInterfaces
 @inject IEquipmentService EquipmentService
-<h3>ManageEquipment</h3>
+@inject IJSRuntime jsRuntime
+@inject NavigationManager navMgr
+<h3>View Equipments</h3>       <button class="addNewButton"  @onclick="@(() => navMgr.NavigateTo("/AddEquipment"))">Add new equipment</button>
+<div class="filter-bar">
+    <div class="filters-container">
+        <img src="img/@(doShowFilters ? "clear_" : "")funnel.png" class="funnel" @onclick="@(() => doShowFilters = !doShowFilters)" alt="Funnel"/>
+        @if (doShowFilters)
+        {
+            <div class="filter">
+                <label>Name:</label>
+                <input type="text" @bind="_nameFilter"/>
+            </div>
+        }
+    </div>
+</div>
+
+<div>
+    <button @onclick="LoadEquipmentItems">Load</button>
+    @if (!string.IsNullOrEmpty(msg))
+    {
+        <label style="color: green">@msg</label>
+    }
+</div>
 @if (equipmetsounts != null)
 {
     <table>
-<thead>
-<tr>
-    <th>Name</th>
-    <th>Count</th>
-</tr>
-</thead>
-<tbody>
-@foreach (var e in equipmetsounts)
-{
-    <tr>
-        <td>@e.Name</td>
-        <td>@e.Amount</td>
-    </tr>
-}
- </tbody>
-</table>
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Count</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var e in equipmetsounts)
+        {
+            <tr>
+                <td>@e.Name</td>
+                <td>@e.Amount</td>
+                <td>
+                    <img src="img/view.png" class="funnel" @onclick="@(() => navMgr.NavigateTo($"/ViewAndManageEquipment/{e.Name}/{e.Amount}"))"/></td>
+                <td>
+                    <img src="img/delete.png" class="funnel" @onclick="@(() => ConfirmAction(e.Name))"/>
+                </td>
+       
+       
+            </tr>
+        }
+        </tbody>
+    </table>
+    <br/> <br/> <br/>
+    <h3>Manage Equipment</h3> 
+    <h5>Add more existing equipment</h5> 
+    <div class="filter-bar">
+        <div class="filters-container">
+            <img src="icons/@(doShowFilters1 ? "clear_" : "")add.png" class="funnel" @onclick="@(() => doShowFilters1 = !doShowFilters1)" alt="Funnel"/>
+            <div class="form-group field">
+                <label>Name:</label>
+                <input type="text" @bind="upName"/>
+            </div>
+            <br/>
+            <div class="form-group field">
+                <label>Amount :</label>
+                <input type="text" @bind="upAmount" />
+            </div>  </div>  </div>  
+    <div class="button-row">
+        @if (!string.IsNullOrEmpty(error))
+        {
+            <label style="color: red">@error</label>
+        }
+                
+        <button class="createEquipmentButton"  @onclick="UpdateMoreEquipment">Update</button>
+    </div>
+    
+    <h5>Remove some existing equipment</h5> 
+    <div class="filter-bar">
+        <div class="filters-container">
+            <img src="icons/@(doShowFilters1 ? "clear_" : "")add.png" class="funnel" @onclick="@(() => doShowFilters1 = !doShowFilters1)" alt="Funnel"/>
+            <div class="form-group field">
+                <label>Name:</label>
+                <input type="text" @bind="upName1"/>
+            </div>
+            <br/>
+            <div class="form-group field">
+                <label>Amount :</label>
+                <input type="text" @bind="upAmount1" />
+            </div>  </div>  </div>  
+    <div class="button-row">
+        @if (!string.IsNullOrEmpty(error))
+        {
+            <label style="color: red">@error</label>
+        }
+                
+        <button class="createEquipmentButton"  @onclick="UpdateLessEquipment">Update</button>
+    </div>
+
 }
 @code {
     private ICollection<EquipmentBasicDto> equipmetsounts;
@@ -30,16 +105,117 @@
     private ICollection<int> amounts;
     private int amount;
     private string name;
-
+    private bool doShowFilters1 = false;
+    private bool doShowFilters2 = false;
+    private string msg = "";
+    private bool doShowFilters = false;
+    private string? _nameFilter;
+    private string upName;
+    private int upAmount;
+    private string upName1;
+    private int upAmount1;
+    private string error = "";
+    /* <td>
+                <img src="img/delete.png" class="funnel" @onclick="@(() => ConfirmAction(e.Equipments))"/> 
+                
+                </td> */
     protected override async Task OnInitializedAsync()
     {
         equipments = await EquipmentService.getAllEquipmentAsync(null);
         
         equipmetsounts = equipments.GroupBy(e => e.Name).Select(e => new EquipmentBasicDto { Name = e.Key, Amount = e.Count() }).ToList();
        
+       
     }
     
-   /* private async Task<List<EquipmentBasicDto>> GetEquipmentData()
+    private async Task LoadEquipmentItems()
+    {
+        try
+        {
+            equipments= await EquipmentService.getAllEquipmentAsync(_nameFilter);
+           // equipmetsounts = equipments.GroupBy(e => e.Name).Select(e => new EquipmentBasicDto { Name = e.Key, Amount = e.Count() }).ToList();
+            //await OnInitializedAsync();
+
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            msg = e.Message;
+        }
+    }
+
+    private async Task ConfirmAction(string name )
+    {
+        bool confirmed = await jsRuntime.InvokeAsync<bool>("confirmAction", "Are you sure you want to proceed?");
+
+        if (confirmed)
+        {
+           
+                await EquipmentService.DeleteEquipmentAsync(name);
+              
+            
+            equipments = await EquipmentService.getAllEquipmentAsync(null);
+            await OnInitializedAsync();
+
+        }
+        else
+        {
+            LoadEquipmentItems();
+        }
+    }
+    
+    
+    
+    private async Task UpdateMoreEquipment()
+    {
+        try
+        {
+            error = "";
+            List<EquipmentBasicDto> equipmentList = new List<EquipmentBasicDto>();
+
+
+
+            for (int i = 0; i < upAmount; i++)
+            {
+                EquipmentBasicDto basicDto = new(upName);
+                equipmentList.Add(basicDto);
+                
+
+            }
+            await EquipmentService.CreateEquipmentAsync(equipmentList, amount);
+
+            error = "Equipment updated";
+            equipments = await EquipmentService.getAllEquipmentAsync(null);
+            await OnInitializedAsync();
+
+                
+            
+            
+         
+           
+
+
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            error = e.Message;
+        }
+    }
+    
+    private async Task UpdateLessEquipment()
+    {
+       
+           
+        await EquipmentService.UpdateEquipmentAmount(upName1,upAmount1);
+        equipments = await EquipmentService.getAllEquipmentAsync(null);
+        await OnInitializedAsync();
+            
+
+      
+    }
+
+    /* private async Task<List<EquipmentBasicDto>> GetEquipmentData()
     {
         ICollection<EquipmentBasicDto> equipmentList = await  EquipmentService.getAllEquipmentAsync(null);
 

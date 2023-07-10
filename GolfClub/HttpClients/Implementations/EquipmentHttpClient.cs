@@ -18,7 +18,8 @@ public class EquipmentHttpClient: IEquipmentService
 
     public async Task<ICollection<Equipment>> getAllEquipmentAsync(string? name)
     {
-        HttpResponseMessage response = await client.GetAsync("/Equipment");
+        string query = ConstructQuery(name);
+        HttpResponseMessage response = await client.GetAsync("/Equipment"+query);
         string content = await response.Content.ReadAsStringAsync();
         if (!response.IsSuccessStatusCode)
         {
@@ -31,28 +32,69 @@ public class EquipmentHttpClient: IEquipmentService
         })!;
         return equipments; 
     }
-
-    public async Task CreateEquipmentAsync(EquipmentBasicDto dto)
+    
+    private static string ConstructQuery(string? name)
     {
-        HttpResponseMessage response = await client.PostAsJsonAsync("/Equipment", dto);
-        if (!response.IsSuccessStatusCode)
+        string query = "";
+        if (!string.IsNullOrEmpty(name))
         {
-            string content = await response.Content.ReadAsStringAsync();
-            throw new Exception(content);
+            query += $"?Name={name}";
         }
+
+       
+        if (!string.IsNullOrEmpty(name))
+        {
+            query += string.IsNullOrEmpty(query) ? "?" : "&";
+            query += $"namecontains={name}";
+        }
+        
+
+        return query;
     }
 
-    public async Task UpdateEquipmentAmount(EquipmentBasicDto dto)
+    public async Task CreateEquipmentAsync(IEnumerable<EquipmentBasicDto>  equipment, int amount)
     {
-        string dtoAsJson = JsonSerializer.Serialize(dto);
-        StringContent amount = new StringContent(dtoAsJson, Encoding.UTF8, "application/json");
+        HttpResponseMessage response = await client.PostAsJsonAsync("/Equipment", equipment);  
+        
+            
+            Console.WriteLine("in the http ");  
+            if (!response.IsSuccessStatusCode)
+            {
+                string content = await response.Content.ReadAsStringAsync();
+                throw new Exception(content);
+            }
 
-        HttpResponseMessage response = await client.PatchAsync("/Equipment", amount);
+
+    }
+
+    public async Task UpdateEquipmentAmount(string name, int amount)
+    { 
+        string requestUrl = $"/Equipment/{name}/{amount}";
+        HttpResponseMessage response = await client.DeleteAsync(requestUrl);
         if (!response.IsSuccessStatusCode)
         {
             string content = await response.Content.ReadAsStringAsync();
             throw new Exception(content);
         }
+        /*HttpResponseMessage response = await client.DeleteAsync($"Equipment/{name}/{amount}");
+        if (!response.IsSuccessStatusCode)
+        {
+            string content = await response.Content.ReadAsStringAsync();
+            throw new Exception(content);
+        }
+         string requestUrl = $"/Equipment",name,amount;
+         HttpResponseMessage response = await client.PatchAsync(requestUrl, null);
+         if (!response.IsSuccessStatusCode)
+         {
+             string content = await response.Content.ReadAsStringAsync();
+             throw new Exception(content);
+         }
+         HttpResponseMessage response = await client.PatchAsync("/Equipment",name);
+         if (!response.IsSuccessStatusCode)
+         {
+             string content = await response.Content.ReadAsStringAsync();
+             throw new Exception(content);
+         }*/
     }
 
     public async Task<Equipment?> GetEquipmentByNameAsync(string name)

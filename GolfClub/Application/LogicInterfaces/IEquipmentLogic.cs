@@ -5,10 +5,11 @@ namespace Application.LogicInterfaces;
 
 public interface IEquipmentLogic
 {
-    Task<Equipment> CreateEquipmentAsync(Equipment equipment);
-    Task UpdateEquipmentAmount(EquipmentBasicDto dto);
-    Task<IEnumerable<Equipment>> GetEquipmentAsync();
+    Task<IEnumerable<Equipment>> CreateEquipmentAsync(IEnumerable<EquipmentBasicDto>  equipment, int amount);
+    Task UpdateEquipmentAsync(string name, int amount);
+    Task<IEnumerable<Equipment>> GetEquipmentAsync(SearchEquipmentDto searchParameters);
     Task<Equipment?> GetEquipmentByIdAsync(int id);
     Task<Equipment?> GetEquipmentByNameAsync(string name);
-    Task DeleteEquipmentAsync(IEnumerable<string> name);
+    Task DeleteEquipmentAsync(string name);
+    Task<List<Equipment>> GetEquipmentListAsync(string name);
 }

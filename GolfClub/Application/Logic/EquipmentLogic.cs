@@ -15,46 +15,62 @@ public class EquipmentLogic: IEquipmentLogic
         this.equipmentDao = equipmentDao;
     }
 
-    public async Task<Equipment> CreateEquipmentAsync(Equipment equipment)
+    public async Task<IEnumerable<Equipment>> CreateEquipmentAsync(IEnumerable<EquipmentBasicDto>  equipment, int amount)
     {
-        Equipment? equipment1 = await equipmentDao.GetEquipmentByNameAsync(equipment.Name);
+        if (equipment == null || !equipment.Any())
+            {
+                throw new Exception("Equipment collection is empty");
+            }
+
+            foreach (var equipmentItem in equipment)
+            {
+                if (string.IsNullOrEmpty(equipmentItem.Name))
+                {
+                    throw new Exception("Name Field Is Required");
+                }
+                if (equipmentItem.Name.Length > 50)
+                {
+                    throw new Exception("Max Name Length Is 50 Characters");
+                }
+            }
+
+            IEnumerable<Equipment> created = await equipmentDao.CreateEquipmentAsync(equipment, amount);
+
+            return created;
+
+        
        
-        if (string.IsNullOrEmpty(equipment.Name))
-        {
-            throw new Exception("Name Field Is Required");
-        }
-        if (equipment.Name.Length > 50)
-        {
-            throw new Exception("Max Name Length Is 50 Characters");
-        }
-
-        Equipment eq = new Equipment(equipment.Name);
-        Equipment created = await equipmentDao.CreateEquipmentAsync(eq);
         
-        
-        return created;
+      
     }
 
-    public async Task UpdateEquipmentAmount(EquipmentBasicDto dto)
+    public async Task UpdateEquipmentAsync(string name, int amount)
     {
-        Equipment? equipment = await equipmentDao.GetEquipmentByIdAsync(dto.Id);
-        if (equipment == null)
-        {
-            throw new Exception($"Equipment with the id {dto.Id} was not found!");
-        }
+      
+        for (int i = 0; i < amount; i++)
 
-        int amountToUse = dto.Amount;
-        Equipment updated = new(equipment.Name)
         {
-            Id = equipment.Id
-        };
+            List<Equipment> findEquipment = await equipmentDao.GetEquipmentListByNameAsync(name);
 
-        await equipmentDao.UpdateEquipmentAsync(updated); 
+            Equipment equipmentToDelete = findEquipment.First();
+
+            await equipmentDao.UpdateEquipmentAsync(equipmentToDelete.Name, amount);
+            
+        }/*  List<Equipment> findEquipment = await equipmentDao.GetEquipmentListByNameAsync(name);
+        var entriesToDelete = findEquipment.Take(amount).ToList();
+        foreach (var entry in entriesToDelete)
+        {
+            await equipmentDao.DeleteEquipmentAsync(entry.Name);
+        }*/
+
+       
+        
     }
 
-    public Task<IEnumerable<Equipment>> GetEquipmentAsync()
+
+    public Task<IEnumerable<Equipment>> GetEquipmentAsync(SearchEquipmentDto searchParameters)
     {
-        return equipmentDao.GetEquipmentsAsync();
+        return equipmentDao.GetEquipmentsAsync(searchParameters);
     }
 
     public async Task<Equipment?> GetEquipmentByIdAsync(int id)
@@ -80,19 +96,50 @@ public class EquipmentLogic: IEquipmentLogic
         return new Equipment(findEquipment.Name); 
         
     }
-
-    public async Task DeleteEquipmentAsync(IEnumerable<string> names)
+    public Task<List<Equipment>> GetEquipmentListAsync( string name)
     {
-        foreach (var name in names)
-        {
-            Equipment? findEquipment = await equipmentDao.GetEquipmentByNameAsync(name);
-            if (findEquipment == null)
+        return equipmentDao.GetEquipmentListByNameAsync(name);
+    }
+
+    public async Task DeleteEquipmentAsync(string name)
+    {
+
+        while (true)
             {
-                throw new Exception($"Equipment with name {name} was not found!");
-            } 
+                List<Equipment> findEquipment = await equipmentDao.GetEquipmentListByNameAsync(name);
+                if (findEquipment.Count== 0)
+                {
+                    break; // Exit the loop if no more equipment with the given name is found
+                }
+                foreach (Equipment equipment in findEquipment)
+                {
+                    await equipmentDao.DeleteEquipmentAsync(equipment.Name);
+                }
+               
+                
+                Console.WriteLine("in logic");
+            }
+        
+ 
+    }
+
+    /*public async Task<Equipment> RentEquipment(RentEquipmentDto dto)
+    {
+        foreach (string eq in dto.EquipmentNames)
+        {
+            Equipment? existing = await equipmentDao.GetEquipmentByNameAsync(eq);
+            if (existing is { Name: null })
+            {
+                throw new Exception($"This equipment you try to use, does not exist!");
+
+            }
+
+            if (dto.EquipmentNames == null || !dto.EquipmentNames.Any())
+            {
+                throw new Exception("You need to select equipments in order to rent");
+
+            }
         }
         
-        
-        await equipmentDao.DeleteEquipmentAsync(names);
-    }
+          }*/
 }
