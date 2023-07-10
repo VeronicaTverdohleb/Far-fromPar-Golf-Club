@@ -77,7 +77,14 @@
 
     private async Task CreateNewGame()
     {
+        if (playerUsernames == null || !playerUsernames.Any())
+        {
+            error = "Please select players first";
+            return;
+        }
+        
         error = "";
+        
         bool confirmed = await JsRuntime.InvokeAsync<bool>("confirmAction", "Do you wish to proceed and create a new game");
 
         if (confirmed)
