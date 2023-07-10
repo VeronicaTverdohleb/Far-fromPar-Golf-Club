@@ -1,7 +1,10 @@
 ﻿@page "/ManageTournament/{tournamentName}"
 @using global::Shared.Model
 @using HttpClients.ClientInterfaces
+@using global::Shared.Dtos.TournamentDto
 @inject ITournamentService TournamentService
+@inject IUserService UserService
+@inject NavigationManager navMgr
 <h3>@tournamentName</h3>
 
 @if (tournament == null)
@@ -12,19 +15,45 @@
     }
 else
 {
-    <p>@tournament.Name</p>
-    <p>@tournament.StartDate - @tournament.EndDate</p>
+    <p>Tournament starts on: @tournament.StartDate</p>
+    <p>Tournament ends on:   @tournament.EndDate</p>
     <p></p>
+    <h3>Registered players:</h3>
+    foreach (var player in players)
+    {
+        <p>@player.Name</p>
+    }
+    
+    <select name="choosePlayer" id="choosePlayer" @onchange="SetSelectedPlayer">
+        <option selected="selected">choose:</option>
+        @foreach (var player in allPlayers)
+        {
+            <option value="@player.Name">@player.Name</option>
+        }
+    </select>
+    <button @onclick="AddPlayer">register player</button>
+    <br/><br/>
+    <button @onclick="SwitchDeleteBool">Delete Tournament</button>
+    @if (delete)
+    {
+        <p>Are you sure? this will delete the tournament</p>
+        <button @onclick="DeleteTournament">Yes</button>
+        <button @onclick="SwitchDeleteBool">No</button>
+    }
 }
 
-
-<label>@msg</label>
+<br/><br/>
+<label style="color:red;">@msg</label>
 
 @code {
     [Parameter] 
     public string tournamentName { get; set; }
 
+    private bool delete = false;
+    private string chosenPlayerName ="";
     private Tournament tournament;
+    private ICollection<User> players = new List<User>();
+    private ICollection<User> allPlayers = new List<User>();
     private string msg;
 
     protected override async Task OnInitializedAsync()
@@ -32,12 +61,54 @@ else
         try
         {
             tournament = await TournamentService.GetTournamentByNameAsync(tournamentName);
-            
+            var playersInTournament = await TournamentService.GetAllTournamentPlayersAsync(tournamentName);
+            players = playersInTournament.OrderBy(p => p.UserName).ToList();
+            var allMembers = await UserService.GetAllUsersAsync();//propose changing to a method that only gets members
+            allPlayers = allMembers.OrderBy(p => p.Name).ToList();
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
             msg = e.Message;
+        }
+    }
+
+    private void SwitchDeleteBool()
+    {
+        delete = !delete;
+    }
+
+    private async void DeleteTournament()
+    {
+       await TournamentService.DeleteTournamentAsync(tournamentName);
+        navMgr.NavigateTo($"/ManageTournament");
+    }
+
+    private async Task AddPlayer()
+    {
+        if (string.IsNullOrEmpty(chosenPlayerName)||chosenPlayerName.Equals("choose:"))
+        {
+            msg = "Select a player first!";
+        }
+        else if (players.Any(u =>u.Name.ToLower().Equals(chosenPlayerName.ToLower())))
+        {
+            msg = "Player is already registered";
+        }
+        else
+        {
+            Console.WriteLine("the chosen playername was: "+chosenPlayerName);
+            RegisterPlayerDto update = new RegisterPlayerDto(chosenPlayerName, tournamentName);
+            await TournamentService.AddPlayerAsync(update);
+            await OnInitializedAsync();
+        }
+    }
+
+    private void SetSelectedPlayer(ChangeEventArgs e)
+    {
+        if (!string.IsNullOrEmpty(e.Value.ToString()))
+        {
+            string selectedPlayerName = e.Value.ToString();
+            chosenPlayerName = selectedPlayerName;
         }
     }
 }

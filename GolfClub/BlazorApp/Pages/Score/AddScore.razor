@@ -1,133 +1,149 @@
 ﻿@page "/AddScore"
 @using HttpClients.ClientInterfaces
 @using global::Shared.Model
+@using System.Security.Claims
+@using global::Shared.Dtos.ScoreDto
 @inject IScoreService ScoreService
-@inject IHoleService HoleService
+@inject IGameService GameService
+@inject IJSRuntime JsRuntime
 
-@if (holes != null && holes.Any())
+
+@if (activeGame != null)
 {
     <table>
         <thead>
         <tr>
-            <th>Hole</th>
-            @foreach (Hole hole in holes)
+            <th class="first_row">Hole</th>
+            @for (int i = 1; i <= 18; i++)
             {
-                <th>@hole.Number</th>
+                <th class="first_row">@i</th>
             }
         </tr>
         <tr>
-            <th>Par</th>
-            @foreach (Hole hole in holes)
+            <th class="second_row">Par</th>
+            @foreach (int par in pars)
             {
-                <th>@hole.Par</th>
+                <th class="second_row">@par</th>
             }
         </tr>
         </thead>
         <tbody>
-        @foreach (List<Score> playerScores in scores)
-        {
-            <tr>
-                <th>
-                    <input type="text" placeholder="Player's username" @bind="playerScores.ElementAt(0).PlayerUsername"/>
-                </th>
-                @for (int i = 0; i < holes.Count; i++)
-                {
-                    Console.WriteLine($"The strokes for the player: {playerScores.ElementAt(i).Strokes}");
-                    <th>
-                        
-                        <input type="number" class="hole_number" placeholder="0" min="0" max="23" @onchange="ChangeStrokes"/>
-                        @{
-                            ChangePlayersStrokes(playerScores, i);
-                        }
-                    </th>
-                }
-            </tr>
-        }
+        <tr>
+            <th class="first_cell">@loggedInMemberUsername</th>
+            
+            <!-- Petra: Trust me, I tried with a for loop, but it just did not work so I gave up lol -->
+            <th><input type="number" class="hole_number" placeholder="0" min="1" max="23" @bind="@scores[0]"/></th>
+            <th><input type="number" class="hole_number" placeholder="0" min="1" max="23" @bind="@scores[1]"/></th>
+            <th><input type="number" class="hole_number" placeholder="0" min="1" max="23" @bind="@scores[2]"/></th>
+            <th><input type="number" class="hole_number" placeholder="0" min="1" max="23" @bind="@scores[3]"/></th>
+            <th><input type="number" class="hole_number" placeholder="0" min="1" max="23" @bind="@scores[4]"/></th>
+            <th><input type="number" class="hole_number" placeholder="0" min="1" max="23" @bind="@scores[5]"/></th>
+            <th><input type="number" class="hole_number" placeholder="0" min="1" max="23" @bind="@scores[6]"/></th>
+            <th><input type="number" class="hole_number" placeholder="0" min="1" max="23" @bind="@scores[7]"/></th>
+            <th><input type="number" class="hole_number" placeholder="0" min="1" max="23" @bind="@scores[8]"/></th>
+            <th><input type="number" class="hole_number" placeholder="0" min="1" max="23" @bind="@scores[9]"/></th>
+            <th><input type="number" class="hole_number" placeholder="0" min="1" max="23" @bind="@scores[10]"/></th>
+            <th><input type="number" class="hole_number" placeholder="0" min="1" max="23" @bind="@scores[11]"/></th>
+            <th><input type="number" class="hole_number" placeholder="0" min="1" max="23" @bind="@scores[12]"/></th>
+            <th><input type="number" class="hole_number" placeholder="0" min="1" max="23" @bind="@scores[13]"/></th>
+            <th><input type="number" class="hole_number" placeholder="0" min="1" max="23" @bind="@scores[14]"/></th>
+            <th><input type="number" class="hole_number" placeholder="0" min="1" max="23" @bind="@scores[15]"/></th>
+            <th><input type="number" class="hole_number" placeholder="0" min="1" max="23" @bind="@scores[16]"/></th>
+            <th><input type="number" class="hole_number" placeholder="0" min="1" max="23" @bind="@scores[17]"/></th>
+        </tr>
+
         </tbody>
     </table>
-    <div class="add_player">
-        <h6>Add Players</h6>
-        <img src="img/add.png" class="plus" alt="Plus Sign" onclick="@AddPlayer"/>
-        <button class="savebtn" onclick="@SaveScores">Save All Scores</button>
-    </div>
-    @if (!string.IsNullOrEmpty(holeErrorMsg))
-    {
-        <p class="error-message">@holeErrorMsg</p>
-    }
+
+    <button class="savebtn" @onclick="@SaveScores">Save Score</button>
+@if (!string.IsNullOrEmpty(error))
+{
+    <p class="error-message">@error</p>
 }
-    
+}
+
 
 
 @code {
-    private string holeErrorMsg = "";
-    private ICollection<Hole> holes;
-    private List<List<Score>> scores = new List<List<Score>>();
+    private string error = "";
+    private List<int> pars = new List<int>();
+    private List<int> scores = new List<int>(18);
     private int strokes;
+    private string username = "";
+    private Random random = new Random();
 
-    /// Initial method that loads holes and pars
+    // Variables regarding getting the logged in Member
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthState { get; set; } = null!;
+
+    private IEnumerable<Claim>? userClaims;
+    private string loggedInMemberUsername = "";
+    private Game? activeGame;
+
+
+    /// Initial method that loads player's scorecard
     protected override async Task OnInitializedAsync()
     {
-        holeErrorMsg = "";
+        var authState = await AuthState;
+        var user = authState.User;
+
+        userClaims = user.Claims;
+        foreach (var claim in userClaims!)
+        {
+            if (claim.Type.Equals("Username"))
+                loggedInMemberUsername = claim.Value;
+        }
+
+        error = "";
         try
         {
-            holes = await HoleService.GetAllHolesAsync();
+            activeGame = await GameService.GetActiveGameByUsernameAsync(loggedInMemberUsername)!;
         }
         catch (Exception e)
         {
             Console.WriteLine(e.Message);
-            holeErrorMsg = e.Message;
+            error = e.Message;
         }
-        List<Score> newScores = new List<Score>();
-        for (int i = 0; i < holes.Count; i++)
-        {
-            newScores.Add(new Score("", holes.ElementAt(i), 0));
-        }
-        Console.WriteLine($"The size of scores for the first player is: {newScores.Count}");
-        scores.Add(newScores);
-        Console.WriteLine($"The size of scores list with all scores is: {scores.Count}");
+        if (activeGame == null)
+            await JsRuntime.InvokeVoidAsync("alertAction", "ALERT: You currently do not have any started game to add a score to. " +
+                                                           "\nTo start a game, please reach out to our employees.");
+        
+        for (int i = 0; i < 18; i++)
+            pars.Add(random.Next(2, 8));
+
+        scores = new List<int>(18);
+        for (int i = 1; i <= 18; i++)
+            scores.Add(0);
     }
 
-    /// Whenever a user clicks on the "+" sign to add a player, a new List of Scores gets added List<Score> scores 
-    private void AddPlayer()
-    {
-        List<Score> newScores = new List<Score>();
-        for (int i = 0; i < holes.Count; i++)
-        {
-            newScores.Add(new Score("", holes.ElementAt(i), 0));
-        }
-        scores.Add(newScores);
-    }
-
-    // Add "async Task" later 
     /// Calls CreateAsync method in the ScoreService which send a request to to the Web API and adds scores to the database
-    private void SaveScores()
+    private async Task SaveScores()
     {
-        foreach (List<Score> list in scores)
+        for (int i = 0; i < 18; i++)
         {
-            foreach (Score score in list)
+            if (scores.ElementAt(i) == 0)
             {
-                Console.WriteLine($"Strokes: {score.Strokes}");
+                error = "Please fill out scores for all holes before submitting the scorecard";
+                return;
             }
         }
-    }
 
-    /// Whenever there is a change in the hole number pickers, the value gets assigned to strokes global variable
-    /// The below function happens afterwards
-    private void ChangeStrokes(ChangeEventArgs e)
-    {
-        strokes = int.Parse(e.Value.ToString());
-    }
-    
-    /// This function is supposed to assign the strokes value to the exact Score in the Score list of the user - DOES NOT WORK FOR NOW
-    private void ChangePlayersStrokes(List<Score> playerScores, int indexOfScore)
-    {
-        foreach (List<Score> list in scores)
+        error = "";
+        try
         {
-            if (list.Equals(playerScores))
-            {
-                list.ElementAt(indexOfScore).Strokes = strokes;
-            }
-        }            
-        strokes = 0;
+            ScoreBasicDto dto = new ScoreBasicDto(loggedInMemberUsername, scores, activeGame!.Id);
+            await ScoreService.CreateAsync(dto);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            error = e.Message;
+        }
+        
+        if (error.Equals(""))
+            await JsRuntime.InvokeVoidAsync("alertAction", "Score submitted successfully");
+        
+        activeGame = null;
+        await OnInitializedAsync();
     }
 }

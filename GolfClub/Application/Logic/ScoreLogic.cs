@@ -29,11 +29,16 @@ public class ScoreLogic : IScoreLogic
         User? user = await userDao.GetByUsernameAsync(dto.PlayerUsername);
         if (user == null)
             throw new Exception($"User with username {dto.PlayerUsername} does not exist");
-        if (dto.Strokes == 0 || dto.Strokes > 23)
-            dto.Strokes = 23;
+        
+        // If any of the strokes in the list are either 0 or more than 23, just set it to 23
+        for (int i = 0; i < 18; i++)
+        {
+            if (dto.Strokes[i] == 0 || dto.Strokes[i] > 23)
+                dto.Strokes[i] = 23;
+        }
+        
 
-        Score score = new Score(dto.PlayerUsername, dto.Hole, dto.Strokes);
-        Score created = await scoreDao.CreateAsync(score);
+        Score created = await scoreDao.CreateAsync(dto);
         return created;
     }
 }

@@ -1,6 +1,165 @@
 ﻿@page "/ManageMember"
-<h3>ManageMember</h3>
+@using HttpClients.ClientInterfaces
+@using global::Shared.Model
+@using global::Shared.Dtos
+@inject IUserService UserService;
+@inject IJSRuntime jsRuntime;
+
+<div class="head">
+    <h3>Members</h3>
+</div>
+
+@if (users == null)
+{
+    <p></p>
+}
+else if (!users.Any())
+{
+    <p>No Members to display</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Username</th>
+            <th>Delete</th>
+        </tr>
+        </thead>
+        @foreach (var user in users)
+        {
+            <tr>
+                <td>@user.Name</td>
+                <td>@user.UserName</td>
+            <td>
+                <img src="img/delete.png" class="funnel" @onclick="(() => ConfirmActionDelete(user.UserName))" alt="delete"/></td>
+            </tr>
+        }
+    </table>
+}
+<div class="filter-bar">
+        <h3 class="create-head">Create</h3>
+        <div class="filters-container">
+            <img src="img/@(doShowFilters ? "clear_" : "")add.png" class="funnel" @onclick="@(() => doShowFilters = !doShowFilters)" alt="Funnel"/>
+            @if (doShowFilters)
+            {
+                <div class="form-group field">
+                    <label>Name:</label>
+                    <input type="text" rows="1" cols="15" @bind="name"/>
+                </div>
+                <div class="form-group field">
+                    <label>Username:</label>
+                    <input type="text" rows="1" cols="5" @bind="username"/>
+                </div>
+                <div class="form-group field">
+                    <label>Password:</label>
+                    <input type="text" rows="1" cols="5" @bind="password"/>
+                </div>
+                <div class="button-row">
+                    
+                    <button @onclick="ConfirmActionCreate" class="acceptbtn">Create</button>
+                </div>
+            }
+        </div>
+    </div>
 
 @code {
+    private IEnumerable<User>? users;
+
+    private bool doShowFilters = false;
+    private string name;
+    private string username;
+    private string password;
+    private string msg = "";
     
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            users = await UserService.GetAllUsersAsync();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            msg = e.Message;
+        }
+    }
+    
+    private async Task CreateMember()
+    {
+        msg = "";
+        try
+        {
+            UserCreationDto creationDto = new(name, username, password);
+            await UserService.CreateAsync(creationDto);
+            users = await UserService.GetAllUsersAsync();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            msg = "Error Creating Member";
+        }
+    }
+    
+    private async Task DeleteMember(string Username)
+    {
+        msg = "";
+        try
+        {
+            await UserService.DeleteAsync(Username);
+            await OnInitializedAsync();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            msg = e.Message;
+        }
+    }
+    
+    private async Task ConfirmActionDelete(string UserName)
+    {
+        bool confirmed = await jsRuntime.InvokeAsync<bool>("confirmAction", "Are you sure you want to proceed?");
+        
+        if (confirmed)
+        {
+            try
+            {
+                await DeleteMember(UserName);
+                await OnInitializedAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                msg = e.Message;
+            }
+        }
+        else
+        {
+            await OnInitializedAsync();
+        }
+    }
+    
+    private async Task ConfirmActionCreate()
+    {
+        bool confirmed = await jsRuntime.InvokeAsync<bool>("confirmAction", "Are you sure you want to proceed?");
+        
+        if (confirmed)
+        {
+            try
+            {
+                await CreateMember();
+                await OnInitializedAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                msg = e.Message;
+            }
+        }
+        else
+        {
+            await OnInitializedAsync();
+        }
+    }
 }

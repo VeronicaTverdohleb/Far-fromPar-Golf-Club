@@ -31,4 +31,38 @@ public class TournamentLogic:ITournamentLogic
 
         return tournament;
     }
+
+    public async Task DeleteTournamentAsync(string name)
+    {
+        Tournament? tournament = await tournamentDao.GetTournamentByNameAsync(name);
+        if (tournament == null)
+        {
+            throw new Exception($"Tournament with name {name} doesn't exist");
+        }
+        await tournamentDao.DeleteTournamentAsync(name);
+    }
+
+    public Task<IEnumerable<Tournament>> GetAllTournamentsAsync()
+    {
+        return tournamentDao.GetAllTournamentsAsync();
+    }
+
+    public Task<IEnumerable<User>> GetAllTournamentPlayersAsync(string name)
+    {
+        return tournamentDao.GetAllTournamentPlayersAsync(name);
+    }
+
+    public async Task RegisterPlayerAsync(RegisterPlayerDto dto)
+    {
+        IEnumerable<User> registeredPlayers = await tournamentDao.GetAllTournamentPlayersAsync(dto.TournamentName);
+        foreach (var player in registeredPlayers)
+        {
+            if (player.Name.Equals(dto.PlayerName))
+            {
+                throw new Exception("This player is already registered!");
+            }
+        }
+
+        await tournamentDao.RegisterPlayerAsync(dto);
+    }
 }

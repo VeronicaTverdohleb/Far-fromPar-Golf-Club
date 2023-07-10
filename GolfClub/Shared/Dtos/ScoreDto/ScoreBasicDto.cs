@@ -5,13 +5,13 @@ namespace Shared.Dtos.ScoreDto;
 public class ScoreBasicDto
 {
     public string PlayerUsername { get; set; }   // Basically a user Id
-    public Hole Hole { get; set; }
-    public int Strokes { get; set; }
+    public List<int> Strokes { get; set; }
+    public int GameId { get; set; }
 
-    public ScoreBasicDto(string playerUsername, Hole hole, int strokes)
+    public ScoreBasicDto(string playerUsername, List<int> strokes, int gameId)
     {
         PlayerUsername = playerUsername;
-        Hole = hole;
         Strokes = strokes;
+        GameId = gameId;
     }
 }

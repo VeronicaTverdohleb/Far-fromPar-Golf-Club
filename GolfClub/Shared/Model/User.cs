@@ -11,22 +11,16 @@ public class User
     
     [JsonIgnore]
     public ICollection<Game>? Games { get; set; }
+    [JsonIgnore]
+    public ICollection<Tournament>? Tournaments { get; set;}
 
+    private User() { }
+    
     public User(string name, string userName, string password, string role)
     {
         Name = name;
         UserName = userName;
         Password = password;
         Role = role;
-    }
-    
-    private User() { }
-
-    public User(string Name, string UserName, string Password)
-    {
-        this.Name = Name;
-        this.UserName = UserName;
-        this.Password = Password;
-        Role = "Member";
     }
 }

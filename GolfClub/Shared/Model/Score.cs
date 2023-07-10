@@ -4,13 +4,13 @@ public class Score
 {
     public int Id { get; set; }
     public string PlayerUsername { get; set; }
-    public Hole Hole { get; set; }
+    public int HoleNumber { get; set; }
     public int Strokes { get; set; }
 
-    public Score(string playerUsername, Hole hole, int strokes)
+    public Score(string playerUsername, int holeNumber, int strokes)
     {
         PlayerUsername = playerUsername;
-        Hole = hole;
+        HoleNumber = holeNumber;
         Strokes = strokes;
     }
     

@@ -16,7 +16,7 @@ public class UserDao : IUserDao
 
     public Task<IEnumerable<User>> GetAllUsersAsync()
     {
-        IEnumerable<User> list = context.Users.ToList();
+        IEnumerable<User> list = context.Users.Where(u => u.Role == "Member").ToList();
         return Task.FromResult(list);
     }
 
@@ -35,18 +35,13 @@ public class UserDao : IUserDao
         return added.Entity;
     }
     
-    public async Task UpdateAsync(User user)
-    {
-        context.Users.Update(user);
-        await context.SaveChangesAsync();
-    }
 
-    public async Task DeleteAsync(User user)
+    public async Task DeleteAsync(string userName)
     {
-        User? existing = await GetByUsernameAsync(user.UserName);
+        User? existing = await GetByUsernameAsync(userName);
         if (existing == null)
         {
-            throw new Exception($"User with username {user.UserName} not found");
+            throw new Exception($"User with username {userName} not found");
         }
 
         context.Users.Remove(existing);
