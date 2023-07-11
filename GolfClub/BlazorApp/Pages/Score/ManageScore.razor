@@ -1,6 +1,7 @@
-﻿@page "/ManageScore"
-<h3>ManageScore</h3>
+﻿@page "/ManageScore/{id:int}"
 
 @code {
+    [Parameter] 
+    public int Id { get; set; }
     
 }

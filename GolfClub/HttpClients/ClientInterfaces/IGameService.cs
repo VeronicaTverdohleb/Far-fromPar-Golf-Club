@@ -7,4 +7,5 @@ public interface IGameService
 {
     public Task CreateAsync(GameBasicDto dto);
     public Task<Game>? GetActiveGameByUsernameAsync(string username);
+    public Task<ICollection<Game>> GetAllGamesByUsernameAsync(string username);
 }

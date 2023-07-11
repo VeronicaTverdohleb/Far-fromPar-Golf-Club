@@ -66,7 +66,7 @@ public class GameDao : IGameDao
 
 
     /// <summary>
-    /// Method that fetches a Game based on a username
+    /// Method that fetches Games based on a username
     /// </summary>
     /// <param name="username"></param>
     /// <returns></returns>

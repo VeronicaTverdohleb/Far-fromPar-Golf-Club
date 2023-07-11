@@ -38,8 +38,23 @@ public class GameController : ControllerBase
     {
         try
         {
-            Game game = await gameLogic.GetActiveGameByUsernameAsync(username);
+            Game game = (await gameLogic.GetActiveGameByUsernameAsync(username))!;
             return Ok(game);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(500, e.Message);
+        }
+    }
+    
+    [HttpGet("/Games/{username}")]
+    public async Task<ActionResult<IEnumerable<Tournament>>> GetAllGamesByUsernameAsync([FromRoute] string username)
+    {
+        try
+        {
+            var games = await gameLogic.GetAllGamesByUsernameAsync(username);
+            return Ok(games);
         }
         catch (Exception e)
         {

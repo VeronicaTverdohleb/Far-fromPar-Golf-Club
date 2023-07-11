@@ -8,10 +8,12 @@ namespace Application.Logic;
 public class GameLogic : IGameLogic
 {
     private readonly IGameDao gameDao;
+    private readonly IUserDao userDao;
 
-    public GameLogic(IGameDao gameDao)
+    public GameLogic(IGameDao gameDao, IUserDao userDao)
     {
         this.gameDao = gameDao;
+        this.userDao = userDao;
     }
 
     public async Task<Game> CreateAsync(GameBasicDto dto)
@@ -36,6 +38,10 @@ public class GameLogic : IGameLogic
 
     public Task<Game?> GetActiveGameByUsernameAsync(string username)
     {
+        User? user = userDao.GetByUsernameAsync(username).Result;
+        if (user == null)
+            throw new Exception("No user found");
+        
         Task<IEnumerable<Game>> games = gameDao.GetGamesByUsername(username);
         Game gameToBeReturned = null;
         foreach (Game game in games.Result)
@@ -48,5 +54,13 @@ public class GameLogic : IGameLogic
         }
 
         return Task.FromResult(gameToBeReturned);
+    }
+
+    public Task<IEnumerable<Game>> GetAllGamesByUsernameAsync(string username)
+    {
+        User? user = userDao.GetByUsernameAsync(username).Result;
+        if (user == null)
+            throw new Exception("No user found");
+        return gameDao.GetGamesByUsername(username);
     }
 }

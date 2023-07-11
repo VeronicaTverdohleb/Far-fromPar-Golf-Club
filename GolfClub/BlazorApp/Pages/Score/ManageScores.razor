@@ -1,0 +1,113 @@
+﻿@page "/ManageScores"
+@using HttpClients.ClientInterfaces
+@using global::Shared.Model
+@inject IScoreService ScoreService
+@inject IGameService GameService
+@inject NavigationManager NavMgr;
+
+
+<!-- For everyone, here starts the heading, happy stealing -->
+<div class="headline_box">
+    <img src="img/golfball.png" class="golfball" alt="Golf Ball"/>
+    <h3 class="headline"> Manage Score </h3>
+    <img src="img/golfball.png" class="golfball" alt="Golf Ball"/>
+</div>
+<!-- For everyone, this is where the heading ends -->
+
+<label>
+    <h5>Which member's score do you want to manage:</h5>
+</label>
+<input type="text" class="type_username" placeholder="Username" @bind="@selectedUsername"/>
+<button class="searchbtn" @onclick="@GetPlayerScores">Search Scores</button>
+
+<h7 class="error">@error</h7>
+<hr>
+@if (playerGames.Any())
+{
+    <h5 class="gamecard_note">Click on the gamecard to manage the player's score</h5>
+}
+@foreach (Game game in playerGames)
+{
+    <div class="game_card">
+        <a @onclick=@(() => SeeScore(@game.Id))>
+            <p>Game ID: @game.Id</p>
+            @if (game.Players.Count == 1)
+            {
+                <p>No Co-Players in this Game.</p>
+            }
+            else
+            {
+                <p>Co-players: </p>
+                @foreach (User co_player in game.Players)
+                {
+                    if (!co_player.UserName.Equals(selectedUsername))
+                    {
+                        <p>@co_player.UserName</p>
+                    }
+                }
+            }
+            @if (game.Scores == null || !game.Scores.Any())
+            {
+                <p>No Score in this Game.</p>
+            }
+            else
+            {
+                <p>@selectedUsername's Scores:</p>
+                <table class="score_table">
+                    <tr>
+                        <th>Hole</th>
+                        @foreach (Score score in game.Scores!)
+                        {
+                            <th>@score.HoleNumber</th>
+                        }
+                    </tr>
+                    <tr>
+                        <th>Score</th>
+                        @foreach (Score score in game.Scores!)
+                        {
+                            <th>@score.Strokes</th>
+                        }
+                    </tr>
+                </table>
+            }
+
+        </a>
+    </div>
+}
+
+
+@code {
+    private string error = "";
+    private string selectedUsername = "";
+    private ICollection<Game> playerGames = new List<Game>();
+
+    private async Task GetPlayerScores()
+    {
+        playerGames = new List<Game>();
+        error = "";
+        if (selectedUsername.Equals(""))
+        {
+            error = "Insert username";
+            return;
+        }
+
+        try
+        {
+            playerGames = await GameService.GetAllGamesByUsernameAsync(selectedUsername);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            error = e.Message;
+        }
+        if (!error.Equals("No user found") && !playerGames.Any())
+            error = "This player has no scores";
+    }
+
+    private void SeeScore(int id)
+    {
+        NavMgr.NavigateTo($"/ManageScore/{id}");
+    }
+
+
+}
