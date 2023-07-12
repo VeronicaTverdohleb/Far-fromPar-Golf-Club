@@ -1,6 +1,109 @@
 ﻿@page "/BookLesson"
-<h3>BookLesson</h3>
+@using BlazorApp.Services
+@using global::Shared.Model
+@using Microsoft.VisualBasic
+@using System.Text.Json
+@inject IJavaSocketConnection socketService
+
+<h3>Book Lesson</h3>
+
+<div>
+    <label>Select a Date</label>
+    <input type="date" @onchange="SetDateTime"/><br/><br/>
+</div>
+<div>
+    <button @onclick="SendMessage">See Instructors</button>
+</div>
+
+@if (Instructors == null)
+{
+    <p style="color: red">@msg</p>
+}else if (!Instructors.Any())
+{
+    <p style="color: red">No instructors are available on @chosenDate</p>
+}
+else
+{
+    <h2>Available Instructors on: @chosenDate</h2>
+    @foreach (var instructor in Instructors)
+    {
+        <div class="instructor">
+            <p>Name: @instructor.InstructorName</p>
+            <p>Date: @instructor.Date</p>
+            <p>Time: @instructor.Time</p>
+            <button onclick=@(() => bookLesson(instructor))>Book Lesson</button>
+        </div>
+    }
+    <p style="color: red">@msg</p>
+}
 
 @code {
+    private DateAndTime dateTime;
+    private ICollection<InstructorLesson> Instructors;
+    private string msg = "";
+    private string selectedDate;
+    private string chosenDate;
     
+    protected override async Task OnInitializedAsync()
+    {
+        socketService.Connect();
+    }
+
+    private void SetDateTime(ChangeEventArgs e)
+    {
+        string selectedValue = e.Value.ToString();
+        selectedDate = selectedValue;
+        StateHasChanged();
+    }
+    
+    private async Task SendMessage()
+    {
+        
+        if (string.IsNullOrWhiteSpace(chosenDate))
+        {
+            chosenDate = "";
+        }
+        chosenDate = selectedDate;
+        try
+        {
+            string returnMessage = await socketService.SendMessage(chosenDate);
+            ConvertJson(returnMessage);
+        }
+        catch (Exception e)
+        {
+            if (e.Message.Equals("Object reference not set to an instance of an object."))
+            {
+                msg = "";
+            }
+            else
+            {
+                msg = e.Message;
+            }
+        }
+    }
+    
+    private void ConvertJson(string jsonMsg)
+    {
+
+        var options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
+        var result = JsonSerializer.Deserialize<Dictionary<string, List<InstructorLesson>>>(jsonMsg, options);
+        if (result.TryGetValue("instructor", out var instructorList))
+        {
+            Instructors = instructorList;
+        }
+        else
+        {
+            Instructors.Clear();
+        }
+
+    }
+    
+    private void bookLesson(InstructorLesson instructorLesson)
+    {
+        
+    }
 }
