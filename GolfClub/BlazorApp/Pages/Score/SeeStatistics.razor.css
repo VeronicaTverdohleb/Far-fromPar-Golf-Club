@@ -1,0 +1,46 @@
+.error-message {
+    font-size: large;
+    color: red;
+    font-weight: bold;
+    margin-left: 25px;
+    margin-top: 12px;
+}
+
+th {
+    text-align: center;
+    border: 1px solid black;
+}
+
+table {
+    border: 1px solid black;
+}
+
+.hole_number {
+    width: 50px;
+    height: 35px;
+}
+
+.savebtn {
+    margin-left: 25px;
+    margin-top: 20px;
+    background-color: darkorange;
+    width: 150px;
+    height: 50px;
+    font-size: large;
+    border-radius: 10px;
+}
+
+.first_cell {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.first_row {
+    padding: 10px 20px;
+    background-color: forestgreen;
+}
+
+.second_row {
+    padding: 10px 20px;
+    background-color: lightgreen;
+}

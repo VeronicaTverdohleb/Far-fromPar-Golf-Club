@@ -30,6 +30,8 @@ builder.Services.AddScoped<IEquipmentDao, EquipmentDao>();
 builder.Services.AddScoped<IEquipmentLogic, EquipmentLogic>();
 builder.Services.AddScoped<IGameDao, GameDao>();
 builder.Services.AddScoped<IGameLogic, GameLogic>();
+builder.Services.AddScoped<IStatisticDao, StatisticDao>();
+builder.Services.AddScoped<IStatisticLogic, StatisticLogic>();
 
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
