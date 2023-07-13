@@ -3,11 +3,13 @@
 @using HttpClients.ClientInterfaces
 @using System.Security.Claims
 @inject IStatisticService StatisticService
+@inject IUserService UserService
 <h3>SeeStatistics</h3>
 <label>Hey @loggedInMemberUsername! Which statistic would you like to see?</label>
 <select name="chooseStatistic" id="chooseStatistic" @onchange="SetSelectedStatistic">
     <option selected="selected">choose:</option>
     <option value="personalBest">Personal Best</option>
+    <option value="leaderboard">Leaderboard</option>
 </select>
 <button @onclick="LoadStatistic">Load</button><br/><br/>
 <label class="error-message">@msg</label>
@@ -24,39 +26,43 @@
     </tr>
     <tr>
         <th class="second_row">Par</th>
+        <th class="second_row">3</th>
         <th class="second_row">4</th>
+        <th class="second_row">2</th>
+        <th class="second_row">5</th>
+        <th class="second_row">3</th>
+        <th class="second_row">5</th>
+        <th class="second_row">7</th>
+        <th class="second_row">5</th>
+        <th class="second_row">6</th>
+        <th class="second_row">3</th>
+        <th class="second_row">3</th>
         <th class="second_row">4</th>
+        <th class="second_row">5</th>
+        <th class="second_row">3</th>
+        <th class="second_row">5</th>
         <th class="second_row">4</th>
-        <th class="second_row">4</th>
-        <th class="second_row">4</th>
-        <th class="second_row">4</th>
-        <th class="second_row">4</th>
-        <th class="second_row">4</th>
-        <th class="second_row">4</th>
-        <th class="second_row">4</th>
-        <th class="second_row">4</th>
-        <th class="second_row">4</th>
-        <th class="second_row">4</th>
-        <th class="second_row">4</th>
-        <th class="second_row">4</th>
-        <th class="second_row">4</th>
-        <th class="second_row">4</th>
-        <th class="second_row">4</th>
+        <th class="second_row">6</th>
+        <th class="second_row">3</th>
         <th class="second_row">72</th>
     </tr>
     </thead>
     @if (chosenScores.Count >= 18)
     {
         <tbody>
-        <tr>
-            <th class="first_cell">@chosenScores[0].PlayerUsername</th>
-            @for (int i = 0; i < 18; i++)
-            {
-                chosenScoreTotal += chosenScores[i].Strokes;
-                <th class="hole_number">@chosenScores[i].Strokes</th>
-            }
-            <th>@chosenScoreTotal</th>
-        </tr>
+        @for (int j = 0; j < (chosenScores.Count() / 18); j++)
+        {
+            chosenScoreTotal = 0;
+            <tr>
+                <th class="first_cell">@chosenScores[j * 18].PlayerUsername</th>
+                @for (int i = 0+j*18; i < (j+1)*18; i++)
+                {
+                    chosenScoreTotal += chosenScores[i].Strokes;
+                    <th class="hole_number">@chosenScores[i].Strokes</th>
+                }
+                <th>@chosenScoreTotal</th>
+            </tr>
+        }
         </tbody>
     }
     </table>
@@ -66,6 +72,7 @@
     private string msg="";
     private IEnumerable<Score> scores = new List<Score>();
     private List<Score> chosenScores = new List<Score>();
+    private IEnumerable<User> allUsers = new List<User>();
     private int chosenScoreTotal = 0;
 
     [CascadingParameter]
@@ -97,14 +104,20 @@
 
     private async Task LoadStatistic()
     {
+        chosenScoreTotal = 0;
+        chosenScores = new List<Score>();
         try
         {
             switch (selectedStatistic)
             {
                 case "personalBest":
-                    await GetPersonalBest();
+                    await GetPersonalBest(loggedInMemberUsername);
                     break;
-                
+                    
+                case "leaderboard":
+                    await GetLeaderBoard();
+                    break;
+
                 default:
                     msg = "Please select a statistic first!";
                     break;
@@ -117,11 +130,9 @@
         }
     }
 
-    public async Task GetPersonalBest()
+    public async Task GetPersonalBest(string name)
     {
-        chosenScoreTotal = 0;
-        chosenScores = new List<Score>();
-        scores = await StatisticService.GetAllScoresByPlayerAsync(loggedInMemberUsername);
+        scores = await StatisticService.GetAllScoresByPlayerAsync(name);
         if (!scores.Any())
         {
             msg = "You haven't played any games yet!";
@@ -153,5 +164,39 @@
             }
         }
         
+    }
+
+    public async Task GetLeaderBoard()
+    {
+        allUsers = await UserService.GetAllUsersAsync();
+        foreach (var user in allUsers)
+        {
+            await GetPersonalBest(user.UserName);
+        }
+        if (msg.Equals("You haven't played any games yet!"))
+        {
+            msg = "not all members have played a game.";
+        }
+        /*
+        chosenScores.Select((s, index) => new { Score = s, SetIndex = index / 18 })
+            .GroupBy(x => x.SetIndex)
+            .OrderBy(g => g.Sum(x => x.Score.Strokes))
+            .SelectMany(g => g.OrderBy(x => x.Score.Strokes))
+            .Select(x => x.Score).ToList();
+        Console.WriteLine(chosenScores.Count);
+        Console.WriteLine(chosenScores[0].PlayerUsername);*/
+        
+        //If you see this, you've reached pain
+        List<Score> scoresToOrder = chosenScores;
+
+        var orderedScores = scoresToOrder
+            .Select((s, index) => new { Score = s, SetIndex = index / 18 })
+            .GroupBy(x => x.SetIndex)
+            .OrderBy(g => g.Sum(x => x.Score.Strokes))
+            .SelectMany(g => g.Select(x => x.Score))
+            .ToList();
+        Console.WriteLine(orderedScores.Count());
+        Console.WriteLine(orderedScores[0].PlayerUsername);
+        chosenScores = orderedScores;
     }
 }
