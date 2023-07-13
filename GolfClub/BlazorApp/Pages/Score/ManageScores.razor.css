@@ -49,18 +49,41 @@
 
 .game_card {
     display: flex;
-    border: 1px solid black;
+    border: 4px solid green;
     border-radius: 10px;
-    width: 50%;
+    width: 30%;
     margin: 15px;
     padding: 10px;
 }
 
 .score_table {
     border: black 1px solid;
+    margin-top: -10px;
+}
+
+th {
+    border: black 1px solid;
 }
 
 .gamecard_note {
     margin-left: 15px;
+    color: green;
+}
+
+.game_card_anchor {
+    width: 100%;
+    text-decoration: none;
+    color: black;
+}
+
+.game_card:hover {
+    cursor: pointer;
+    background: lightgreen;
+}
+
+.game_card_label {
+    font-size: large;
+    margin-right: 10px;
+    font-weight: bold;
     color: green;
 }

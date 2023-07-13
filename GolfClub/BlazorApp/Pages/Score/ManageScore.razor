@@ -1,7 +1,133 @@
 ﻿@page "/ManageScore/{id:int}"
 
+@using HttpClients.ClientInterfaces
+@using global::Shared.Model
+@using System.Security.Claims
+@using global::Shared.Dtos.ScoreDto
+@inject IScoreService ScoreService
+@inject IGameService GameService
+@inject IJSRuntime JsRuntime
+
+
+@if (game != null)
+{
+    <table>
+        <thead>
+        <tr>
+            <th class="first_row">Hole</th>
+            @for (int i = 1; i <= 18; i++)
+            {
+                <th class="first_row">@i</th>
+            }
+        </tr>
+        <tr>
+            <th class="second_row">Par</th>
+            @foreach (int par in pars)
+            {
+                <th class="second_row">@par</th>
+            }
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <th class="first_cell"><!--playerUsername--></th>
+            
+            <!-- Petra: Trust me, I tried with a for loop, but it just did not work so I gave up lol -->
+            <th><input type="number" class="hole_number" placeholder="0" min="1" max="23" @bind="@scores[0]"/></th>
+            <th><input type="number" class="hole_number" placeholder="0" min="1" max="23" @bind="@scores[1]"/></th>
+            <th><input type="number" class="hole_number" placeholder="0" min="1" max="23" @bind="@scores[2]"/></th>
+            <th><input type="number" class="hole_number" placeholder="0" min="1" max="23" @bind="@scores[3]"/></th>
+            <th><input type="number" class="hole_number" placeholder="0" min="1" max="23" @bind="@scores[4]"/></th>
+            <th><input type="number" class="hole_number" placeholder="0" min="1" max="23" @bind="@scores[5]"/></th>
+            <th><input type="number" class="hole_number" placeholder="0" min="1" max="23" @bind="@scores[6]"/></th>
+            <th><input type="number" class="hole_number" placeholder="0" min="1" max="23" @bind="@scores[7]"/></th>
+            <th><input type="number" class="hole_number" placeholder="0" min="1" max="23" @bind="@scores[8]"/></th>
+            <th><input type="number" class="hole_number" placeholder="0" min="1" max="23" @bind="@scores[9]"/></th>
+            <th><input type="number" class="hole_number" placeholder="0" min="1" max="23" @bind="@scores[10]"/></th>
+            <th><input type="number" class="hole_number" placeholder="0" min="1" max="23" @bind="@scores[11]"/></th>
+            <th><input type="number" class="hole_number" placeholder="0" min="1" max="23" @bind="@scores[12]"/></th>
+            <th><input type="number" class="hole_number" placeholder="0" min="1" max="23" @bind="@scores[13]"/></th>
+            <th><input type="number" class="hole_number" placeholder="0" min="1" max="23" @bind="@scores[14]"/></th>
+            <th><input type="number" class="hole_number" placeholder="0" min="1" max="23" @bind="@scores[15]"/></th>
+            <th><input type="number" class="hole_number" placeholder="0" min="1" max="23" @bind="@scores[16]"/></th>
+            <th><input type="number" class="hole_number" placeholder="0" min="1" max="23" @bind="@scores[17]"/></th>
+        </tr>
+
+        </tbody>
+    </table>
+
+    <button class="savebtn" @onclick="@SaveScores">Save Score</button>
+@if (!string.IsNullOrEmpty(error))
+{
+    <p class="error-message">@error</p>
+}
+}
+
+
+
 @code {
     [Parameter] 
     public int Id { get; set; }
+    private string error = "";
+    private static int[] parNumbers = { 3, 4, 2, 5, 3, 5, 7, 5, 6, 3, 3, 4, 5, 3, 5, 4, 6, 3 };
+    private List<int> pars = parNumbers.ToList();    
+    private List<int> scores = new List<int>(18);
+    private int strokes;
+    private string username = "";
+    private Random random = new Random();
+
+    private Game? game;
+
+
+    /// Initial method that loads the game card with all scores
+    protected override async Task OnInitializedAsync()
+    {
+        error = "";
+        try
+        {
+            game = await GameService.GetGameByIdAsync(Id)!;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            error = e.Message;
+        }
+
+        scores = new List<int>(18);
+        for (int i = 1; i <= 18; i++)
+            scores.Add(0);
+    }
+
+    
+    /// Calls CreateAsync method in the ScoreService which send a request to to the Web API and adds scores to the database
+    private async Task SaveScores()
+    {
+        /*
+        for (int i = 0; i < 18; i++)
+        {
+            if (scores.ElementAt(i) == 0)
+            {
+                error = "Please fill out scores for all holes before submitting the scorecard";
+                return;
+            }
+        }
+
+        error = "";
+        try
+        {
+            ScoreBasicDto dto = new ScoreBasicDto(loggedInMemberUsername, scores, activeGame!.Id);
+            await ScoreService.CreateAsync(dto);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            error = e.Message;
+        }
+        
+        if (error.Equals(""))
+            await JsRuntime.InvokeVoidAsync("alertAction", "Score submitted successfully");
+        
+        */
+    }
     
 }

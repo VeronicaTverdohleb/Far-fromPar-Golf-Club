@@ -83,4 +83,14 @@ public class GameDao : IGameDao
 
         return Task.FromResult(games);
     }
+
+    public Task<Game?> GetGameByIdAsync(int id)
+    {
+        Game? existing = context.Games
+            .Include(game => game.Scores)
+            .Include(game => game.Equipments)
+            .Include(game => game.Players)
+            .FirstOrDefault(game => game.Id == id);
+        return Task.FromResult(existing);
+    }
 }

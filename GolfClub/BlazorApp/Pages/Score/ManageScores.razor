@@ -1,7 +1,6 @@
 ﻿@page "/ManageScores"
 @using HttpClients.ClientInterfaces
 @using global::Shared.Model
-@inject IScoreService ScoreService
 @inject IGameService GameService
 @inject NavigationManager NavMgr;
 
@@ -29,23 +28,26 @@
 @foreach (Game game in playerGames)
 {
     <div class="game_card">
-        <a @onclick=@(() => SeeScore(@game.Id))>
-            <p>Game ID: @game.Id</p>
+        <a class="game_card_anchor" @onclick=@(() => SeeScore(@game.Id))>
+            <label class="game_card_label">Game ID:</label>@game.Id
+            <hr>
+            <label class="game_card_label">Co-players:</label>
             @if (game.Players.Count == 1)
             {
-                <p>No Co-Players in this Game.</p>
+                <p>No Co-players in this Game.</p>
             }
             else
             {
-                <p>Co-players: </p>
                 @foreach (User co_player in game.Players)
                 {
                     if (!co_player.UserName.Equals(selectedUsername))
                     {
-                        <p>@co_player.UserName</p>
+                        @co_player.UserName
                     }
                 }
             }
+            <hr>
+            <label class="game_card_label">Scores:</label>
             @if (game.Scores == null || !game.Scores.Any())
             {
                 <p>No Score in this Game.</p>
@@ -54,20 +56,27 @@
             {
                 <p>@selectedUsername's Scores:</p>
                 <table class="score_table">
-                    <tr>
-                        <th>Hole</th>
-                        @foreach (Score score in game.Scores!)
+                    <!-- On the scorecard, only the score of the searched user is displayed -->
+                    @foreach (User player in game.Players)
+                    {
+                        if (player.UserName.Equals(selectedUsername))
                         {
-                            <th>@score.HoleNumber</th>
+                            <tr>
+                                <th>Hole</th>
+                                @foreach (Score score in game.Scores!)
+                                {
+                                    <th>@score.HoleNumber</th>
+                                }
+                            </tr>
+                            <tr>
+                                <th>Score</th>
+                                @foreach (Score score in game.Scores!)
+                                {
+                                    <th>@score.Strokes</th>
+                                }
+                            </tr>
                         }
-                    </tr>
-                    <tr>
-                        <th>Score</th>
-                        @foreach (Score score in game.Scores!)
-                        {
-                            <th>@score.Strokes</th>
-                        }
-                    </tr>
+                    }
                 </table>
             }
 

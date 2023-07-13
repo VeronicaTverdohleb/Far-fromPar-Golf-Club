@@ -34,7 +34,7 @@ public class GameController : ControllerBase
     
     
     [HttpGet,Route("/Game/{username}")]
-    public async Task<ActionResult<Tournament>> GetActiveGameByUsernameAsync([FromRoute] string username)
+    public async Task<ActionResult<Game>> GetActiveGameByUsernameAsync([FromRoute] string username)
     {
         try
         {
@@ -49,12 +49,27 @@ public class GameController : ControllerBase
     }
     
     [HttpGet("/Games/{username}")]
-    public async Task<ActionResult<IEnumerable<Tournament>>> GetAllGamesByUsernameAsync([FromRoute] string username)
+    public async Task<ActionResult<IEnumerable<Game>>> GetAllGamesByUsernameAsync([FromRoute] string username)
     {
         try
         {
             var games = await gameLogic.GetAllGamesByUsernameAsync(username);
             return Ok(games);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(500, e.Message);
+        }
+    }
+    
+    [HttpGet,Route("/Game/{id:int}")]
+    public async Task<ActionResult<Game>> GetGameByIdAsync([FromRoute] int id)
+    {
+        try
+        {
+            Game game = (await gameLogic.GetGameByIdAsync(id))!;
+            return Ok(game);
         }
         catch (Exception e)
         {

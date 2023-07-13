@@ -13,4 +13,6 @@ public interface IGameLogic
 
     // This method returns all Games that a player has ever been part of
     public Task<IEnumerable<Game>> GetAllGamesByUsernameAsync(string username);
+
+    public Task<Game?> GetGameByIdAsync(int id);
 }

@@ -51,6 +51,14 @@ public class GameLogic : IGameLogic
                 gameToBeReturned = game;
                 break;
             }
+            foreach (Score score in game.Scores!)
+            {
+                if (score.PlayerUsername != username)
+                {
+                    gameToBeReturned = game;
+                    break;
+                }
+            }
         }
 
         return Task.FromResult(gameToBeReturned);
@@ -62,5 +70,15 @@ public class GameLogic : IGameLogic
         if (user == null)
             throw new Exception("No user found");
         return gameDao.GetGamesByUsername(username);
+    }
+
+    public async Task<Game?> GetGameByIdAsync(int id)
+    {
+        Game? game = await gameDao.GetGameByIdAsync(id);
+        if (game == null)
+        {
+            throw new Exception($"Game with id {id} not found");
+        }
+        return game;
     }
 }

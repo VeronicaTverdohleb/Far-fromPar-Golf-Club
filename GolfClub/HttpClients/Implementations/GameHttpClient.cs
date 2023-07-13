@@ -57,4 +57,21 @@ public class GameHttpClient : IGameService
         })!;
         return games;
     }
+
+    public async Task<Game>? GetGameByIdAsync(int id)
+    {
+        HttpResponseMessage response = await client.GetAsync($"/Game/{id}");
+        string content = await response.Content.ReadAsStringAsync();
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception(content);
+        }
+
+        Game? game = JsonSerializer.Deserialize<Game>(content, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        })!;
+        return game;
+        
+    }
 }
