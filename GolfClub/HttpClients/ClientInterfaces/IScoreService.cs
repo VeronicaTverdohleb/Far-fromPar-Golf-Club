@@ -7,5 +7,6 @@ namespace HttpClients.ClientInterfaces;
 /// </summary>
 public interface IScoreService
 {
-    public Task CreateAsync(ScoreBasicDto dto);
+    public Task UpdateFromMemberAsync(ScoreBasicDto dto);
+    public Task UpdateFromEmployeeAsync(ScoreUpdateDto dto);
 }

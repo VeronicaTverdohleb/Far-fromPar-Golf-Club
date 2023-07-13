@@ -26,8 +26,11 @@ public class GameLogic : IGameLogic
             {
                 foreach (Game game in games.ToList())
                 {
-                    if (game.Scores == null || !game.Scores.Any())
-                        throw new Exception($"User with username {playerUsername} has an unfinished game. Cannot create a new game with this user.");
+                    foreach (Score score in game.Scores!)
+                    {
+                        if (score.Strokes == 0)
+                            throw new Exception($"User with username {playerUsername} has an unfinished game. Cannot create a new game with this user.");
+                    }
                 }
             }
         }
@@ -36,6 +39,9 @@ public class GameLogic : IGameLogic
         return created;
     }
 
+    // This method return a Game By Username that has a Score with Strokes = 0 
+    // Each Game has 18 Scores per player, and if even a single Score has Strokes = 0
+    // This method returns that Game
     public Task<Game?> GetActiveGameByUsernameAsync(string username)
     {
         User? user = userDao.GetByUsernameAsync(username).Result;
@@ -53,7 +59,7 @@ public class GameLogic : IGameLogic
             }
             foreach (Score score in game.Scores!)
             {
-                if (score.PlayerUsername != username)
+                if (score.PlayerUsername == username && score.Strokes == 0)
                 {
                     gameToBeReturned = game;
                     break;

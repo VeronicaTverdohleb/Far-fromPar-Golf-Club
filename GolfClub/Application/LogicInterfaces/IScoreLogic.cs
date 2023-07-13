@@ -5,5 +5,6 @@ namespace Application.LogicInterfaces;
 
 public interface IScoreLogic
 {
-    public Task<Score> CreateAsync(ScoreBasicDto dto);
+    public Task UpdateFromMemberAsync(ScoreBasicDto dto);
+    public Task UpdateFromEmployeeAsync(ScoreUpdateDto dto);
 }

@@ -24,7 +24,7 @@ public class ScoreLogic : IScoreLogic
         this.userDao = userDao;
     }
     
-    public async Task<Score> CreateAsync(ScoreBasicDto dto)
+    public async Task UpdateFromMemberAsync(ScoreBasicDto dto)
     {
         User? user = await userDao.GetByUsernameAsync(dto.PlayerUsername);
         if (user == null)
@@ -36,9 +36,11 @@ public class ScoreLogic : IScoreLogic
             if (dto.Strokes[i] == 0 || dto.Strokes[i] > 23)
                 dto.Strokes[i] = 23;
         }
-        
+        await scoreDao.UpdateFromMemberAsync(dto);
+    }
 
-        Score created = await scoreDao.CreateAsync(dto);
-        return created;
+    public async Task UpdateFromEmployeeAsync(ScoreUpdateDto dto)
+    {
+        await scoreDao.UpdateFromEmployeeAsync(dto);
     }
 }

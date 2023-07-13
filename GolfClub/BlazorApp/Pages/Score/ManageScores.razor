@@ -42,7 +42,7 @@
                 {
                     if (!co_player.UserName.Equals(selectedUsername))
                     {
-                        @co_player.UserName
+                        <label class="co_player">@co_player.UserName</label>
                     }
                 }
             }
@@ -57,26 +57,26 @@
                 <p>@selectedUsername's Scores:</p>
                 <table class="score_table">
                     <!-- On the scorecard, only the score of the searched user is displayed -->
-                    @foreach (User player in game.Players)
-                    {
-                        if (player.UserName.Equals(selectedUsername))
+                    <tr>
+                        <th>Hole</th>
+                        @foreach (Score score in game.Scores)
                         {
-                            <tr>
-                                <th>Hole</th>
-                                @foreach (Score score in game.Scores!)
-                                {
-                                    <th>@score.HoleNumber</th>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Score</th>
-                                @foreach (Score score in game.Scores!)
-                                {
-                                    <th>@score.Strokes</th>
-                                }
-                            </tr>
+                            if (score.PlayerUsername.Equals(selectedUsername))
+                            {
+                                <th>@score.HoleNumber</th>
+                            }
                         }
-                    }
+                    </tr>
+                    <tr>
+                        <th>Strokes</th>
+                        @foreach (Score score in game.Scores)
+                        {
+                            if (score.PlayerUsername.Equals(selectedUsername))
+                            {
+                                <th>@score.Strokes</th>
+                            }
+                        }
+                    </tr>
                 </table>
             }
 

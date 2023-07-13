@@ -71,7 +71,6 @@
     private List<int> scores = new List<int>(18);
     private int strokes;
     private string username = "";
-    private Random random = new Random();
 
     // Variables regarding getting the logged in Member
     [CascadingParameter]
@@ -130,7 +129,7 @@
         try
         {
             ScoreBasicDto dto = new ScoreBasicDto(loggedInMemberUsername, scores, activeGame!.Id);
-            await ScoreService.CreateAsync(dto);
+            await ScoreService.UpdateFromMemberAsync(dto);
         }
         catch (Exception e)
         {

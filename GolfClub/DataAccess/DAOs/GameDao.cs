@@ -36,13 +36,16 @@ public class GameDao : IGameDao
          4. Return Task<Game>
          */
         ICollection<User> players = new List<User>();
+        ICollection<Score> scores = new List<Score>();
         foreach (string playerUsername in game.PlayerUsernames)
         {
             User? user = context.Users.FirstOrDefault(user => user.UserName == playerUsername);
             players.Add(user!);
+            for (int i = 1; i <= 18; i++)
+                scores.Add(new Score(playerUsername, i, 0));
         }
 
-        Game newGame = new Game(null, null, players);
+        Game newGame = new Game(scores, null, players);
         EntityEntry<Game> addedGame = await context.Games.AddAsync(newGame);
         await context.SaveChangesAsync();
 

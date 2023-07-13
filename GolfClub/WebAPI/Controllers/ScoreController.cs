@@ -22,17 +22,39 @@ public class ScoreController : ControllerBase
     }
     
     /// <summary>
-    /// POST endpoint that accepts ScoreBasicDto as a parameter and calls the ScoreLogic
+    /// PATCH endpoint that accepts ScoreBasicDto as a parameter and calls the ScoreLogic
     /// </summary>
     /// <param name="dto"></param>
     /// <returns></returns>
-    [HttpPost]
-    public async Task<ActionResult<Score>> CreateAsync([FromBody]ScoreBasicDto dto)
+    [HttpPatch("/Score")]
+    public async Task<ActionResult> UpdateFromMemberAsync([FromBody]ScoreBasicDto dto)
     {
         try
         {
-            Score created = await scoreLogic.CreateAsync(dto);
-            return Created($"/Score/{created.Id}", created);
+            await scoreLogic.UpdateFromMemberAsync(dto);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(500, e.Message);
+        }
+    }
+    
+    /// <summary>
+    /// PATCH endpoint that accepts ScoreUpdateDto as a parameter and calls the ScoreLogic
+    /// To Update the Scores 
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <returns></returns>
+
+    [HttpPatch("/Scores")]
+    public async Task<ActionResult> UpdateFromEmployeeAsync([FromBody] ScoreUpdateDto dto)
+    {
+        try
+        {
+            await scoreLogic.UpdateFromEmployeeAsync(dto);
+            return Ok();
         }
         catch (Exception e)
         {
