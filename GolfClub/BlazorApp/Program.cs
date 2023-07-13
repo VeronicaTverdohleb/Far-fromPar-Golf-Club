@@ -20,6 +20,7 @@ builder.Services.AddScoped<IJavaSocketConnection, JavaSocketConnection>();
 builder.Services.AddScoped<IAuthService, JwtAuthService>();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthProvider>();
 builder.Services.AddScoped<IUserService, UserHttpClient>();
+builder.Services.AddScoped<IStatisticService, StatisticHttpClient>();
 
 AuthorizationPolicies.AddPolicies(builder.Services);
 
