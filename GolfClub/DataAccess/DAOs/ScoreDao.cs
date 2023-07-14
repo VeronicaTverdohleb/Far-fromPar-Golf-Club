@@ -21,7 +21,6 @@ public class ScoreDao : IScoreDao
     
     /// <summary>
     /// Method that adds all Scores in the scorecard to the database
-    /// As well as updates the Game that the Scores belong to
     /// </summary>
     /// <param name="score"></param>
     /// <returns></returns>
@@ -46,20 +45,32 @@ public class ScoreDao : IScoreDao
         }
     }
 
-    public Task<Score?> GetScoreByUsernameAndHoleNumberAsync(string playerUsername, int holeNumber)
-    {
-        Score? existing = context.Scores.FirstOrDefault(score =>
-            score.PlayerUsername == playerUsername && score.HoleNumber == holeNumber);
-        return Task.FromResult(existing);
-    }
-
+    /// <summary>
+    /// Method that takes Scores from dto.HolesAndStrokes and updates
+    /// The corresponding Scores in the DB
+    /// </summary>
+    /// <param name="dto"></param>
     public async Task UpdateFromEmployeeAsync(ScoreUpdateDto dto)
     {
-        
-        foreach (int value in dto.HolesAndStrokes.Values)
-        {
-            
-        }
+        Game? existing = context.Games
+            .Include(game => game.Scores)
+            .FirstOrDefault(game => game.Id == dto.GameId);
 
+        foreach (Score score in existing!.Scores!)
+        {
+            if (score.PlayerUsername.Equals(dto.PlayerUsername))
+            {
+                foreach (int key in dto.HolesAndStrokes.Keys)
+                {
+                    if (key == score.HoleNumber)
+                    {
+                        score.Strokes = dto.HolesAndStrokes[key];
+                        context.Scores.Update(score);
+                        await context.SaveChangesAsync();
+                        Console.WriteLine($"Updated Score to this - HoleNo {score.HoleNumber}: Strokes {score.Strokes}");
+                    }
+                }
+            }
+        }
     }
 }

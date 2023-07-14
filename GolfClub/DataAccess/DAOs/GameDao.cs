@@ -25,7 +25,7 @@ public class GameDao : IGameDao
     /// Functionality is described below
     /// </summary>
     /// <param name="game"></param>
-    /// <returns></returns>
+    /// <returns>Task<Game></returns>
     public async Task<Game> CreateAsync(GameBasicDto game)
     {
         /*
@@ -69,10 +69,10 @@ public class GameDao : IGameDao
 
 
     /// <summary>
-    /// Method that fetches Games based on a username
+    /// Method that fetches Games from the DB based on a username 
     /// </summary>
     /// <param name="username"></param>
-    /// <returns></returns>
+    /// <returns>Task<IEnumerable<Game>></returns>
     public Task<IEnumerable<Game>> GetGamesByUsername(string username)
     {
         User? user = context.Users.FirstOrDefault(user => user.UserName == username);
@@ -87,6 +87,11 @@ public class GameDao : IGameDao
         return Task.FromResult(games);
     }
 
+    /// <summary>
+    /// Method that fetches a Game by its Id from the DB
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>Task<Game?></returns>
     public Task<Game?> GetGameByIdAsync(int id)
     {
         Game? existing = context.Games

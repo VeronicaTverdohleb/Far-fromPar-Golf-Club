@@ -1,5 +1,8 @@
 ﻿namespace Shared.Dtos.ScoreDto;
 
+/// <summary>
+/// Data Transfer Object used when updating Score by an Employee
+/// </summary>
 public class ScoreUpdateDto
 {
     public string PlayerUsername { get; set; }   // Basically a user Id

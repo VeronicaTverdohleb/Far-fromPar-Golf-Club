@@ -18,6 +18,7 @@
             {
                 <th class="first_row">@i</th>
             }
+            <th></th>
         </tr>
         <tr>
             <th class="second_row">Par</th>
@@ -25,6 +26,7 @@
             {
                 <th class="second_row">@par</th>
             }
+            <th></th>
         </tr>
         </thead>
         <tbody>
@@ -41,7 +43,7 @@
                         </th>
                     }
                 }
-                <button class="savebtn">Save Player's Score</button>
+                <th><button class="savebtn" @onclick="async () => { await SaveScores(player.UserName);}">Save Score</button></th>
             </tr>
         }
         </tbody>
@@ -83,21 +85,27 @@
             Console.WriteLine(e.Message);
             error = e.Message;
         }
-
-        //AddEmptyPlayerScores();
     }
 
 
-    /// Calls CreateAsync method in the ScoreService which send a request to to the Web API and adds scores to the database
+    /// Calls UpdateFromEmployeeAsync() in the ScoreService which sends a request to to the Web API
+    /// and updates scores in the database
     private async Task SaveScores(string playersUsername)
     {
-    // First find the scores to add 
+        // Creates a Dictionary with HoleNumbers and Strokes for ScoreUpdateDto
         Dictionary<int, int> holesAndStrokes = new Dictionary<int, int>();
         foreach (Score score in game!.Scores!)
         {
             if (score.PlayerUsername.Equals(playersUsername))
+                // If score is not = 0, it is added to the dictionary as <holeNumber> : <strokes>
                 if (score.Strokes != 0)
                     holesAndStrokes.Add(score.HoleNumber, score.Strokes);
+                // If Score is 0, it shows an error and does not let the employee to update the Scores
+                else if (score.Strokes == 0)
+                {
+                    error = "Sadly, you cannot submit scores with score of value 0";
+                    return;
+                }
         }
         error = "";
 
@@ -115,47 +123,5 @@
         if (error.Equals(""))
             await JsRuntime.InvokeVoidAsync("alertAction", "Score submitted successfully");
     }
-
-    public void AddEmptyPlayerScores()
-    {
-    // If there are no Scores for some players, we need to add a list of 0 scores
-    /*
-        Functionality:
-        1. First, we find playerUsernames with no Scores
-        2. If there are no Scores in game.Scores, we add all playerUsernames to the List<String> playersWithNoScores
-        3. Finally, we loop through "List<string> playersWithNoScores" and add Score 18 times (for 18 holes) with Strokes = 0
-         */
-        //Console.WriteLine($"Size of scores at start: {game!.Scores!.Count}");
-
-        List<string> playersWithNoScores = new List<string>();
-        if (game!.Scores == null || !game!.Scores.Any())
-        {
-            foreach (User player in game!.Players)
-                playersWithNoScores.Add(player.UserName);
-        }
-        else
-        {
-            foreach (User player in game!.Players)
-            {
-                foreach (Score score in game!.Scores)
-                {
-    // If the player has a Score in game.Scores, then just get out of here
-                    if (score.PlayerUsername.Equals(player.UserName))
-                        break;
-    // If not, add their username to the list so we can add empty Scores at the end of this method
-                    playersWithNoScores.Add(player.UserName);
-                    break;
-                }
-            }
-        }
-
-        for (int i = 0; i < playersWithNoScores.Count; i++)
-        {
-            for (int j = 1; j <= 18; j++)
-                game!.Scores!.Add(new Score(playersWithNoScores[i], j, 0));
-        }
-        //Console.WriteLine($"Size of scores after adjustment: {game!.Scores!.Count}");
-    }
-
 }
 

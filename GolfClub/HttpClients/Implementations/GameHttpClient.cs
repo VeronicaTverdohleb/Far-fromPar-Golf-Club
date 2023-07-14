@@ -6,16 +6,23 @@ using Shared.Model;
 
 namespace HttpClients.Implementations;
 
+/// <summary>
+/// Class responsible for making REST requests towards Web API
+/// </summary>
 public class GameHttpClient : IGameService
 {
     private readonly HttpClient client;
-    private IGameService gameService;
 
     public GameHttpClient(HttpClient client)
     {
         this.client = client;
     }
 
+    /// <summary>
+    /// POST HTTP Request to create a Game
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <exception cref="Exception"></exception>
     public async Task CreateAsync(GameBasicDto dto)
     {
         HttpResponseMessage response = await client.PostAsJsonAsync("/Game", dto);
@@ -26,7 +33,13 @@ public class GameHttpClient : IGameService
         }
     }
 
-    public async Task<Game>? GetActiveGameByUsernameAsync(string username)
+    /// <summary>
+    /// GET HTTP Request to get an active Game by username (Game with Score that has values 0)
+    /// </summary>
+    /// <param name="username"></param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
+    public async Task<Game?> GetActiveGameByUsernameAsync(string username)
     {
         HttpResponseMessage response = await client.GetAsync($"/Game/{username}");
         string content = await response.Content.ReadAsStringAsync();
@@ -42,6 +55,12 @@ public class GameHttpClient : IGameService
         return game;
     }
 
+    /// <summary>
+    /// GET HTTP Request that fetches all Games by username
+    /// </summary>
+    /// <param name="username"></param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
     public async Task<ICollection<Game>> GetAllGamesByUsernameAsync(string username)
     {
         HttpResponseMessage response = await client.GetAsync($"/Games/{username}");
@@ -58,7 +77,13 @@ public class GameHttpClient : IGameService
         return games;
     }
 
-    public async Task<Game>? GetGameByIdAsync(int id)
+    /// <summary>
+    /// GET HTTP Request 
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
+    public async Task<Game?> GetGameByIdAsync(int id)
     {
         HttpResponseMessage response = await client.GetAsync($"/Game/{id}");
         string content = await response.Content.ReadAsStringAsync();

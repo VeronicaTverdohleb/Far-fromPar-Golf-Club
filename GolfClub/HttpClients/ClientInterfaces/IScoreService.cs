@@ -3,7 +3,7 @@
 namespace HttpClients.ClientInterfaces;
 
 /// <summary>
-/// Interface implemented by ScoreService
+/// Interface implemented by ScoreHttpClient
 /// </summary>
 public interface IScoreService
 {

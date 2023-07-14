@@ -12,7 +12,6 @@ namespace HttpClients.Implementations;
 public class ScoreHttpClient : IScoreService
 {
     private readonly HttpClient client;
-    private IScoreService scoreService;
 
     public ScoreHttpClient(HttpClient client)
     {
@@ -20,7 +19,7 @@ public class ScoreHttpClient : IScoreService
     }
     
     /// <summary>
-    /// HTTP request to create Scores
+    /// PATCH HTTP request to Update Scores from Member side (only updates all scores in a Scorecard at a time)
     /// </summary>
     /// <param name="dto"></param>
     /// <exception cref="Exception"></exception>
@@ -38,7 +37,7 @@ public class ScoreHttpClient : IScoreService
     }
 
     /// <summary>
-    /// HTTP request to update Scores
+    /// PATCH HTTP request to update Scores from Employee (updates any amount of Scores)
     /// </summary>
     /// <param name="dto"></param>
     /// <returns></returns>

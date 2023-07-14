@@ -6,9 +6,9 @@ using Shared.Model;
 namespace WebAPI.Controllers;
 
 /// <summary>
-/// Web API method definition related to Score functionality
-/// Is responsible for receiving REST requests from IScoreService and calling methods
-/// In the Application Logic
+/// Controller definition for Score-related requests, it communicates on request-reply basis
+/// with GameHttpClient in the BlazorApp
+/// It calls methods in the ScoreLogic
 /// </summary>
 [ApiController]
 [Route("[controller]")]

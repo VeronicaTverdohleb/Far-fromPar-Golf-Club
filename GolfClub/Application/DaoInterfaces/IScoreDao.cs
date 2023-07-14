@@ -3,6 +3,9 @@ using Shared.Model;
 
 namespace Application.DaoInterfaces;
 
+/// <summary>
+/// Interface implemented by ScoreDao
+/// </summary>
 public interface IScoreDao
 {
     public Task UpdateFromMemberAsync(ScoreBasicDto score);

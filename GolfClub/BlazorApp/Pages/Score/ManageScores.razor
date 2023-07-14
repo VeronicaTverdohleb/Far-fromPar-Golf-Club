@@ -5,7 +5,7 @@
 @inject NavigationManager NavMgr;
 
 
-<!-- For everyone, here starts the heading, happy stealing -->
+<!-- For everyone, here starts the heading -->
 <div class="headline_box">
     <img src="img/golfball.png" class="golfball" alt="Golf Ball"/>
     <h3 class="headline"> Manage Score </h3>
@@ -90,6 +90,8 @@
     private string selectedUsername = "";
     private ICollection<Game> playerGames = new List<Game>();
 
+    
+    /// When an employee inserts a playerUsername, the player's info gets fetched via the GameService method
     private async Task GetPlayerScores()
     {
         playerGames = new List<Game>();
@@ -113,10 +115,9 @@
             error = "This player has no scores";
     }
 
+    /// When the employee clicks on the Game Card, it redirects them to a new page with the Game's scorecards
     private void SeeScore(int id)
     {
         NavMgr.NavigateTo($"/ManageScore/{id}");
     }
-
-
 }

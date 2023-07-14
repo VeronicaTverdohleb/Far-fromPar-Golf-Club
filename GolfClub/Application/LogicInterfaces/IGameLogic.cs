@@ -3,6 +3,9 @@ using Shared.Model;
 
 namespace Application.LogicInterfaces;
 
+/// <summary>
+/// Interface implemented by GameLogic
+/// </summary>
 public interface IGameLogic
 {
     public Task<Game> CreateAsync(GameBasicDto dto);

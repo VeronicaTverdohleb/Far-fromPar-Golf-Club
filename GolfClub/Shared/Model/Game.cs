@@ -1,5 +1,8 @@
 ﻿namespace Shared.Model;
 
+/// <summary>
+/// Model Class used in Game-related use cases and for DB creation
+/// </summary>
 public class Game
 {
     public int Id { get; set; }
