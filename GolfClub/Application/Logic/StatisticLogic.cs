@@ -17,4 +17,9 @@ public class StatisticLogic:IStatisticLogic
     {
         return statisticDao.GetAllScoresByPlayerAsync(playerName);
     }
+
+    public Task<IEnumerable<Score>> GetAllScoresByTournamentAsync(string tournamentName)
+    {
+        return statisticDao.GetAllScoresByTournamentAsync(tournamentName);
+    }
 }

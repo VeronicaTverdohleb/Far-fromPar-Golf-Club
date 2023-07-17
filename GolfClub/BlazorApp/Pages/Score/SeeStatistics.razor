@@ -8,9 +8,18 @@
 <label>Hey @loggedInMemberUsername! Which statistic would you like to see?</label>
 <select name="chooseStatistic" id="chooseStatistic" @onchange="SetSelectedStatistic">
     <option selected="selected">choose:</option>
+    <option value="allScores">All your scores</option>
     <option value="personalBest">Personal Best</option>
     <option value="leaderboard">Leaderboard</option>
-</select>
+    <option value="tournament">Tournament scores</option>
+</select><br/>
+@if (TournamentBool)
+{
+    <br/><label>Enter the name of the tournament: </label>
+    <input type="text" @bind="tournamentName"/><br/>
+    <button @onclick="GetTournamentScores">Load tournament scores</button><br/><br/>
+}
+
 <button @onclick="LoadStatistic">Load</button><br/><br/>
 <label class="error-message">@msg</label>
 
@@ -44,7 +53,7 @@
         <th class="second_row">4</th>
         <th class="second_row">6</th>
         <th class="second_row">3</th>
-        <th class="second_row">72</th>
+        <th class="second_row">76</th>
     </tr>
     </thead>
     @if (chosenScores.Count >= 18)
@@ -74,6 +83,8 @@
     private List<Score> chosenScores = new List<Score>();
     private IEnumerable<User> allUsers = new List<User>();
     private int chosenScoreTotal = 0;
+    private bool TournamentBool = false;
+    private string tournamentName = "";
 
     [CascadingParameter]
     public Task<AuthenticationState> AuthState { get; set; } = null!;
@@ -110,12 +121,20 @@
         {
             switch (selectedStatistic)
             {
+                case "allScores":
+                    await GetAllScores(loggedInMemberUsername);
+                    break;
+                    
                 case "personalBest":
                     await GetPersonalBest(loggedInMemberUsername);
                     break;
                     
                 case "leaderboard":
                     await GetLeaderBoard();
+                    break;
+                    
+                case "tournament":
+                    ShowTournamentField();
                     break;
 
                 default:
@@ -127,6 +146,28 @@
         {
             Console.WriteLine(e);
             msg = e.Message;
+        }
+    }
+
+    public async Task GetAllScores(string name)
+    {
+        scores = await StatisticService.GetAllScoresByPlayerAsync(name);
+        if (!scores.Any())
+        {
+            msg = "You haven't played any games yet!";
+        }
+        else
+        {
+            List<Score> scoresToOrder = scores.ToList();
+
+            var orderedScores = scoresToOrder
+                .Select((s, index) => new { Score = s, SetIndex = index / 18 })
+                .GroupBy(x => x.SetIndex)
+                .OrderBy(g => g.Sum(x => x.Score.Strokes))
+                .SelectMany(g => g.Select(x => x.Score))
+                .ToList();
+
+            chosenScores = orderedScores;
         }
     }
 
@@ -151,7 +192,7 @@
                     total += scoreList[j].Strokes;
                 }
 
-                if (total<bestScore)
+                if (total<bestScore && total!=0)
                 {
                     bestScore = total;
                     bestGame = i;
@@ -198,5 +239,33 @@
         Console.WriteLine(orderedScores.Count());
         Console.WriteLine(orderedScores[0].PlayerUsername);
         chosenScores = orderedScores;
+    }
+
+    public void ShowTournamentField()
+    {
+        TournamentBool = !TournamentBool;
+    }
+
+    public async Task GetTournamentScores()
+    {
+        scores = await StatisticService.GetAllScoresByTournamentAsync(tournamentName);
+        if (!scores.Any())
+        {
+            msg = "No games have been played in this tournament!";
+        }
+        else
+        {
+            List<Score> scoresToOrder = scores.ToList();
+
+            var orderedScores = scoresToOrder
+                .Select((s, index) => new { Score = s, SetIndex = index / 18 })
+                .GroupBy(x => x.SetIndex)
+                .OrderBy(g => g.Sum(x => x.Score.Strokes))
+                .SelectMany(g => g.Select(x => x.Score))
+                .ToList();
+
+            chosenScores = orderedScores;
+        }
+        
     }
 }

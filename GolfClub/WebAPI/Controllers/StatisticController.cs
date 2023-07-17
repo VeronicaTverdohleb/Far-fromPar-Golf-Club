@@ -29,4 +29,19 @@ public class StatisticController:ControllerBase
             return StatusCode(500, e.Message);
         }
     }
+    
+    [HttpGet("/StatisticT/{tournamentName}")]
+    public async Task<ActionResult<IEnumerable<Score>>> GetAllScoresByTournamentAsync([FromRoute] string tournamentName)
+    {
+        try
+        {
+            var scores = await statisticLogic.GetAllScoresByTournamentAsync(tournamentName);
+            return Ok(scores);
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(500, e.Message);
+        }
+    }
 }

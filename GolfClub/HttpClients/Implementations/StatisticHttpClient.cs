@@ -28,4 +28,20 @@ public class StatisticHttpClient:IStatisticService
         })!;
         return scores;
     }
+
+    public async Task<ICollection<Score>> GetAllScoresByTournamentAsync(string tournamentName)
+    {
+        HttpResponseMessage response = await client.GetAsync($"/StatisticT/{tournamentName}");
+        string content = await response.Content.ReadAsStringAsync();
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception(content);
+        }
+        
+        ICollection<Score> scores = JsonSerializer.Deserialize<ICollection<Score>>(content, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        })!;
+        return scores;
+    }
 }
