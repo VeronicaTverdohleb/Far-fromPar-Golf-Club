@@ -2,6 +2,9 @@
 
 namespace Shared.Dtos.GameDto;
 
+/// <summary>
+/// Data Transfer Object used in Game-related use cases
+/// </summary>
 public class GameBasicDto
 { 
     public ICollection<Score>? Scores { get; set; }

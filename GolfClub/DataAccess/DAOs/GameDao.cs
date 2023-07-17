@@ -25,7 +25,7 @@ public class GameDao : IGameDao
     /// Functionality is described below
     /// </summary>
     /// <param name="game"></param>
-    /// <returns></returns>
+    /// <returns>Task<Game></returns>
     public async Task<Game> CreateAsync(GameBasicDto game)
     {
         /*
@@ -36,13 +36,16 @@ public class GameDao : IGameDao
          4. Return Task<Game>
          */
         ICollection<User> players = new List<User>();
+        ICollection<Score> scores = new List<Score>();
         foreach (string playerUsername in game.PlayerUsernames)
         {
             User? user = context.Users.FirstOrDefault(user => user.UserName == playerUsername);
             players.Add(user!);
+            for (int i = 1; i <= 18; i++)
+                scores.Add(new Score(playerUsername, i, 0));
         }
 
-        Game newGame = new Game(null, null, players);
+        Game newGame = new Game(scores, null, players);
         EntityEntry<Game> addedGame = await context.Games.AddAsync(newGame);
         await context.SaveChangesAsync();
 
@@ -66,10 +69,10 @@ public class GameDao : IGameDao
 
 
     /// <summary>
-    /// Method that fetches Games based on a username
+    /// Method that fetches Games from the DB based on a username 
     /// </summary>
     /// <param name="username"></param>
-    /// <returns></returns>
+    /// <returns>Task<IEnumerable<Game>></returns>
     public Task<IEnumerable<Game>> GetGamesByUsername(string username)
     {
         User? user = context.Users.FirstOrDefault(user => user.UserName == username);
@@ -82,5 +85,20 @@ public class GameDao : IGameDao
             .AsEnumerable();
 
         return Task.FromResult(games);
+    }
+
+    /// <summary>
+    /// Method that fetches a Game by its Id from the DB
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>Task<Game?></returns>
+    public Task<Game?> GetGameByIdAsync(int id)
+    {
+        Game? existing = context.Games
+            .Include(game => game.Scores)
+            .Include(game => game.Equipments)
+            .Include(game => game.Players)
+            .FirstOrDefault(game => game.Id == id);
+        return Task.FromResult(existing);
     }
 }

@@ -1,5 +1,6 @@
 ﻿namespace Shared.Model;
 
+/// Model Class used in Score-related use cases and for DB creation
 public class Score
 {
     public int Id { get; set; }

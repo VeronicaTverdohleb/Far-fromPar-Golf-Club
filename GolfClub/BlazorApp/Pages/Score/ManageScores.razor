@@ -1,12 +1,11 @@
 ﻿@page "/ManageScores"
 @using HttpClients.ClientInterfaces
 @using global::Shared.Model
-@inject IScoreService ScoreService
 @inject IGameService GameService
 @inject NavigationManager NavMgr;
 
 
-<!-- For everyone, here starts the heading, happy stealing -->
+<!-- For everyone, here starts the heading -->
 <div class="headline_box">
     <img src="img/golfball.png" class="golfball" alt="Golf Ball"/>
     <h3 class="headline"> Manage Score </h3>
@@ -29,23 +28,26 @@
 @foreach (Game game in playerGames)
 {
     <div class="game_card">
-        <a @onclick=@(() => SeeScore(@game.Id))>
-            <p>Game ID: @game.Id</p>
+        <a class="game_card_anchor" @onclick=@(() => SeeScore(@game.Id))>
+            <label class="game_card_label">Game ID:</label>@game.Id
+            <hr>
+            <label class="game_card_label">Co-players:</label>
             @if (game.Players.Count == 1)
             {
-                <p>No Co-Players in this Game.</p>
+                <p>No Co-players in this Game.</p>
             }
             else
             {
-                <p>Co-players: </p>
                 @foreach (User co_player in game.Players)
                 {
                     if (!co_player.UserName.Equals(selectedUsername))
                     {
-                        <p>@co_player.UserName</p>
+                        <label class="co_player">@co_player.UserName</label>
                     }
                 }
             }
+            <hr>
+            <label class="game_card_label">Scores:</label>
             @if (game.Scores == null || !game.Scores.Any())
             {
                 <p>No Score in this Game.</p>
@@ -54,18 +56,25 @@
             {
                 <p>@selectedUsername's Scores:</p>
                 <table class="score_table">
+                    <!-- On the scorecard, only the score of the searched user is displayed -->
                     <tr>
                         <th>Hole</th>
-                        @foreach (Score score in game.Scores!)
+                        @foreach (Score score in game.Scores)
                         {
-                            <th>@score.HoleNumber</th>
+                            if (score.PlayerUsername.Equals(selectedUsername))
+                            {
+                                <th>@score.HoleNumber</th>
+                            }
                         }
                     </tr>
                     <tr>
-                        <th>Score</th>
-                        @foreach (Score score in game.Scores!)
+                        <th>Strokes</th>
+                        @foreach (Score score in game.Scores)
                         {
-                            <th>@score.Strokes</th>
+                            if (score.PlayerUsername.Equals(selectedUsername))
+                            {
+                                <th>@score.Strokes</th>
+                            }
                         }
                     </tr>
                 </table>
@@ -81,6 +90,8 @@
     private string selectedUsername = "";
     private ICollection<Game> playerGames = new List<Game>();
 
+    
+    /// When an employee inserts a playerUsername, the player's info gets fetched via the GameService method
     private async Task GetPlayerScores()
     {
         playerGames = new List<Game>();
@@ -104,10 +115,9 @@
             error = "This player has no scores";
     }
 
+    /// When the employee clicks on the Game Card, it redirects them to a new page with the Game's scorecards
     private void SeeScore(int id)
     {
         NavMgr.NavigateTo($"/ManageScore/{id}");
     }
-
-
 }

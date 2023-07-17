@@ -59,6 +59,7 @@
     private string selectedTournament = "";
 
 
+    /// Initial method that loads all players and tournaments
     protected override async Task OnInitializedAsync()
     {
         playerUsernames = new List<string>();
@@ -75,6 +76,7 @@
         }
     }
 
+    /// When employee presses "Create Game", a method in GameService is called with the information for Game creation
     private async Task CreateNewGame()
     {
         if (playerUsernames == null || !playerUsernames.Any())
@@ -108,12 +110,16 @@
             
     }
 
+    /// There is a button "Delete Players" which allows the employee to delete the users that have been selected
+    /// To be added to the new Game
     private void DeleteAllPlayers()
     {
         playerUsernames = new List<string>();
     }
 
 
+    /// In the drop down menu with players, when a player is selected,
+    /// The playerUsername is added to List<string> playerUsername
     private void SetSelectedPlayer(ChangeEventArgs e)
     {
         if (!string.IsNullOrEmpty(e.Value.ToString()))
@@ -122,6 +128,8 @@
         }
     }
 
+    /// In the drop down menu with tournaments, when a tournaments is selected,
+    /// The selectedTournament variable is assigned to the selected tournament name
     private void SetSelectedTournament(ChangeEventArgs e)
     {
         if (!string.IsNullOrEmpty(e.Value.ToString()))

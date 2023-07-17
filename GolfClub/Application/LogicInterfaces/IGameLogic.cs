@@ -3,6 +3,9 @@ using Shared.Model;
 
 namespace Application.LogicInterfaces;
 
+/// <summary>
+/// Interface implemented by GameLogic
+/// </summary>
 public interface IGameLogic
 {
     public Task<Game> CreateAsync(GameBasicDto dto);
@@ -13,4 +16,6 @@ public interface IGameLogic
 
     // This method returns all Games that a player has ever been part of
     public Task<IEnumerable<Game>> GetAllGamesByUsernameAsync(string username);
+
+    public Task<Game?> GetGameByIdAsync(int id);
 }

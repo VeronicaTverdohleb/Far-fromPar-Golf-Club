@@ -1,4 +1,5 @@
 ﻿using Application.DaoInterfaces;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Shared.Dtos.ScoreDto;
 using Shared.Model;
@@ -20,40 +21,56 @@ public class ScoreDao : IScoreDao
     
     /// <summary>
     /// Method that adds all Scores in the scorecard to the database
-    /// As well as updates the Game that the Scores belong to
     /// </summary>
     /// <param name="score"></param>
     /// <returns></returns>
-    public async Task<Score> CreateAsync(ScoreBasicDto score)
+    public async Task UpdateFromMemberAsync(ScoreBasicDto score)
     {
         /*
          Functionality: 
-         1. There are 18 scores in the ScoreBasicDto, they are added to the database
-         2. The Game that the Scores belong to is updated with the list of Scores
-         3. The first Score is returned (Not really correct, but oh well)
+         1. There are 18 scores in the ScoreBasicDto, 
+            those Scores need to be updated in the DB (they currently have value Strokes = 0)
+         2. The first Score is returned (Not really correct, but oh well)
          */
-        EntityEntry<Score> added = null!;
-
-        ICollection<Score> scoresToGame = new List<Score>();
-        for (int i = 0; i < 18; i++)
+        for (int i = 1; i < score.Strokes.Count+1; i++)
         {
-            Score newScore = new Score(score.PlayerUsername, i + 1, score.Strokes[i]);
-            scoresToGame.Add(newScore);
-            added = await context.Scores.AddAsync(newScore);
+            // Retrieve the Score that we want to update from the DB
+            Score? existing = context.Scores
+                .FirstOrDefault(s => s.PlayerUsername == score.PlayerUsername && s.HoleNumber == i && s.Strokes == 0);
+            // Assign the Strokes value to the value from ScoreBasicDto 
+            existing!.Strokes = score.Strokes[i-1];
+            // Update in the database
+            context.Scores.Update(existing);
             await context.SaveChangesAsync();
         }
-        
-        // Updating the Game
-        // First, pull out the game from the database
-        Game? game = context.Games.FirstOrDefault(game => game.Id == score.GameId);
-        
-        // Then, add the scores to it
-        game!.Scores = scoresToGame;
+    }
 
-        // And then, update it in the database
-        context.Games.Update(game!);
-        await context.SaveChangesAsync();
-        
-        return added!.Entity;
+    /// <summary>
+    /// Method that takes Scores from dto.HolesAndStrokes and updates
+    /// The corresponding Scores in the DB
+    /// </summary>
+    /// <param name="dto"></param>
+    public async Task UpdateFromEmployeeAsync(ScoreUpdateDto dto)
+    {
+        Game? existing = context.Games
+            .Include(game => game.Scores)
+            .FirstOrDefault(game => game.Id == dto.GameId);
+
+        foreach (Score score in existing!.Scores!)
+        {
+            if (score.PlayerUsername.Equals(dto.PlayerUsername))
+            {
+                foreach (int key in dto.HolesAndStrokes.Keys)
+                {
+                    if (key == score.HoleNumber)
+                    {
+                        score.Strokes = dto.HolesAndStrokes[key];
+                        context.Scores.Update(score);
+                        await context.SaveChangesAsync();
+                        Console.WriteLine($"Updated Score to this - HoleNo {score.HoleNumber}: Strokes {score.Strokes}");
+                    }
+                }
+            }
+        }
     }
 }

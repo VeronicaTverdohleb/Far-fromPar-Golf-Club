@@ -3,9 +3,10 @@
 namespace HttpClients.ClientInterfaces;
 
 /// <summary>
-/// Interface implemented by ScoreService
+/// Interface implemented by ScoreHttpClient
 /// </summary>
 public interface IScoreService
 {
-    public Task CreateAsync(ScoreBasicDto dto);
+    public Task UpdateFromMemberAsync(ScoreBasicDto dto);
+    public Task UpdateFromEmployeeAsync(ScoreUpdateDto dto);
 }

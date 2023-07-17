@@ -24,7 +24,14 @@ public class ScoreLogic : IScoreLogic
         this.userDao = userDao;
     }
     
-    public async Task<Score> CreateAsync(ScoreBasicDto dto)
+    /// <summary>
+    /// Method used in Add Score use case
+    /// The Member uses it to add their Score to a Game
+    /// It returns Exception, if a User with dto.PlayerUsername is not found
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <exception cref="Exception"></exception>
+    public async Task UpdateFromMemberAsync(ScoreBasicDto dto)
     {
         User? user = await userDao.GetByUsernameAsync(dto.PlayerUsername);
         if (user == null)
@@ -36,9 +43,21 @@ public class ScoreLogic : IScoreLogic
             if (dto.Strokes[i] == 0 || dto.Strokes[i] > 23)
                 dto.Strokes[i] = 23;
         }
-        
+        await scoreDao.UpdateFromMemberAsync(dto);
+    }
 
-        Score created = await scoreDao.CreateAsync(dto);
-        return created;
+    /// <summary>
+    /// Method used in Manage Score use case 
+    ///  The Employee uses it to manage Score in a Game
+    /// It returns Exception, if a User with dto.PlayerUsername is not found
+    /// </summary>
+    /// <param name="dto"></param>
+    public async Task UpdateFromEmployeeAsync(ScoreUpdateDto dto)
+    {
+        User? user = await userDao.GetByUsernameAsync(dto.PlayerUsername);
+        if (user == null)
+            throw new Exception($"User with username {dto.PlayerUsername} does not exist");
+
+        await scoreDao.UpdateFromEmployeeAsync(dto);
     }
 }
