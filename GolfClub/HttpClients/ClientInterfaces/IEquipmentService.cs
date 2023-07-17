@@ -9,8 +9,10 @@ public interface IEquipmentService
     Task CreateEquipmentAsync(IEnumerable<EquipmentBasicDto>  equipment, int amount);
     Task UpdateEquipmentAmount(string name, int amount);
     Task<Equipment?> GetEquipmentByNameAsync(string name);
-    Task DeleteEquipmentAsync(string name);
+    Task DeleteEquipmentAsync(string? name);
 
     Task<int> CountOfEquipment(string name);
-   
+    Task RentEquipment(RentEquipmentDto dto, string username);
+    Task<IEnumerable<Equipment>?> GetAvailableEquipment();
+
 }

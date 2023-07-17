@@ -79,6 +79,23 @@ public class EquipmentController: ControllerBase
             return StatusCode(500, e.Message);
         }
     }
+    [HttpGet("RentEquipment/available")]
+    public async Task<ActionResult<IEnumerable<Equipment>?>> GetAvailableEquipment()
+    {
+        try
+        {
+            var availableEquipment = equipmentLogic.GetAvailableEquipment();
+            
+            return Ok(availableEquipment); 
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(500, e.Message);
+             }
+       
+    }
+   
 
     [HttpDelete ("{name:required}/{amount:int}")]
     public async Task<ActionResult> UpdateAsync(string name, int amount)
@@ -108,4 +125,6 @@ public class EquipmentController: ControllerBase
             return StatusCode(500, e.Message);
         }
     }
+    
+   
 }

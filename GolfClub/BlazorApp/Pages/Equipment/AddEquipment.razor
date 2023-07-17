@@ -5,11 +5,14 @@
 @inject NavigationManager navMgr
 @inject IJSRuntime jsRuntime;
 @inject IEquipmentService EquipmentService;
-<h3>Add Equipment</h3>
+<div class="headline_box">
+    <img src="img/golfball.png" class="golfball" alt="Golf Ball"/>
+    <h3 class="headline">Add Equipment </h3>
+    <img src="img/golfball.png" class="golfball" alt="Golf Ball"/>
+</div>
 <div class="filter-bar">
 <div class="filters-container">
-        <img src="icons/@(doShowFilters1 ? "clear_" : "")add.png" class="funnel" @onclick="@(() => doShowFilters1 = !doShowFilters1)" alt="Funnel"/>
-<div class="form-group field">
+        <div class="form-group field">
         <label>Name:</label>
         <input type="text" @bind="newEquipmentName"/>
     </div>

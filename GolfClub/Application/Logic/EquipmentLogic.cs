@@ -1,6 +1,7 @@
 ﻿using Application.DaoInterfaces;
 using Application.LogicInterfaces;
 using Shared.Dtos.EquipmentDto;
+using Shared.Dtos.GameDto;
 using Shared.Model;
 
 namespace Application.Logic;
@@ -8,11 +9,13 @@ namespace Application.Logic;
 public class EquipmentLogic: IEquipmentLogic
 {
     private readonly IEquipmentDao equipmentDao;
+    private readonly IGameDao gameDao;
 
 
-    public EquipmentLogic(IEquipmentDao equipmentDao)
+    public EquipmentLogic(IEquipmentDao equipmentDao, IGameDao gameDao)
     {
         this.equipmentDao = equipmentDao;
+        this.gameDao = gameDao;
     }
 
     public async Task<IEnumerable<Equipment>> CreateEquipmentAsync(IEnumerable<EquipmentBasicDto>  equipment, int amount)
@@ -101,6 +104,30 @@ public class EquipmentLogic: IEquipmentLogic
         return equipmentDao.GetEquipmentListByNameAsync(name);
     }
 
+    public async Task RentEquipment(RentEquipmentDto dto, string username)
+    {
+            IEnumerable<Equipment> availableEquipment = await GetAvailableEquipment();
+            List<int> forRentEquipment = new List<int>();
+            IEnumerable<Game> userGames = await gameDao.GetGamesByUsername(username);
+            int gameId = userGames.FirstOrDefault()?.Id ?? 0;
+
+            foreach (int equipmentName in dto.EquipmentIds)
+            {
+                Equipment equipment = availableEquipment.FirstOrDefault(eq => eq.Id == equipmentName);
+
+                if (equipment != null)
+                {
+                    forRentEquipment.Add(equipment.Id);
+                }
+            }
+
+            RentEquipmentDto newRented = new RentEquipmentDto(gameId, forRentEquipment);
+          
+            
+            await equipmentDao.RentEquipment(newRented);
+        
+    }
+
     public async Task DeleteEquipmentAsync(string name)
     {
 
@@ -121,6 +148,10 @@ public class EquipmentLogic: IEquipmentLogic
             }
         
  
+    }
+    public async Task<IEnumerable<Equipment>> GetAvailableEquipment()
+    {
+        return await equipmentDao.GetAvailbaleEquipment();
     }
 
     /*public async Task<Equipment> RentEquipment(RentEquipmentDto dto)

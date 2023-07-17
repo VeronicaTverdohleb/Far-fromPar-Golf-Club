@@ -2,17 +2,22 @@ namespace Shared.Dtos.EquipmentDto;
 
 public class RentEquipmentDto
 {
-
    
+
     public int GameId { get; }
-    public List<string> EquipmentNames { get; }
+    public List<int> EquipmentIds { get; }
     public int Amount { get; }
     
-    public RentEquipmentDto(int gameId, List<string> equipmentNames, int amount)
+  /*  public RentEquipmentDto(int gameId, List<string> equipmentNames)
     {
 
         GameId = gameId;
         EquipmentNames = equipmentNames;
-        Amount = amount;
+        
+    }*/
+    public RentEquipmentDto(int gameId, List<int> equipmentIds)
+    {
+        GameId = gameId;
+        EquipmentIds = equipmentIds;
     }
 }

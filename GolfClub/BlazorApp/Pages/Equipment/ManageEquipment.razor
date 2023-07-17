@@ -5,7 +5,12 @@
 @inject IEquipmentService EquipmentService
 @inject IJSRuntime jsRuntime
 @inject NavigationManager navMgr
-<h3>View Equipments</h3>       <button class="addNewButton"  @onclick="@(() => navMgr.NavigateTo("/AddEquipment"))">Add new equipment</button>
+<div class="headline_box">
+    <img src="img/golfball.png" class="golfball" alt="Golf Ball"/>
+    <h3 class="headline"> Manage Equipment </h3>
+    <img src="img/golfball.png" class="golfball" alt="Golf Ball"/>
+</div>       
+<button class="addNewButton"  @onclick="@(() => navMgr.NavigateTo("/AddEquipment"))">Add new equipment</button>
 <div class="filter-bar">
     <div class="filters-container">
         <img src="img/@(doShowFilters ? "clear_" : "")funnel.png" class="funnel" @onclick="@(() => doShowFilters = !doShowFilters)" alt="Funnel"/>
@@ -28,11 +33,14 @@
 </div>
 @if (equipmetsounts != null)
 {
-    <table>
+    <table class="equipment-table">
         <thead>
         <tr>
             <th>Name</th>
-            <th>Count</th>
+            <th>Amount</th>
+            <th>Delete</th>
+            <th>Add</th>
+            <th>Subtract</th>
         </tr>
         </thead>
         <tbody>
@@ -42,61 +50,75 @@
                 <td>@e.Name</td>
                 <td>@e.Amount</td>
                 <td>
-                    <img src="img/view.png" class="funnel" @onclick="@(() => navMgr.NavigateTo($"/ViewAndManageEquipment/{e.Name}/{e.Amount}"))"/></td>
-                <td>
                     <img src="img/delete.png" class="funnel" @onclick="@(() => ConfirmAction(e.Name))"/>
                 </td>
-       
-       
+                <td>
+                    <img src="img/add.png" class="funnel" @onclick="@(() => ShowUpdateFormPlus(e.Name))"/>
+                    
+                </td>
+                
+                <td>
+                    <img src="img/clear_add.png" class="funnel" @onclick="@(() => ShowUpdateFormMinus(e.Name))"/>
+                     
+                </td>
             </tr>
+            @if (showUpdateFormPlus && e.Name == selectedEquipmentName)
+            {
+                <tr>
+                    <td colspan="20">
+                        <div class="update-form">
+                            <div class="form-group field">
+                                <label>Add more equipment items:</label> 
+                                <br/>
+                                <label>Name:</label>
+                                <input type="text" @bind="selectedEquipmentName" readonly/>
+                            </div>
+                            <div class="form-group field">
+                                <label>Amount:</label>
+                                <input type="text" @bind="upAmount"/>
+                            </div>
+                            <div class="button-row">
+                                @if (!string.IsNullOrEmpty(error))
+                                {
+                                    <label style="color: red">@error</label>
+                                }
+                                <button class="createEquipmentButton" @onclick="UpdateMoreEquipment">Update</button>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+           
+            @if (showUpdateFormMinus && e.Name == selectedEquipmentName){
+                <tr>
+        <td colspan="5">
+        <div class="update-form">
+            <div class="form-group field">
+                <label>Remove some equipment items:</label>
+                <br/>
+                <label>Name: </label>
+                <input type="text" @bind="selectedEquipmentName" readonly/>
+            </div>
+            <div class="form-group field">
+                <label>Amount:</label>
+                <input type="text" @bind="upAmount1"/>
+            </div>
+            <div class="button-row">
+                @if (!string.IsNullOrEmpty(error))
+                {
+                    <label style="color: red">@error</label>
+                }
+                <button class="createEquipmentButton" @onclick="UpdateLessEquipment">Update</button>
+            </div>
+        </div>
+        </td>
+                        </tr>
+            }
         }
         </tbody>
     </table>
     <br/> <br/> <br/>
-    <h3>Manage Equipment</h3> 
-    <h5>Add more existing equipment</h5> 
-    <div class="filter-bar">
-        <div class="filters-container">
-            <img src="icons/@(doShowFilters1 ? "clear_" : "")add.png" class="funnel" @onclick="@(() => doShowFilters1 = !doShowFilters1)" alt="Funnel"/>
-            <div class="form-group field">
-                <label>Name:</label>
-                <input type="text" @bind="upName"/>
-            </div>
-            <br/>
-            <div class="form-group field">
-                <label>Amount :</label>
-                <input type="text" @bind="upAmount" />
-            </div>  </div>  </div>  
-    <div class="button-row">
-        @if (!string.IsNullOrEmpty(error))
-        {
-            <label style="color: red">@error</label>
-        }
-                
-        <button class="createEquipmentButton"  @onclick="UpdateMoreEquipment">Update</button>
-    </div>
     
-    <h5>Remove some existing equipment</h5> 
-    <div class="filter-bar">
-        <div class="filters-container">
-            <img src="icons/@(doShowFilters1 ? "clear_" : "")add.png" class="funnel" @onclick="@(() => doShowFilters1 = !doShowFilters1)" alt="Funnel"/>
-            <div class="form-group field">
-                <label>Name:</label>
-                <input type="text" @bind="upName1"/>
-            </div>
-            <br/>
-            <div class="form-group field">
-                <label>Amount :</label>
-                <input type="text" @bind="upAmount1" />
-            </div>  </div>  </div>  
-    <div class="button-row">
-        @if (!string.IsNullOrEmpty(error))
-        {
-            <label style="color: red">@error</label>
-        }
-                
-        <button class="createEquipmentButton"  @onclick="UpdateLessEquipment">Update</button>
-    </div>
 
 }
 @code {
@@ -115,6 +137,9 @@
     private string upName1;
     private int upAmount1;
     private string error = "";
+    private bool showUpdateFormMinus = false;
+    private bool showUpdateFormPlus = false;
+    private string selectedEquipmentName = "";
     /* <td>
                 <img src="img/delete.png" class="funnel" @onclick="@(() => ConfirmAction(e.Equipments))"/> 
                 
@@ -144,7 +169,7 @@
         }
     }
 
-    private async Task ConfirmAction(string name )
+    private async Task ConfirmAction(string? name )
     {
         bool confirmed = await jsRuntime.InvokeAsync<bool>("confirmAction", "Are you sure you want to proceed?");
 
@@ -209,10 +234,29 @@
            
         await EquipmentService.UpdateEquipmentAmount(upName1,upAmount1);
         equipments = await EquipmentService.getAllEquipmentAsync(null);
+        error = "Equipment updated";
         await OnInitializedAsync();
             
 
       
+    }
+    private void ShowUpdateFormPlus(string equipmentName)
+    {
+        selectedEquipmentName = equipmentName;
+        upName = equipmentName;
+        upAmount = 0;
+        error = string.Empty;
+        showUpdateFormPlus = true;
+        showUpdateFormMinus = false;
+    }
+    private void ShowUpdateFormMinus(string equipmentName)
+    {
+        selectedEquipmentName = equipmentName;
+        upName1 = equipmentName;
+        upAmount1 = 0;
+        error = string.Empty;
+        showUpdateFormMinus = true;
+        showUpdateFormPlus = false;
     }
 
     /* private async Task<List<EquipmentBasicDto>> GetEquipmentData()

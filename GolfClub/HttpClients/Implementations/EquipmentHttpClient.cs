@@ -115,7 +115,7 @@ public class EquipmentHttpClient: IEquipmentService
         return equipment;
     }
 
-    public async Task DeleteEquipmentAsync(string name)
+    public async Task DeleteEquipmentAsync(string? name)
     {
         HttpResponseMessage response = await client.DeleteAsync($"Equipment/{name}");
         if (!response.IsSuccessStatusCode)
@@ -140,4 +140,31 @@ public class EquipmentHttpClient: IEquipmentService
         })!;
         return n; 
     }
+
+    public async Task RentEquipment(RentEquipmentDto dto, string username)
+    {
+        HttpResponseMessage response = await client.PostAsJsonAsync("/RentEquipment", dto);
+        if (!response.IsSuccessStatusCode)
+        {
+            string content = await response.Content.ReadAsStringAsync();
+            throw new Exception(content);
+        }
+    }
+    
+    public async Task<IEnumerable<Equipment>?> GetAvailableEquipment()
+    {
+        var response = await client.GetAsync("/Equipment/RentEquipment/available");
+        response.EnsureSuccessStatusCode();
+        var responseStream = await response.Content.ReadAsStreamAsync();
+        var options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
+        var result = await JsonSerializer.DeserializeAsync<IEnumerable<Equipment>>(responseStream, options);
+        return result;
+       
+    }
+    
+    
 }

@@ -12,4 +12,6 @@ public interface IEquipmentLogic
     Task<Equipment?> GetEquipmentByNameAsync(string name);
     Task DeleteEquipmentAsync(string name);
     Task<List<Equipment>> GetEquipmentListAsync(string name);
+    Task RentEquipment(RentEquipmentDto dto, string username);
+    Task<IEnumerable<Equipment>> GetAvailableEquipment();
 }
