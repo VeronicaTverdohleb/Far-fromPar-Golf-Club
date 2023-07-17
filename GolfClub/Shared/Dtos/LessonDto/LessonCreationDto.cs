@@ -7,4 +7,11 @@ public class LessonCreationDto
     public DateTime DateAndTime { get; set; }
     public User Player { get; set; }
     public string Instructor { get; set; }
+
+    public LessonCreationDto(DateTime dateAndTime, User player, string instructor)
+    {
+        DateAndTime = dateAndTime;
+        Player = player;
+        Instructor = instructor;
+    }
 }

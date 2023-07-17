@@ -3,7 +3,12 @@
 @using global::Shared.Model
 @using Microsoft.VisualBasic
 @using System.Text.Json
+@using global::Shared.Dtos.LessonDto
+@using HttpClients.ClientInterfaces
+@using System.Security.Claims
 @inject IJavaSocketConnection socketService
+@inject ILessonService lessonService;
+@inject IUserService userService;
 
 <h3>Book Lesson</h3>
 
@@ -29,20 +34,24 @@ else
     {
         <div class="instructor">
             <p>Name: @instructor.InstructorName</p>
-            <p>Date: @instructor.Date</p>
-            <p>Time: @instructor.Time</p>
-            <button onclick=@(() => bookLesson(instructor))>Book Lesson</button>
+            <p>Date & Time: @instructor.DateTime</p>
+            <button onclick=@(() => BookALesson(instructor))>Book Lesson</button>
         </div>
     }
     <p style="color: red">@msg</p>
 }
 
 @code {
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthState { get; set; } = null!;
+    private IEnumerable<Claim>? userClaims;
+    
     private DateAndTime dateTime;
     private ICollection<InstructorLesson> Instructors;
     private string msg = "";
     private string selectedDate;
     private string chosenDate;
+    private string username;
     
     protected override async Task OnInitializedAsync()
     {
@@ -102,8 +111,29 @@ else
 
     }
     
-    private void bookLesson(InstructorLesson instructorLesson)
+    private async void BookALesson(InstructorLesson instructorLesson)
     {
-        
+        if (instructorLesson == null)
+        {
+            msg = "Error with booking lesson!";
+        }
+        else
+        {
+            var authState = await AuthState;
+            var user = authState.User;
+            
+            userClaims = user.Claims;
+            foreach (var claim in userClaims!)
+            {
+                if (claim.Type.Equals("Username"))
+                    username = claim.Value;
+            }
+            User player = await userService.GetByUsernameAsync(username);
+            
+            DateTime dateTime = Convert.ToDateTime(instructorLesson.DateTime);
+            LessonCreationDto dto = new LessonCreationDto(dateTime, player, instructorLesson.InstructorName);
+            await lessonService.CreateAsync(dto);
+        }
+        StateHasChanged();
     }
 }
