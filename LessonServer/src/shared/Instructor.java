@@ -4,9 +4,11 @@ package shared;
  * This class takes in the values stored for an Ingredient object
  */
 public class Instructor {
+    private int id;
     private String instructorName;
-    public Instructor(String instructorName) {
+    public Instructor(String instructorName, int id) {
         this.instructorName = instructorName;
+        this.id = id;
     }
 
     /**

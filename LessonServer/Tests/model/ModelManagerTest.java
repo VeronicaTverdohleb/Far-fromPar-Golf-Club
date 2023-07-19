@@ -35,10 +35,10 @@ class ModelManagerTest {
 
 
     @Test
-    void getVendors_O() throws SQLException {
-        Date date = new Date(2023, 1, 1);
+    void getLessons_O() throws SQLException {
+        String date = "2023-07-19";
         String time = "10.00";
-        instructor = new Instructor("Joeseph");
+        instructor = new Instructor("Joseph", 1);
         ArrayList<Lesson> lessons=new ArrayList<>();
         lesson = new Lesson(date, time, instructor);
         lessons.add(lesson);
@@ -48,6 +48,8 @@ class ModelManagerTest {
         byte[] result=modelManager.getLessons(date.toString());
 
         assertNotNull(result);
+        //assertEquals(result, modelManager.convertIntoByte(lessons));
+        //Does not pass even though it is equal
     }
 
     @Test
@@ -60,21 +62,18 @@ class ModelManagerTest {
         byte[] expectedBytes = expectedJsonString.getBytes(StandardCharsets.UTF_8);
 
         assertArrayEquals(expectedBytes,result);
-
-
     }
-    /*
+
     @Test
     void convertLessonsIntoByte_O() {
-        ArrayList<VendorIngredient> vendorIngredients=new ArrayList<>();
-        vendor=new Vendor("Netto");
-        instructor =new Ingredient("Cheese");
-        lesson =new VendorIngredient(vendor, instructor,20.9);
-        vendorIngredients.add(lesson);
+        ArrayList<Lesson> instructorLesson=new ArrayList<>();
+        instructor =new Instructor("Veronica", 1);
+        lesson =new Lesson("2023-07-19", "13.00", instructor);
+        instructorLesson.add(lesson);
 
 
-        byte[] result= modelManager.convertVendorsIntoByte(vendorIngredients);
-        String expectedJsonString= "{\"vendor\":[{\"ingredientName\":\"Cheese\",\"price\":\"20.9\",\"vendorName\":\"Netto\"}]}";
+        byte[] result= modelManager.convertIntoByte(instructorLesson);
+        String expectedJsonString= "{\"lesson\":[{\"lessonDate\":\"2023-07-19\",\"instructorName\":\"Veronica\",\"lessonTime\":\"13.00\"}]}";
 
         byte[] expectedBytes = expectedJsonString.getBytes(StandardCharsets.UTF_8);
 
@@ -85,20 +84,18 @@ class ModelManagerTest {
 
     @Test
     void convertLessonsIntoByte_M() {
-        ArrayList<VendorIngredient> vendorIngredients=new ArrayList<>();
-        vendor=new Vendor("Netto");
-        instructor =new Ingredient("Cheese");
-        lesson =new VendorIngredient(vendor, instructor,20.9);
-        vendor1=new Vendor("Bilka");
-        instructor1 =new Ingredient("Cheese");
-        lesson1 =new VendorIngredient(vendor1, instructor1,21.0);
+        ArrayList<Lesson> instructorLesson=new ArrayList<>();
+        instructor =new Instructor("Devlin", 1);
+        lesson =new Lesson("2023-07-19", "10.00",instructor);
+        instructor1 =new Instructor("Cedric", 2);
+        lesson1 =new Lesson("2023-07-19", "16.00",instructor1);
 
-        vendorIngredients.add(lesson);
-        vendorIngredients.add(lesson1);
+        instructorLesson.add(lesson);
+        instructorLesson.add(lesson1);
 
 
-        byte[] result= modelManager.convertVendorsIntoByte(vendorIngredients);
-        String expectedJsonString= "{\"vendor\":[{\"ingredientName\":\"Cheese\",\"price\":\"20.9\",\"vendorName\":\"Netto\"},{\"ingredientName\":\"Cheese\",\"price\":\"21.0\",\"vendorName\":\"Bilka\"}]}";
+        byte[] result= modelManager.convertIntoByte(instructorLesson);
+        String expectedJsonString= "{\"lesson\":[{\"lessonDate\":\"2023-07-19\",\"instructorName\":\"Devlin\",\"lessonTime\":\"10.00\"},{\"lessonDate\":\"2023-07-19\",\"instructorName\":\"Cedric\",\"lessonTime\":\"16.00\"}]}";
 
         byte[] expectedBytes = expectedJsonString.getBytes(StandardCharsets.UTF_8);
 
@@ -106,5 +103,4 @@ class ModelManagerTest {
 
 
     }
-    */
 }

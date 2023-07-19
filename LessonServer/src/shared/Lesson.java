@@ -7,11 +7,11 @@ import java.util.Date;
  */
 public class Lesson {
 
-    private Date date;
+    private String date;
     private String time;
     private Instructor instructor;
 
-    public Lesson(Date date, String time, Instructor instructor) {
+    public Lesson(String date, String time, Instructor instructor) {
         this.date = date;
         this.time = time;
         this.instructor = instructor;
@@ -20,7 +20,7 @@ public class Lesson {
     /**
      * @return date type
      */
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
@@ -28,7 +28,7 @@ public class Lesson {
      *
      * @param date Date type
      */
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 

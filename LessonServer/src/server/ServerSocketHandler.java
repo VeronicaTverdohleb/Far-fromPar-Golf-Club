@@ -71,7 +71,7 @@ public class ServerSocketHandler implements Runnable {
 
                 if (result.get("Action").equals("get".toLowerCase())) {
                     if (result.containsKey("Date")) {
-                        byte[] newObjectToSend = model.getLessons(result.get("").toString());
+                        byte[] newObjectToSend = model.getLessons(result.get("Date").toString());
                         sendData(newObjectToSend);
                     }
                 } else if (result.get("Action").equals("exit".toLowerCase())) {

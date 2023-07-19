@@ -8,6 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import shared.Instructor;
 import shared.Lesson;
 
 import java.sql.SQLException;
@@ -44,48 +45,45 @@ class DataModelManagerTest {
         assertThrows(Exception.class, ()->{ throw new Exception("No lessons");});
 
     }
-    /*
-    @Test public void testGettingLessons_O() throws SQLException {
-        String name="Tomato";
 
-        VendorIngredient vi1=new VendorIngredient(v,ingredient,9.99);
-        ArrayList<VendorIngredient> vendors=new ArrayList<>();
-        vendors.add(vi1);
-        ArrayList<VendorIngredient> vendors1=new ArrayList<>();
-        vendors1.add(vi1);
+    @Test public void testGettingLessons_O() throws SQLException {
+        Instructor instructor = new Instructor("Cedric", 2);
+        Lesson l=new Lesson(date.toString(),"10.00",instructor);
+        ArrayList<Lesson> larray=new ArrayList<>();
+        larray.add(l);
+        ArrayList<Lesson> larray2=new ArrayList<>();
+        larray2.add(l);
 
         try {
-            when(dataModel.getVendors(name)).thenReturn(vendors);
+            when(dataModel.getLessons(date.toString())).thenReturn(larray);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        ArrayList<VendorIngredient> actualResult= dataModel.getVendors(name);
+        ArrayList<Lesson> actualResult= dataModel.getLessons(date.toString());
 
-        assertEquals(vendors1,actualResult);
+        assertEquals(larray2,actualResult);
     }
 
     @Test public void testGettingLessons_M() throws SQLException {
-        String name="Tomato";
-        ingredient=new Ingredient("Tomato");
-        Vendor v =new Vendor("netto");
-        Vendor v1=new Vendor("bilka");
-        VendorIngredient vi1=new VendorIngredient(v,ingredient,9.99);
-        VendorIngredient vi2=new VendorIngredient(v1,ingredient,9.29);
 
-        ArrayList<VendorIngredient> vendors=new ArrayList<>();
-        vendors.add(vi1);
-        vendors.add(vi2);
-        ArrayList<VendorIngredient> vendors1=new ArrayList<>();
-        vendors1.add(vi1);
+        Instructor i1 = new Instructor("Thomas", 1);
+        Instructor i2 = new Instructor("Joseph", 2);
+        Lesson l1 = new Lesson(date.toString(), "8.00", i1);
+        Lesson l2 = new Lesson(date.toString(), "14.00", i2);
+
+        ArrayList<Lesson> list1=new ArrayList<>();
+        list1.add(l1);
+        list1.add(l2);
+        ArrayList<Lesson> list2=new ArrayList<>();
+        list2.add(l1);
 
         try {
-            when(dataModel.getVendors(name)).thenReturn(vendors);
+            when(dataModel.getLessons(date.toString())).thenReturn(list1);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        ArrayList<VendorIngredient> actualResult= dataModel.getVendors(name);
+        ArrayList<Lesson> actualResult= dataModel.getLessons(date.toString());
 
-        assertEquals(vendors,actualResult);
+        assertEquals(list1,actualResult);
     }
-     */
 }

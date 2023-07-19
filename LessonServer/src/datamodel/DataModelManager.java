@@ -27,7 +27,7 @@ public class DataModelManager implements DataModel {
      * @throws SQLException
      */
     private Connection getConnection() throws SQLException{
-        return DriverManager.getConnection("jdbc:postgresql://localhost:5432/vendor_db","postgres","bobs");
+        return DriverManager.getConnection("jdbc:postgresql://localhost:5432/lessons_db","postgres","bobs");
     }
 
     /**
@@ -40,26 +40,36 @@ public class DataModelManager implements DataModel {
     @Override
     public ArrayList<Lesson> getLessons(String lessonDate) throws SQLException {
         try(Connection connection=getConnection()){
-            PreparedStatement preparedStatement=connection.prepareStatement("select * " +
-                    " from lesson" +
-                    " where lessonDate = "+ "'" +lessonDate+ "'") ;
+            String query = "select * "+
+                    "from lesson "+
+                    "where date = "+ "'" +lessonDate+ "'";
+            System.out.println(query);
+            PreparedStatement preparedStatement=connection.prepareStatement(query) ;
             //System.out.println(preparedStatement);
             ResultSet resultSet=preparedStatement.executeQuery();
             ArrayList<Lesson> lessons=new ArrayList<>();
             while (resultSet.next()){
-                String lessonsDate=resultSet.getString(1);
+                String lessonsDate=resultSet.getString(3);
                 if(lessonsDate==null){
                     throw new SQLException("No lessons for this date");
                 }
 
-                //Need help solving this!
-                String inName=resultSet.getString(3);
-                Instructor instructor = new Instructor(inName);
-                String time=resultSet.getString(2);
-                Lesson l = new Lesson(new Date(lessonDate), time, instructor);
+                int instructorId=resultSet.getInt(2);
+                PreparedStatement statement=connection.prepareStatement("select *" +
+                        " from instructor" +
+                        " where id = "+ instructorId);
+                ResultSet resultSet1 = statement.executeQuery();
+                while(resultSet1.next()) {
+                    String name = resultSet1.getString(2);
+                    Instructor instructor = new Instructor(name, instructorId);
+                    String time = resultSet.getString(4);
+                    Lesson l = new Lesson(lessonsDate, time, instructor);
 
-                lessons.add(l);
-
+                    lessons.add(l);
+                }
+                if (lessons.size() == 0){
+                    throw new SQLException("No lessons for this date");
+                }
             }
             return lessons;
         }
