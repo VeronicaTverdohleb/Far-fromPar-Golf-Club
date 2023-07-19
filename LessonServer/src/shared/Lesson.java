@@ -1,28 +1,41 @@
 package shared;
 
+import java.util.Date;
+
 /**
- * This class takes in the values stored for a Vendor object
+ * This class takes in the values stored for a Lesson object
  */
 public class Lesson {
-    private String instructorName;
 
-    public Lesson(String vendorName) {
-        this.instructorName = vendorName;
+    private Date date;
+    private String time;
+    private Instructor instructor;
+
+    public Lesson(Date date, String time, Instructor instructor) {
+        this.date = date;
+        this.time = time;
+        this.instructor = instructor;
+    }
+
+    /**
+     * @return date type
+     */
+    public Date getDate() {
+        return date;
     }
 
     /**
      *
-     * @return string type
+     * @param date Date type
      */
-    public String getVendorName() {
-        return instructorName;
+    public void setDate(Date date) {
+        this.date = date;
     }
 
-    /**
-     *
-     * @param instructorName string type
-     */
-    public void setVendorName(String instructorName) {
-        this.instructorName = instructorName;
+    public Instructor getInstructor(){return instructor;}
+
+    public void setTime(String time){
+        this.time = time;
     }
+    public String getTime(){return time;}
 }
