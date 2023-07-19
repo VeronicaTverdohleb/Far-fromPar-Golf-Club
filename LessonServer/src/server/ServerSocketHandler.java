@@ -70,8 +70,8 @@ public class ServerSocketHandler implements Runnable {
                 System.out.println("Received from client: " + result.toString());
 
                 if (result.get("Action").equals("get".toLowerCase())) {
-                    if (result.containsKey("IngredientName")) {
-                        byte[] newObjectToSend = model.getVendors(result.get("IngredientName").toString());
+                    if (result.containsKey("Date")) {
+                        byte[] newObjectToSend = model.getLessons(result.get("").toString());
                         sendData(newObjectToSend);
                     }
                 } else if (result.get("Action").equals("exit".toLowerCase())) {

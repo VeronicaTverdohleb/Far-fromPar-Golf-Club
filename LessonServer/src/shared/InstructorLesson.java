@@ -3,7 +3,7 @@ package shared;
 /**
  * This class takes in the values stored for a VendorIngredient object
  */
-public class VendorIngredient {
+public class InstructorLesson {
     private Vendor vendor;
     private Ingredient ingredient;
     private double price;
@@ -14,7 +14,7 @@ public class VendorIngredient {
      * @param ingredient takes in an Ingredient
      * @param price takes in an integer
      */
-    public VendorIngredient(Vendor vendor, Ingredient ingredient, double price) {
+    public InstructorLesson(Vendor vendor, Ingredient ingredient, double price) {
         this.vendor = vendor;
         this.ingredient = ingredient;
         this.price = price;
@@ -22,16 +22,16 @@ public class VendorIngredient {
 
     /**
      *
-     * @return Ingredient type
+     * @return instructor type
      */
-    public Ingredient getIngredient() {
+    public Ingredient getInstructor() {
         return ingredient;
     }
     /**
      *
-     * @return Vendor type
+     * @return lesson type
      */
-    public Vendor getVendor() {
+    public Vendor getLesson() {
         return vendor;
     }
     /**

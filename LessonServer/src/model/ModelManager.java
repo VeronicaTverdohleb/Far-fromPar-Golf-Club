@@ -1,10 +1,11 @@
 package model;
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import datamodel.DataModel;
-import shared.VendorIngredient;
+import shared.Lesson;
 import org.json.simple.JSONObject;
 
 import java.sql.SQLException;
@@ -26,50 +27,50 @@ public class ModelManager implements Model {
 
 
     /**
-     * Method gets the vendors from the getVendors() method in DataModel
+     * Method gets the vendors from the getLessons() method in DataModel
      * which is implemented in DataModelManager
-     * @param ingredientName gets the vendors by this ingredient name parameter
-     * @return a byte version of the vendors ArrayList
+     * @param date gets the lessons
+     * @return a byte version of the lessons ArrayList
      */
     @Override
-    public byte[] getVendors(String ingredientName) {
-        ArrayList<VendorIngredient> vendors = null;
+    public byte[] getLessons(String date) {
+        ArrayList<Lesson> lessons = null;
         try {
-            vendors = dataModel.getVendors(ingredientName);
+            lessons = dataModel.getLessons(date);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
-        return convertVendorsIntoByte(vendors);
+        return convertIntoByte(lessons);
     }
 
     /***
      * Translates DB output to JSON string and then into byte array
      * The format of the JSON output is:
-     * {"vendor": [ {"vendorName: "{vendorName}",
-     *               "ingredientName": "{ingredientName}",
-     *               "price": "{price}"}
+     * {"lesson": [ {"instructorName: "{Name}",
+     *               "lessonDate": "{Date}",
+     *               "lessonTime": "{Time}"}
      *            ]
      * }
-     * @param vendorIngredients ArrayList of vendorIngredients
+     * @param lessons ArrayList of Lesson
      * @return a string of bytes
      */
-    public byte[] convertVendorsIntoByte(ArrayList<VendorIngredient> vendorIngredients) {
-        // Creating map for "vendor": [list of vendors and their info]
-        Map<String, ArrayList<Map<String, String>>> vendorsInfo = new HashMap<>();
+    public byte[] convertIntoByte(ArrayList<Lesson> lessons) {
+        // Creating map for "lesson": [list of lessons and their info]
+        Map<String, ArrayList<Map<String, String>>> lessonInfo = new HashMap<>();
 
-        // Creating Maps for each vendor and putting it in the above Map vendorInfo
-        for (VendorIngredient vendorIngredient : vendorIngredients) {
-            Map<String, String> singleVendorInfo = new HashMap<>();
+        // Creating Maps for each vendor and putting it in the above Map lessonInfo
+        for (Lesson lesson : lessons) {
+            Map<String, String> singleLessonInfo = new HashMap<>();
             // Putting values from DB output together with pre-agreed keys compatible with the C# side
-            singleVendorInfo.put("vendorName", vendorIngredient.getVendor().getVendorName());
-            singleVendorInfo.put("ingredientName", vendorIngredient.getIngredient().getName());
-            singleVendorInfo.put("price", String.valueOf(vendorIngredient.getPrice()));
-            vendorsInfo.computeIfAbsent("vendor", k -> new ArrayList<>()).add(singleVendorInfo);
+            singleLessonInfo.put("instructorName", lesson.getInstructor().getName());
+            singleLessonInfo.put("lessonDate", lesson.getDate().toString());
+            singleLessonInfo.put("lessonTime", String.valueOf(lesson.getTime()));
+            lessonInfo.computeIfAbsent("lesson", k -> new ArrayList<>()).add(singleLessonInfo);
         }
 
-        // Map into JSON, so it has "" around keys and values (otherwise it just makes the values as Ingredient=Tomato)
-        JSONObject json = new JSONObject(vendorsInfo);
+        // Map into JSON, so it has "" around keys and values
+        JSONObject json = new JSONObject(lessonInfo);
 
         // Return byte array of the JSON
         return json.toString().getBytes(StandardCharsets.UTF_8);

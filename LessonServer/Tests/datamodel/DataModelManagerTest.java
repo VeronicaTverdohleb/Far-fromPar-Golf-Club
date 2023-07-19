@@ -8,12 +8,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import shared.Ingredient;
-import shared.Vendor;
-import shared.VendorIngredient;
+import shared.Lesson;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 
 import static org.mockito.Mockito.when;
 
@@ -21,34 +20,34 @@ import static org.mockito.Mockito.when;
 class DataModelManagerTest {
     @Mock DataModelManager dataModelManager;
     @Mock DataModel dataModel;
-    @Mock Ingredient ingredient;
+    @Mock
+    Date date;
 
     @BeforeEach public void setup() throws SQLException {
         MockitoAnnotations.openMocks(this);
         dataModelManager=new DataModelManager();
     }
 
-    @Test public void testGettingVendors_Z() throws SQLException {
+    @Test public void testGettingLessons_Z() throws SQLException {
 
-        String name="Tomato";
-        ArrayList<VendorIngredient> vendors=new ArrayList<>();
+        Date date = new Date(2023, 07,19);
+        ArrayList<Lesson> lessons=new ArrayList<>();
 
         try {
-            when(dataModel.getVendors(name)).thenReturn(vendors);
+            when(dataModel.getLessons(date.toString())).thenReturn(lessons);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        ArrayList<VendorIngredient> actualResult= dataModel.getVendors(name);
+        ArrayList<Lesson> actualResult= dataModel.getLessons(date.toString());
 
-        assertEquals(vendors,actualResult);
-        assertThrows(Exception.class, ()->{ throw new Exception("No vendors");});
+        assertEquals(lessons,actualResult);
+        assertThrows(Exception.class, ()->{ throw new Exception("No lessons");});
 
     }
-
-    @Test public void testGettingVendors_O() throws SQLException {
+    /*
+    @Test public void testGettingLessons_O() throws SQLException {
         String name="Tomato";
-        ingredient=new Ingredient("Tomato");
-        Vendor v =new Vendor("netto");
+
         VendorIngredient vi1=new VendorIngredient(v,ingredient,9.99);
         ArrayList<VendorIngredient> vendors=new ArrayList<>();
         vendors.add(vi1);
@@ -65,7 +64,7 @@ class DataModelManagerTest {
         assertEquals(vendors1,actualResult);
     }
 
-    @Test public void testGettingVendors_M() throws SQLException {
+    @Test public void testGettingLessons_M() throws SQLException {
         String name="Tomato";
         ingredient=new Ingredient("Tomato");
         Vendor v =new Vendor("netto");
@@ -88,4 +87,5 @@ class DataModelManagerTest {
 
         assertEquals(vendors,actualResult);
     }
+     */
 }

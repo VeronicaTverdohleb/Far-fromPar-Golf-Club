@@ -1,11 +1,11 @@
 package datamodel;
 
-import shared.Ingredient;
-import shared.Vendor;
-import shared.VendorIngredient;
+import shared.Instructor;
+import shared.Lesson;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Implements DataModel interface
@@ -33,35 +33,35 @@ public class DataModelManager implements DataModel {
     /**
      * Method that returns an ArrayList of all the vendors from the database
      * who have the requested ingredient
-     * @param ingredientName the ingredients name which will be requested
+     * @param lessonDate the ingredients name which will be requested
      * @return vendor (name, ingredient, price)
      * @throws SQLException
      */
     @Override
-    public ArrayList<VendorIngredient> getVendors(String ingredientName) throws SQLException {
+    public ArrayList<Lesson> getLessons(String lessonDate) throws SQLException {
         try(Connection connection=getConnection()){
             PreparedStatement preparedStatement=connection.prepareStatement("select * " +
-                    " from vendoringredient" +
-                    " where ingredientname= "+ "'" +ingredientName+ "'") ;
+                    " from lesson" +
+                    " where lessonDate = "+ "'" +lessonDate+ "'") ;
             //System.out.println(preparedStatement);
             ResultSet resultSet=preparedStatement.executeQuery();
-            ArrayList<VendorIngredient> vendorIngredients=new ArrayList<>();
+            ArrayList<Lesson> lessons=new ArrayList<>();
             while (resultSet.next()){
-                String vendorName=resultSet.getString(1);
-                if(vendorName==null){
-                    throw new SQLException("No vendors for this ingredient");
+                String lessonsDate=resultSet.getString(1);
+                if(lessonsDate==null){
+                    throw new SQLException("No lessons for this date");
                 }
-                String ingName=resultSet.getString(2);
-                double price=resultSet.getDouble(3);
-                Vendor vendor=new Vendor(vendorName);
-                Ingredient ingredient=new Ingredient(ingName);
-                VendorIngredient vIng=new VendorIngredient(vendor,ingredient,price);
 
-                vendorIngredients.add(vIng);
+                //Need help solving this!
+                String inName=resultSet.getString(3);
+                Instructor instructor = new Instructor(inName);
+                String time=resultSet.getString(2);
+                Lesson l = new Lesson(new Date(lessonDate), time, instructor);
+
+                lessons.add(l);
 
             }
-            return vendorIngredients;
+            return lessons;
         }
-
     }
 }
