@@ -4,7 +4,12 @@
 @using System.Security.Claims
 @inject IStatisticService StatisticService
 @inject IUserService UserService
-<h3>SeeStatistics</h3>
+@inject ITournamentService TournamentService
+<div class="headline_box">
+    <img src="img/golfball.png" class="golfball" alt="Golf Ball"/>
+    <h3 class="headline"> See Statistics </h3>
+    <img src="img/golfball.png" class="golfball" alt="Golf Ball"/>
+</div>
 <label>Hey @loggedInMemberUsername! Which statistic would you like to see?</label>
 <select name="chooseStatistic" id="chooseStatistic" @onchange="SetSelectedStatistic">
     <option selected="selected">choose:</option>
@@ -12,17 +17,25 @@
     <option value="personalBest">Personal Best</option>
     <option value="leaderboard">Leaderboard</option>
     <option value="tournament">Tournament scores</option>
-</select><br/>
+</select><br/><br/>
+
+<button @onclick="LoadStatistic" class="greenButton">Load</button><br/><br/>
+
+
 @if (TournamentBool)
 {
     <br/><label>Enter the name of the tournament: </label>
-    <input type="text" @bind="tournamentName"/><br/>
-    <button @onclick="GetTournamentScores">Load tournament scores</button><br/><br/>
+    <select name="chooseTournament" id="chooseTournament" @onchange="SetSelectedTournament">
+        <option selected="selected">choose:</option>
+        @foreach (var tournament in tournaments)
+        {
+            <option value="@tournament.Name">@tournament.Name</option>
+        }
+    </select>
+    <button @onclick="GetTournamentScores" class="greenButton">Load tournament scores</button><br/><br/>
 }
 
-<button @onclick="LoadStatistic">Load</button><br/><br/>
-<label class="error-message">@msg</label>
-
+<label class="error-message">@msg</label><br/>
 <table>
     <thead>
     <tr>
@@ -85,6 +98,8 @@
     private int chosenScoreTotal = 0;
     private bool TournamentBool = false;
     private string tournamentName = "";
+    private string chosenTournamentName ="";
+    private ICollection<Tournament> tournaments = new List<Tournament>();
 
     [CascadingParameter]
     public Task<AuthenticationState> AuthState { get; set; } = null!;
@@ -103,6 +118,9 @@
             if (claim.Type.Equals("Username"))
                 loggedInMemberUsername = claim.Value;
         }
+        
+        var tournamentCollection = await TournamentService.GetAllTournamentsAsync();
+        tournaments = tournamentCollection.OrderBy(t => t.Name).ToList();
     }
     
     private void SetSelectedStatistic(ChangeEventArgs e)
@@ -151,6 +169,7 @@
 
     public async Task GetAllScores(string name)
     {
+        msg = "";
         scores = await StatisticService.GetAllScoresByPlayerAsync(name);
         if (!scores.Any())
         {
@@ -173,6 +192,7 @@
 
     public async Task GetPersonalBest(string name)
     {
+        msg = "";
         scores = await StatisticService.GetAllScoresByPlayerAsync(name);
         if (!scores.Any())
         {
@@ -209,6 +229,7 @@
 
     public async Task GetLeaderBoard()
     {
+        msg = "";
         allUsers = await UserService.GetAllUsersAsync();
         foreach (var user in allUsers)
         {
@@ -245,13 +266,24 @@
     {
         TournamentBool = !TournamentBool;
     }
+    
+    private void SetSelectedTournament(ChangeEventArgs e)
+    {
+        if (!string.IsNullOrEmpty(e.Value.ToString()))
+        {
+            string selectedTournamentName = e.Value.ToString();
+            tournamentName = selectedTournamentName;
+        }
+    }
 
     public async Task GetTournamentScores()
     {
+        msg = "";
         scores = await StatisticService.GetAllScoresByTournamentAsync(tournamentName);
         if (!scores.Any())
         {
             msg = "No games have been played in this tournament!";
+            chosenScores = new List<Score>();
         }
         else
         {
