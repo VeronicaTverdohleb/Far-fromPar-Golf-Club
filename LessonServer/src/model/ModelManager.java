@@ -27,7 +27,7 @@ public class ModelManager implements Model {
 
 
     /**
-     * Method gets the vendors from the getLessons() method in DataModel
+     * Method gets the lessons from the getLessons() method in DataModel
      * which is implemented in DataModelManager
      * @param date gets the lessons
      * @return a byte version of the lessons ArrayList

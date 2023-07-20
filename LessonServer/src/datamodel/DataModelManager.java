@@ -31,10 +31,10 @@ public class DataModelManager implements DataModel {
     }
 
     /**
-     * Method that returns an ArrayList of all the vendors from the database
-     * who have the requested ingredient
-     * @param lessonDate the ingredients name which will be requested
-     * @return vendor (name, ingredient, price)
+     * Method that returns an ArrayList of all the lessons from the database
+     * who have the requested a date
+     * @param lessonDate the date which has been requested
+     * @return lessons on the given date
      * @throws SQLException
      */
     @Override

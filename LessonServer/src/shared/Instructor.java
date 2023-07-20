@@ -1,7 +1,7 @@
 package shared;
 
 /**
- * This class takes in the values stored for an Ingredient object
+ * This class takes in the values stored for an Instructor object
  */
 public class Instructor {
     private int id;
