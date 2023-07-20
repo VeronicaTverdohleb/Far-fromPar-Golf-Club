@@ -8,7 +8,7 @@
 @using System.Security.Claims
 @inject IJavaSocketConnection socketService
 @inject ILessonService lessonService;
-@inject IUserService userService;
+@inject IJSRuntime jsRuntime;
 
 <h3>Book Lesson</h3>
 
@@ -20,23 +20,24 @@
     <button @onclick="SendMessage">See Instructors</button>
 </div>
 
-@if (Instructors == null)
+@if (Lessons == null)
 {
     <p style="color: red">@msg</p>
-}else if (!Instructors.Any())
+}else if (!Lessons.Any())
 {
     <p style="color: red">No instructors are available on @chosenDate</p>
 }
 else
 {
     <h2>Available Instructors on: @chosenDate</h2>
-    @foreach (var instructor in Instructors)
+    @foreach (var instructor in Lessons)
     {
         <div class="instructor">
             <p>Name: @instructor.InstructorName</p>
-            <p>Date & Time: @instructor.DateTime</p>
-            <button onclick=@(() => BookALesson(instructor))>Book Lesson</button>
+            <p>Date: @instructor.LessonDate</p>
+            <p>Time: @instructor.LessonTime</p>
         </div>
+        <button class="bookLessonBtn" onclick=@(() => ConfirmActionBookLesson(instructor))>Book Lesson</button>
     }
     <p style="color: red">@msg</p>
 }
@@ -46,13 +47,12 @@ else
     public Task<AuthenticationState> AuthState { get; set; } = null!;
     private IEnumerable<Claim>? userClaims;
     
-    private DateAndTime dateTime;
-    private ICollection<InstructorLesson> Instructors;
+    private ICollection<InstructorLesson> Lessons;
     private string msg = "";
     private string selectedDate;
     private string chosenDate;
     private string username;
-    
+
     protected override async Task OnInitializedAsync()
     {
         socketService.Connect();
@@ -100,18 +100,18 @@ else
         };
 
         var result = JsonSerializer.Deserialize<Dictionary<string, List<InstructorLesson>>>(jsonMsg, options);
-        if (result.TryGetValue("instructor", out var instructorList))
+        if (result.TryGetValue("lesson", out var instructorList))
         {
-            Instructors = instructorList;
+            Lessons = instructorList;
         }
         else
         {
-            Instructors.Clear();
+            Lessons.Clear();
         }
 
     }
     
-    private async void BookALesson(InstructorLesson instructorLesson)
+    private async Task BookALesson(InstructorLesson instructorLesson)
     {
         if (instructorLesson == null)
         {
@@ -128,12 +128,33 @@ else
                 if (claim.Type.Equals("Username"))
                     username = claim.Value;
             }
-            User player = await userService.GetByUsernameAsync(username);
-            
-            DateTime dateTime = Convert.ToDateTime(instructorLesson.DateTime);
-            LessonCreationDto dto = new LessonCreationDto(dateTime, player, instructorLesson.InstructorName);
+            LessonCreationDto dto = new LessonCreationDto(instructorLesson.LessonDate, instructorLesson.LessonTime, username, instructorLesson.InstructorName);
             await lessonService.CreateAsync(dto);
         }
         StateHasChanged();
+    }
+    
+    private async Task ConfirmActionBookLesson(InstructorLesson instructorLesson)
+    {
+        bool confirmed = await jsRuntime.InvokeAsync<bool>("confirmAction", "Are you sure you want to proceed?");
+        
+        if (confirmed)
+        {
+            try
+            {
+                await BookALesson(instructorLesson);
+                await OnInitializedAsync();
+                msg = "Lesson Booked";
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                msg = e.Message;
+            }
+        }
+        else
+        {
+            await OnInitializedAsync();
+        }
     }
 }

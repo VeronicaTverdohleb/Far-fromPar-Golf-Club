@@ -3,5 +3,6 @@
 public class InstructorLesson
 {
     public string InstructorName { get; set; }
-    public string DateTime { get; set; }
+    public string LessonDate { get; set; }
+    public string LessonTime { get; set; }
 }

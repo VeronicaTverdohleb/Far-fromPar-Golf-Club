@@ -30,19 +30,19 @@ public class JavaSocketConnection:IJavaSocketConnection
     /// Method that converts a message into Json format and sends it over the socket connection
     /// to the java database
     /// </summary>
-    /// <param name="ingredientName">name of the ingredient to get the vendors for</param>
-    /// <returns>Json of the vendors that sell the chosen ingredient</returns>
-    /// <exception cref="Exception">Exception if the ingredientName is null  or empty</exception>
-    public Task<string> SendMessage(string ingredientName)
+    /// <param name="date">date given to get instructors</param>
+    /// <returns>Json of the lessons on the given date</returns>
+    /// <exception cref="Exception">Exception if the date is null or empty</exception>
+    public Task<string> SendMessage(string date)
     {
-        /*
-        if (string.IsNullOrEmpty(ingredientName))
+  
+        if (string.IsNullOrEmpty(date))
         {
-            throw new Exception($"ingredient name cannot be empty!");
+            throw new Exception($"lesson name cannot be empty!");
         }
         
-        string message = "{\"IngredientName\":\"";
-        message += ingredientName;
+        string message = "{\"Date\":\"";
+        message += date;
         message += "\", \"Action\": \"get\"}";
         int toSendLen = System.Text.Encoding.ASCII.GetByteCount(message);
         byte[] toSendBytes = System.Text.Encoding.ASCII.GetBytes(message);
@@ -61,7 +61,5 @@ public class JavaSocketConnection:IJavaSocketConnection
 
         //clientSocket.Close();
         return Task.FromResult(rcv);
-        */
-        return Task.FromResult("hello");
     }
 }

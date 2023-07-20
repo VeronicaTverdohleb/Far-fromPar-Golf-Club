@@ -4,14 +4,16 @@ namespace Shared.Dtos.LessonDto;
 
 public class LessonCreationDto
 {
-    public DateTime DateAndTime { get; set; }
-    public User Player { get; set; }
+    public string Date { get; set; }
+    public string Time { get; set; }
+    public string PlayerUsername { get; set; }
     public string Instructor { get; set; }
 
-    public LessonCreationDto(DateTime dateAndTime, User player, string instructor)
+    public LessonCreationDto(string date, string time, string playerUsername, string instructor)
     {
-        DateAndTime = dateAndTime;
-        Player = player;
+        Date = date;
+        Time = time;
+        PlayerUsername = playerUsername;
         Instructor = instructor;
     }
 }
