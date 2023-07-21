@@ -162,6 +162,11 @@ else
                 Console.WriteLine(e);
                 msg = e.Message;
             }
+            if (msg.Equals(""))
+            {
+                await jsRuntime.InvokeVoidAsync("alertAction", "Lesson Successfully Created");
+                await OnInitializedAsync();
+            }
         }
         else
         {
