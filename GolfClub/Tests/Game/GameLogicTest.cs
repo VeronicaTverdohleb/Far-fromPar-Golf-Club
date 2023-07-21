@@ -25,7 +25,7 @@ public class GameLogicTest
     
     // Tests for CreateAsync in GameLogic
     [Test]
-    public void CreateAsyncTest_0()
+    public void CreateAsyncTest_O()
     {
         // Arrange
         User user = new User("Petra Hrabakova", "Petra123", "123", "Member");
@@ -146,7 +146,7 @@ public class GameLogicTest
     
     
     [Test]
-    public void GetActiveGameByUsernameAsync_0()
+    public void GetActiveGameByUsernameAsync_O()
     {
         // Arrange
         User user = new User("Petra Hrabakova", "Petra123", "123", "Member");
@@ -231,7 +231,7 @@ public class GameLogicTest
     }
     
     [Test]
-    public void GetAllGamesByUsernameAsync_0()
+    public void GetAllGamesByUsernameAsync_O()
     {
         // Arrange
         User user = new User("Petra Hrabakova", "Petra123", "123", "Member");
@@ -300,7 +300,7 @@ public class GameLogicTest
     
     // Tests for GetGameByIdAsync in GameLogic
     [Test]
-    public void GetGameByIdAsync_0()
+    public void GetGameByIdAsync_O()
     {
         // Arrange
         User user = new User("Petra Hrabakova", "Petra123", "123", "Member");
