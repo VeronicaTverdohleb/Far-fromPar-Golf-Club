@@ -38,7 +38,7 @@ public class JavaSocketConnection:IJavaSocketConnection
   
         if (string.IsNullOrEmpty(date))
         {
-            throw new Exception($"lesson name cannot be empty!");
+            throw new Exception($"lesson date cannot be empty!");
         }
         
         string message = "{\"Date\":\"";

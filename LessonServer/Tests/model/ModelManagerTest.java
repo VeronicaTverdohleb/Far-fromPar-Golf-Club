@@ -40,7 +40,7 @@ class ModelManagerTest {
         String time = "10.00";
         instructor = new Instructor("Joseph", 1);
         ArrayList<Lesson> lessons=new ArrayList<>();
-        lesson = new Lesson(date, time, instructor);
+        lesson = new Lesson(1,date, time, instructor);
         lessons.add(lesson);
 
         when(dataModel.getLessons(date.toString())).thenReturn(lessons);
@@ -68,7 +68,7 @@ class ModelManagerTest {
     void convertLessonsIntoByte_O() {
         ArrayList<Lesson> instructorLesson=new ArrayList<>();
         instructor =new Instructor("Veronica", 1);
-        lesson =new Lesson("2023-07-19", "13.00", instructor);
+        lesson =new Lesson(1,"2023-07-19", "13.00", instructor);
         instructorLesson.add(lesson);
 
 
@@ -86,9 +86,9 @@ class ModelManagerTest {
     void convertLessonsIntoByte_M() {
         ArrayList<Lesson> instructorLesson=new ArrayList<>();
         instructor =new Instructor("Devlin", 1);
-        lesson =new Lesson("2023-07-19", "10.00",instructor);
+        lesson =new Lesson(1,"2023-07-19", "10.00",instructor);
         instructor1 =new Instructor("Cedric", 2);
-        lesson1 =new Lesson("2023-07-19", "16.00",instructor1);
+        lesson1 =new Lesson(2,"2023-07-19", "16.00",instructor1);
 
         instructorLesson.add(lesson);
         instructorLesson.add(lesson1);

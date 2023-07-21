@@ -6,9 +6,11 @@
 @using global::Shared.Dtos.LessonDto
 @using HttpClients.ClientInterfaces
 @using System.Security.Claims
+@using System.Security.Principal
 @inject IJavaSocketConnection socketService
 @inject ILessonService lessonService;
 @inject IJSRuntime jsRuntime;
+@inject NavigationManager navMgr;
 
 <h3>Book Lesson</h3>
 
@@ -162,10 +164,10 @@ else
                 Console.WriteLine(e);
                 msg = e.Message;
             }
-            if (msg.Equals(""))
+            if (msg.Equals("Lesson Booked"))
             {
                 await jsRuntime.InvokeVoidAsync("alertAction", "Lesson Successfully Created");
-                await OnInitializedAsync();
+                navMgr.NavigateTo("BookLesson", true);
             }
         }
         else

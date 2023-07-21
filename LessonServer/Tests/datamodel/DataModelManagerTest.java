@@ -48,7 +48,7 @@ class DataModelManagerTest {
 
     @Test public void testGettingLessons_O() throws SQLException {
         Instructor instructor = new Instructor("Cedric", 2);
-        Lesson l=new Lesson(date.toString(),"10.00",instructor);
+        Lesson l=new Lesson(1,date.toString(),"10.00",instructor);
         ArrayList<Lesson> larray=new ArrayList<>();
         larray.add(l);
         ArrayList<Lesson> larray2=new ArrayList<>();
@@ -68,8 +68,8 @@ class DataModelManagerTest {
 
         Instructor i1 = new Instructor("Thomas", 1);
         Instructor i2 = new Instructor("Joseph", 2);
-        Lesson l1 = new Lesson(date.toString(), "8.00", i1);
-        Lesson l2 = new Lesson(date.toString(), "14.00", i2);
+        Lesson l1 = new Lesson(1,date.toString(), "8.00", i1);
+        Lesson l2 = new Lesson(2,date.toString(), "14.00", i2);
 
         ArrayList<Lesson> list1=new ArrayList<>();
         list1.add(l1);
