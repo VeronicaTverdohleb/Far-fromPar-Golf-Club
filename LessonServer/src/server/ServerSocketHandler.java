@@ -74,7 +74,10 @@ public class ServerSocketHandler implements Runnable {
                         byte[] newObjectToSend = model.getLessons(result.get("Date").toString());
                         sendData(newObjectToSend);
                     }
-                } else if (result.get("Action").equals("exit".toLowerCase())) {
+                } else if (result.get("Action").equals("delete".toLowerCase())) {
+                    model.deleteLesson(Integer.parseInt(result.get("LessonId").toString()));
+                }
+                else if (result.get("Action").equals("exit".toLowerCase())) {
                     socket.close();
                     System.out.println("Client disconnected");
                     break;

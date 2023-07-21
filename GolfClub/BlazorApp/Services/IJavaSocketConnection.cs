@@ -7,4 +7,5 @@ public interface IJavaSocketConnection
 {
     public void Connect();
     public Task<string> SendMessage(string message);
+    public void DeleteLesson(string lessonId);
 }

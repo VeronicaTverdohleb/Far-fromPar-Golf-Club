@@ -10,4 +10,5 @@ import java.util.Date;
  */
 public interface Model {
     byte[] getLessons(String date);
+    void deleteLesson(int lessonId);
 }

@@ -27,7 +27,7 @@ public class DataModelManager implements DataModel {
      * @throws SQLException
      */
     private Connection getConnection() throws SQLException{
-        return DriverManager.getConnection("jdbc:postgresql://localhost:5432/lessons_db","postgres","bobs");
+        return DriverManager.getConnection("jdbc:postgresql://localhost:5433/lessons_db","postgres","bobs");
     }
 
     /**
@@ -49,6 +49,7 @@ public class DataModelManager implements DataModel {
             ResultSet resultSet=preparedStatement.executeQuery();
             ArrayList<Lesson> lessons=new ArrayList<>();
             while (resultSet.next()){
+                int lessonsId=resultSet.getInt(1);
                 String lessonsDate=resultSet.getString(3);
                 if(lessonsDate==null){
                     throw new SQLException("No lessons for this date");
@@ -63,7 +64,7 @@ public class DataModelManager implements DataModel {
                     String name = resultSet1.getString(2);
                     Instructor instructor = new Instructor(name, instructorId);
                     String time = resultSet.getString(4);
-                    Lesson l = new Lesson(lessonsDate, time, instructor);
+                    Lesson l = new Lesson(lessonsId, lessonsDate, time, instructor);
 
                     lessons.add(l);
                 }
@@ -72,6 +73,19 @@ public class DataModelManager implements DataModel {
                 }
             }
             return lessons;
+        }
+    }
+
+    @Override
+    public void deleteLesson(int lessonId) throws SQLException {
+        try(Connection connection=getConnection()){
+            String query = "DELETE from lesson "+
+                    "where id = "+ "'" + lessonId + "'";
+            System.out.println(query);
+            PreparedStatement preparedStatement = connection.prepareStatement(query) ;
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet != null)
+                throw new SQLException("Yo something went wrong");
         }
     }
 }

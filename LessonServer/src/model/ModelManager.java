@@ -1,6 +1,5 @@
 package model;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,12 +43,28 @@ public class ModelManager implements Model {
         return convertIntoByte(lessons);
     }
 
+    /**
+     * Method that calls the DataModelManager to delete the lesson from DB
+     * @param lessonId
+     */
+    @Override
+    public void deleteLesson(int lessonId) {
+        try {
+            dataModel.deleteLesson(lessonId);
+        } catch (SQLException e) {
+            if (!(e.getMessage().equals("No results were returned by the query."))) {
+                throw new RuntimeException();
+            }
+        }
+    }
+
     /***
      * Translates DB output to JSON string and then into byte array
      * The format of the JSON output is:
-     * {"lesson": [ {"instructorName: "{Name}",
-     *               "lessonDate": "{Date}",
-     *               "lessonTime": "{Time}"}
+     * {"lesson": [ {"id": "Id"
+     *               "instructorName: "Name",
+     *               "lessonDate": "Date",
+     *               "lessonTime": "Time"}
      *            ]
      * }
      * @param lessons ArrayList of Lesson
@@ -63,6 +78,7 @@ public class ModelManager implements Model {
         for (Lesson lesson : lessons) {
             Map<String, String> singleLessonInfo = new HashMap<>();
             // Putting values from DB output together with pre-agreed keys compatible with the C# side
+            singleLessonInfo.put("id", String.valueOf(lesson.getId()));
             singleLessonInfo.put("instructorName", lesson.getInstructor().getName());
             singleLessonInfo.put("lessonDate", lesson.getDate().toString());
             singleLessonInfo.put("lessonTime", String.valueOf(lesson.getTime()));

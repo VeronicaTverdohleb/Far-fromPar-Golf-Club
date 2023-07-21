@@ -131,6 +131,17 @@ else
             LessonCreationDto dto = new LessonCreationDto(instructorLesson.LessonDate, instructorLesson.LessonTime, username, instructorLesson.InstructorName);
             await lessonService.CreateAsync(dto);
         }
+        
+        // Delete the lesson from the Java side
+        try
+        {
+            socketService.DeleteLesson(instructorLesson!.Id);
+        }
+        catch (Exception e)
+        {
+            msg = e.Message;
+        }
+        
         StateHasChanged();
     }
     

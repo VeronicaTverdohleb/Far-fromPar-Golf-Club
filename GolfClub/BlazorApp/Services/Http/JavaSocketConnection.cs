@@ -62,4 +62,21 @@ public class JavaSocketConnection:IJavaSocketConnection
         //clientSocket.Close();
         return Task.FromResult(rcv);
     }
+
+    public void DeleteLesson(string lessonId)
+    {
+        if (lessonId.Equals("0"))
+        {
+            throw new Exception($"Incorrect lesson Id!");
+        }
+        
+        string message = "{\"LessonId\":\"";
+        message += lessonId;
+        message += "\", \"Action\": \"delete\"}";
+        int toSendLen = System.Text.Encoding.ASCII.GetByteCount(message);
+        byte[] toSendBytes = System.Text.Encoding.ASCII.GetBytes(message);
+        byte[] toSendLenBytes = System.BitConverter.GetBytes(toSendLen);
+        clientSocket.Send(toSendLenBytes);
+        clientSocket.Send(toSendBytes);
+    }
 }

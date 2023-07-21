@@ -7,11 +7,13 @@ import java.util.Date;
  */
 public class Lesson {
 
+    private int id;
     private String date;
     private String time;
     private Instructor instructor;
 
-    public Lesson(String date, String time, Instructor instructor) {
+    public Lesson(int id, String date, String time, Instructor instructor) {
+        this.id = id;
         this.date = date;
         this.time = time;
         this.instructor = instructor;
@@ -38,4 +40,12 @@ public class Lesson {
         this.time = time;
     }
     public String getTime(){return time;}
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 }
