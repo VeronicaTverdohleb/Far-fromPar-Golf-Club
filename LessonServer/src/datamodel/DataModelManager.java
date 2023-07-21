@@ -27,7 +27,7 @@ public class DataModelManager implements DataModel {
      * @throws SQLException
      */
     private Connection getConnection() throws SQLException{
-        return DriverManager.getConnection("jdbc:postgresql://localhost:5433/lessons_db","postgres","bobs");
+        return DriverManager.getConnection("jdbc:postgresql://localhost:5432/lessons_db","postgres","bobs");
     }
 
     /**
