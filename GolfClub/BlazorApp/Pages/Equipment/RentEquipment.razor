@@ -1,117 +1,140 @@
-@page "/RentEquipment"
+@page "/RentEquipment/{id:int}"
 @using global::Shared.Model
 @using HttpClients.ClientInterfaces
 @using global::Shared.Dtos.EquipmentDto
+@using System.Diagnostics
+@using global::Shared.Dtos.GameDto
 @inject IEquipmentService EquipmentService
 @inject IGameService GameService
 @inject IUserService UserService
 @inject IJSRuntime jsRuntime
 @inject NavigationManager navMgr
 <h3>RentEquipment</h3>
-@if (!equipments.Any())
-{
-    <p>No to display</p>
-}
-else
+
+@if (game != null)
 {
     <div class="form-group field">
-        <label>Choose member:</label>
-        <select @bind="mName">
-            <option>Choose:</option>
-            @foreach (User p in GetFilteredMemberNames())
-            {
-                <option value="@p.Name">@p.Name</option>
-
-            }
-        </select>
+        <label>Game id:</label>
+        <input type="text" @bind="Id"/>
     </div>
+   <div class="form-group field">
+        <label>Equipment already added:</label>
+         @foreach (var equip in rentedEquipment)
+                                {
+                                   <li>@equip!.Name</li> 
+                                }
+                     </div>
+    <button class="addEquipmentToGameBtn" @onclick="ReturnEquipment">Return Equipment</button>
     <div>
-        <label>Choose equipments to add to the game:</label>
+        <label > Choose equipments to add to the game:</label >
 
         <select name="addEquipment" id="addEquipment" @onchange="SetEquipmentsToAddToGame">
             <option>Choose:</option>
             @foreach (var e in equipmetCounts)
             {
-                <option value="@e.Id">@e.Name</option>
+                <option value="@e.Name"> @e.Name </option>
             }
-        </select>
+        </select >
 
-        <button class="addEquipmentToGameBtn" @onclick="AddEquipment">Add to game</button>
+        <button class="addEquipmentToGameBtn" @onclick="AddEquipment"> Add to game</button>
     </div>
     <br/>
-    <br/>
-    <h5>Selected Equipment</h5>
+    <br>
+    <h5> Selected Equipment </h5>
 
-    @if (equipmentAdded.Count > 0)
+    @if (equipmentAvaialbleId.Count > 0)
     {
         <table class="table">
-            <thead>
+            <thead >
             <tr>
-                <th>Equipment Name</th>
-                <th>Remove</th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach (var i in equipmetCounts)
+                <th> Equipment Name </th>
+                <th> Remove </th >
+            </tr >
+            </thead >
+            <tbody >
+            @foreach (var i in _equipments)
             {
-                foreach (var j in equipmentAdded)
+                foreach (var j in equipmentAvaialbleId)
                 {
-                    if (i.Id == j.Id)
+                    if (i.Id == j)
                     {
-                        <tr>
-                            <td>@i.Name</td>
-                            <td>
+
+                        <tr >
+                            <td > @i.Id   </td >
+                            <td > @i.Name </td >
+                            <td >
                                 <img src="img/delete.png" class="funnel" @onclick="RemoveEquipment"/>
 
-                            </td>
+                            </td >
                         </tr>
                     }
                 }
             }
-            </tbody>
+            
+                </tbody >
         </table>
     }
     <br/>
-
     <br/>
 
-    <button @onclick="ConfirmAction" class="rentEquipment">Rent Equipment</button>
+
+
+    <button @onclick="ConfirmAction" class="rentEquipment"> RentEquipment </button>
     @if (!string.IsNullOrEmpty(msg))
     {
-        <label class="message">@msg</label>
+        <label class="message"> @msg </label>
     }
 }
+
 @code {
-    private ICollection<Equipment> equipments=new List<Equipment>();
-    private List<Equipment> equipmentAdded = new List<Equipment>();
-    private ICollection<EquipmentBasicDto> equipmetCounts=new List<EquipmentBasicDto>();
+    [Parameter]
+        public int Id { get; set; }
+    private IEnumerable<Equipment?> _equipments=new List<Equipment>();
+    private IEnumerable<Equipment?> rentedEquipment = new List<Equipment?>();
+    private List<int>? equipmentAdded = new List<int>();
+    private IEnumerable<EquipmentBasicDto> equipmetCounts=new List<EquipmentBasicDto>();
     private IEnumerable<User> memeberNames = new List<User>();
     private List<int> equipmentAvaialbleId = new List<int>();
+    
     private Game gamesExisting;
-    private Equipment equipmentToAdd;
+    private Equipment? equipmentToAdd;
     private string mName;
     private int gameId;
     private string error = "";
     private string msg = "";
+    private Game? game;
+    private EquipmentBasicDto dto=null!;
     //How to call the method from game which only gives the members in active games
     ///Method which gets called when accessing the page 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-           
-            equipments = await EquipmentService.getAllEquipmentAsync(null);
-           // List<int> usedEquipmentIds = await GetUsedEquipmentIds();
+            game = await GameService.GetGameByIdAsync(Id)!;
+            //equipmentAdded = await EquipmentService.GetGameEquipmentIds(Id);
+            _equipments = (await EquipmentService.GetAvailableEquipment())!;
+            //_equipments = await EquipmentService.getAllEquipmentAsync(null);
+            equipmetCounts=_equipments.GroupBy(e => e.Name).Select(e => new EquipmentBasicDto { Name = e.Key, Amount = e.Count() }).ToList();
+            rentedEquipment = (await EquipmentService.GetEquipmentByGameIdAsync(Id))!;
+    // equipmentAdded = await EquipmentService.GetGameEquipmentIds(Id);
+    //equipmentAvaialbleId = await EquipmentService.GetAvailableEquipmentIds();
+    //equipmetCounts = await EquipmentService.GetAvailableEquipment();
+    // List<int> usedEquipmentIds = await GetUsedEquipmentIds();
 
-            equipmetCounts = equipments
-                .Where(e => !equipmentAvaialbleId.Contains(e.Id))
+    /* equipmetCounts = equipments
+                .Where(e =>
+                {
+                    Debug.Assert(equipmentAvaialbleId != null, nameof(equipmentAvaialbleId) + " != null");
+                    return !equipmentAvaialbleId.Contains(e.Id);
+                })
                 .GroupBy(e => e.Name)
                 .Select(e => new EquipmentBasicDto { Name = e.Key, Amount = e.Count() })
-                .ToList();
-           // equipmetCounts = equipments.GroupBy(e => e.Name).Select(e => new EquipmentBasicDto { Name = e.Key, Amount = e.Count() }).ToList();
-            memeberNames = await UserService.GetAllUsersAsync();
-           // await LoadAvailableEquipments();
-           // gamesExisting = await GameService.GetActiveGameByUsernameAsync(mName)!;
+                .ToList();*/
+    // equipmetCounts = equipments.GroupBy(e => e.Name).Select(e => new EquipmentBasicDto { Name = e.Key, Amount = e.Count() }).ToList();
+    //memeberNames = await UserService.GetAllUsersAsync();
+
+    // await LoadAvailableEquipments();
+    // gamesExisting = await GameService.GetActiveGameByUsernameAsync(mName)!;
 
         }
         catch (Exception e)
@@ -120,52 +143,23 @@ else
             msg = e.Message;
         }
     }
-    private async Task LoadAvailableEquipments()
+   /* private async Task LoadAvailableEquipments()
     {
-        var usedEquipmentIds = await GetUsedEquipmentIds();
-        equipmentAdded=equipments.Where(e => !usedEquipmentIds.Contains(e.Id)).ToList();
+        var usedEquipmentIds = await GetAvailableEquipmentIds();
+        equipmentAdded=_equipments.Where(e => !usedEquipmentIds.Contains(e.Id)).ToList();
 
-         }
+         }*/
     
-    private void SetEquipmentsToAddToGame(ChangeEventArgs e)
-    {
-        if (e.Value != null)
-        {
-            int selectedValue = int.Parse(e.Value.ToString()!);
-            equipmentToAdd = equipments.FirstOrDefault(e => e.Id == selectedValue);
-        }
-    }
-    
-      private async Task AddEquipment()
-    {
-        msg = "";
-        try
-        {
-            if (!equipmentAdded.Contains(equipmentToAdd))
-            {
-                equipmentAdded.Add(equipmentToAdd);
-                 
-                 msg = "Item added";
-            }
-            else
-            {
-                msg = "Item already added";
-            }
-            
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            msg = e.Message;
-        }
-    }
+   
 ///Removes the selected item
     private async Task RemoveEquipment()
     {
         msg = "";
         try
-        {
-            equipmentAdded.Remove(equipmentToAdd);
+        { Console.WriteLine("equipmentToAdd is null: " + (equipmentToAdd?.Id));
+
+            equipmentAvaialbleId.Remove(equipmentToAdd.Id);
+           // await OnInitializedAsync();
             
             msg = "Item removed";
            
@@ -181,34 +175,30 @@ else
     {
        
         msg = "";
-        if (equipments == null)
+        if (_equipments == null)
         {
-            msg = "You must select an ingredient!";
+            msg = "You must select an equipment!";
             return;
         }
         msg = "";
         try
         {
-            List<int> ids = new List<int>();
-            foreach (var item1 in equipmentAdded)
-            {
-                ids.Add(item1.Id);
-            }
-            RentEquipmentDto dto = new RentEquipmentDto(1,ids);
+            
+            RentEquipmentDto dto = new RentEquipmentDto(Id,equipmentAvaialbleId);
            
             try
             {
                 
-                await EquipmentService.RentEquipment(dto,mName);
+                await EquipmentService.RentEquipment(dto);
                     
-                    msg = "The order was placed";
+                    msg = "The renting process is successful";
           
                
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                msg = "The order was not placed";
+                msg = "The renting process is not successful";
             }
         }
         catch (Exception e)
@@ -221,8 +211,7 @@ else
 ///Asks for confirmation before creating order
     private async Task ConfirmAction()
     {
-        bool confirmed = await jsRuntime.InvokeAsync<bool>("confirmAction", "Are you sure you want to place the order?" +
-                                                                            " (Order pickup is available after 12.00AM of the chosen date)");
+        bool confirmed = await jsRuntime.InvokeAsync<bool>("confirmAction");
 
         if (confirmed)
         {
@@ -235,13 +224,13 @@ else
         }
     }
    
-    private async Task<List<int>> GetUsedEquipmentIds()
+    private async Task<List<int>?> GetAvailableEquipmentIds()
     {
-        IEnumerable<Equipment>? usedEquipment = await EquipmentService.GetAvailableEquipment();
-        if (usedEquipment != null)
-            foreach (var used in usedEquipment)
+        IEnumerable<Equipment>? availableEquipment = await EquipmentService.GetAvailableEquipment();
+        if (availableEquipment != null)
+            foreach (var a in availableEquipment)
             {
-                equipmentAvaialbleId.Add(used.Id);
+                equipmentAvaialbleId.Add(a.Id);
             }
         return equipmentAvaialbleId;
         
@@ -272,7 +261,61 @@ else
     
     public async Task<bool> IsActiveGameByUsername(string username)
     {
-        var activeGame = await GameService.GetActiveGameByUsernameAsync(username)!;
+        var activeGame = await GameService.GetActiveGameByUsernameAsync(username);
         return activeGame!=null; // Return true if an active game exists, false otherwise
+    }
+    private void SetEquipmentsToAddToGame(ChangeEventArgs e)
+    {
+        Console.WriteLine("SetEquipmentsToAddToGame method called");
+
+        string selectedValue = e.Value?.ToString()!;
+        Console.WriteLine("Selected Value: " + selectedValue);
+         equipmentToAdd = _equipments.FirstOrDefault(equipment => equipment != null && equipment.Name == selectedValue);
+        List<Equipment> toRemove = _equipments.ToList();
+        toRemove.Remove(equipmentToAdd);
+        
+
+        if (equipmentToAdd != null)
+        {
+            Console.WriteLine("Equipment Found: " + equipmentToAdd.Name);
+        }
+        else
+        {
+            Console.WriteLine("Equipment Not Found!");
+        }
+    }
+    private async Task AddEquipment()
+    {
+        msg = "";
+        try
+        {Console.WriteLine("equipmentAvaialbleId is null: " + (equipmentAvaialbleId == null));
+            Console.WriteLine("equipmentToAdd is null: " + (equipmentToAdd?.Id));
+            Console.WriteLine("equipmentAvaialbleId: " + string.Join(", ", equipmentAvaialbleId));
+
+
+            if (equipmentToAdd != null && equipmentAvaialbleId != null && !equipmentAvaialbleId.Contains(equipmentToAdd.Id))
+            {
+                equipmentAvaialbleId.Add(equipmentToAdd.Id);
+             
+                 
+                msg = "Item added";
+            }
+            else
+            {
+                msg = "Item already added";
+            }
+            
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            msg = e.Message;
+        }
+    }
+
+    private async Task ReturnEquipment()
+    {
+        await EquipmentService.DeleteAllEquipmentByGameIdAsync(Id);
+
     }
 }

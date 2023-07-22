@@ -5,7 +5,7 @@ public class RentEquipmentDto
    
 
     public int GameId { get; }
-    public List<int> EquipmentIds { get; }
+    public List<int>? EquipmentIds { get; }
     public int Amount { get; }
     
   /*  public RentEquipmentDto(int gameId, List<string> equipmentNames)
@@ -15,7 +15,7 @@ public class RentEquipmentDto
         EquipmentNames = equipmentNames;
         
     }*/
-    public RentEquipmentDto(int gameId, List<int> equipmentIds)
+    public RentEquipmentDto(int gameId, List<int>? equipmentIds)
     {
         GameId = gameId;
         EquipmentIds = equipmentIds;

@@ -1,0 +1,137 @@
+@page "/RentEquipmentsForGame"
+@using global::Shared.Model
+@using HttpClients.ClientInterfaces
+@using global::Shared.Dtos.EquipmentDto
+@using global::Shared.Dtos.GameDto
+@inject IGameService GameService
+@inject IEquipmentService EquipmentService
+@inject NavigationManager NavMgr;
+
+
+<div class="headline_box">
+    <img src="img/golfball.png" class="golfball" alt="Golf Ball"/>
+    <h3 class="headline"> Rent Equipment </h3>
+    <img src="img/golfball.png" class="golfball" alt="Golf Ball"/>
+</div>
+<label>
+    <h5>Type members username:</h5>
+</label>
+<input type="text" class="type_username" placeholder="Username" @bind="@selectedUsername"/>
+<button class="searchbtn" @onclick="@GetPlayerEquipment">Search </button>
+
+<h7 class="error">@error</h7>
+<hr>
+@if (playerGames.Any())
+{
+    <h5 class="gamecard_note">Click on the card to manage the player's rented equipment</h5>
+}
+@foreach (Game game in playerGames)
+{ 
+    <div class="game_card">
+        
+        <a class="game_card_anchor" @onclick=@(() => GoRent(@game.Id))>
+            <label class="game_card_label">Game ID:</label>@game.Id
+            <hr>
+            <label class="game_card_label">Co-players:</label>
+            @if (game.Players.Count == 1)
+            {
+                <p>No Co-players in this Game.</p>
+            }
+            else
+            {
+                @foreach (User co_player in game.Players)
+                {
+                    if (!co_player.UserName.Equals(selectedUsername))
+                    {
+                        <label class="co_player">@co_player.UserName</label>
+                    }
+                }
+            }
+            <hr>
+            <label class="game_card_label">Equipments:</label>
+            @if (game.Equipments == null || !game.Equipments.Any())
+            {
+                <button @onclick=@(() => GoRent(@game.Id)) class="rentEquipment">Go Rent Equipment</button>
+
+                <p>No Equipments in this Game.</p>
+                //add button to go to renting page here
+
+            }
+            //else if  (selectedGameId == game.Id && selectedGameEquipmentIds != null && selectedGameEquipmentIds.Any())
+            else
+            {
+                <p>@selectedUsername's Equipments:</p>
+                <table class="score_table">
+                    <tr>
+                        <th>Equipments:</th>
+                        @foreach (var e in selectedGameEquipmentIds)
+                        {
+                            {
+                                <th> <li>@e</li> </th>
+                            }
+                        }
+                    </tr>
+                </table>
+                <button @onclick=@(() => SeeRentedEquipment(@game.Id)) class="rentEquipment">Equipment</button>
+            }
+
+        </a>
+    </div>
+}
+@code {
+    private string error = "";
+    private string selectedUsername = "";
+    //private Game game;
+    private ICollection<Game> playerGames = new List<Game>();
+    List<int> selectedGameEquipmentIds = new List<int>();
+    private ICollection<Equipment>? Equipments;
+    private EquipmentBasicDto dto=null!;
+    private GameBasicDto gameDto = null!;
+    int selectedGameId=0;
+    
+    
+    private async Task GetPlayerEquipment()
+    {
+        playerGames = new List<Game>();
+        error = "";
+       // selectedGameId = gameId;
+        if (selectedUsername.Equals(""))
+        {
+            error = "Insert username";
+            return;
+        }
+
+        try
+        {
+            playerGames = await GameService.GetAllGamesByUsernameAsync(selectedUsername);
+            //Equipments = gameDto.Equipments;
+           // selectedGameEquipmentIds= await EquipmentService.GetGameEquipmentIds(selectedGameId);
+            
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            error = e.Message;
+        }
+        if (!error.Equals("No user found") && !playerGames.Any())
+            error = "This player has no scores";
+    }
+    private async Task GetGameEquipmentIds(int gameId)
+    {
+      selectedGameEquipmentIds = await EquipmentService.GetGameEquipmentIds(gameId);
+    }
+    
+    private void SeeRentedEquipment(int id)
+         {
+             NavMgr.NavigateTo($"/RentEquipment/{id}");
+         }
+    private void GoRent(int id)
+    {   //await GetGameEquipmentIds(selectedGameId);
+        NavMgr.NavigateTo($"/RentEquipment/{id}");
+    }
+
+    private void ReturnEquipment()
+    {
+        
+    }
+}

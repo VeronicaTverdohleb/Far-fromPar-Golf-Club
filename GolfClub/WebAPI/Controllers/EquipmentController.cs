@@ -34,6 +34,7 @@ public class EquipmentController: ControllerBase
             return StatusCode(500, e.Message);
         }
     }
+    
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Equipment>>> GetEquipmentAsync([FromQuery] string? name)
     {
@@ -79,12 +80,13 @@ public class EquipmentController: ControllerBase
             return StatusCode(500, e.Message);
         }
     }
-    [HttpGet("RentEquipment/available")]
-    public async Task<ActionResult<IEnumerable<Equipment>?>> GetAvailableEquipment()
+    
+    [HttpGet("/Equipments")]
+    public async Task<ActionResult<IEnumerable<Equipment>?>> GetAvailableEquipmentAsync()
     {
         try
         {
-            var availableEquipment = equipmentLogic.GetAvailableEquipment();
+            var availableEquipment = await equipmentLogic.GetAvailableEquipmentAsync();
             
             return Ok(availableEquipment); 
         }
@@ -95,6 +97,57 @@ public class EquipmentController: ControllerBase
              }
        
     }
+
+    [HttpGet,Route("/Equipments/{gameId:int}")]
+    public async Task<ActionResult<IEnumerable<Equipment>>> GetEquipmentByGameIdAsync([FromRoute] int gameId)
+    {
+        Console.WriteLine(gameId);
+        try
+        {
+            var equipment = await equipmentLogic.GetEquipmentByGameIdAsync(gameId);
+            return Ok(equipment);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(500, e.Message);
+        }
+    }
+
+    
+  /*  [HttpGet("RentEquipment")]
+    public async Task<ActionResult<List<int>>> GetAvailableEquipmentIds()
+    {
+        try
+        {
+            var availableEquipment = equipmentLogic.GetAvailableEquipmentIds();
+            
+            return Ok(availableEquipment); 
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(500, e.Message);
+        }
+       
+    }
+    
+    [HttpGet("RentEquipment/{id:int}")]
+    public async Task<ActionResult<List<int>>> GetGameEquipmentIds(int id)
+    {
+        try
+        {
+            var availableEquipment = equipmentLogic.GetGameEquipmentIds(id);
+            
+            return Ok(availableEquipment); 
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(500, e.Message);
+        }
+       
+    }*/
    
 
     [HttpDelete ("{name:required}/{amount:int}")]
@@ -125,6 +178,21 @@ public class EquipmentController: ControllerBase
             return StatusCode(500, e.Message);
         }
     }
-    
-   
+
+    [HttpDelete]
+    public async Task<ActionResult> DeleteAllEquipmentByGameIdAsync([FromRoute]int gameId)
+    {
+        Console.WriteLine("In the controller");
+        try
+        {
+            await equipmentLogic.DeleteAllEquipmentByGameIdAsync(gameId);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(500, e.Message);
+        }
+    }
+
 }

@@ -40,7 +40,7 @@
     private bool doShowFilters = false;
     private string newEquipmentName;
     private int amount;
-    private IEnumerable<Equipment> Equipments = new List<Equipment>();
+    private IEnumerable<Equipment?> Equipments = new List<Equipment?>();
     private IEnumerable<EquipmentBasicDto> equipmentBasicDtos = new List<EquipmentBasicDto>();
 
     private async Task CreateEquipment()

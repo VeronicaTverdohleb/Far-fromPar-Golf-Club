@@ -1,18 +1,24 @@
-﻿using Shared.Dtos.EquipmentDto;
+﻿using System.Collections;
+using Shared.Dtos.EquipmentDto;
 using Shared.Model;
 
 namespace HttpClients.ClientInterfaces;
 
 public interface IEquipmentService
 {
-    Task<ICollection<Equipment>> getAllEquipmentAsync(string? name);
-    Task CreateEquipmentAsync(IEnumerable<EquipmentBasicDto>  equipment, int amount);
-    Task UpdateEquipmentAmount(string name, int amount);
-    Task<Equipment?> GetEquipmentByNameAsync(string name);
-    Task DeleteEquipmentAsync(string? name);
+   public Task<ICollection<Equipment?>> getAllEquipmentAsync(string? name);
+   public Task CreateEquipmentAsync(IEnumerable<EquipmentBasicDto>  equipment, int amount);
+   public Task UpdateEquipmentAmount(string name, int amount);
+   public Task<Equipment?> GetEquipmentByNameAsync(string name);
+   public Task DeleteEquipmentAsync(string? name);
 
-    Task<int> CountOfEquipment(string name);
-    Task RentEquipment(RentEquipmentDto dto, string username);
-    Task<IEnumerable<Equipment>?> GetAvailableEquipment();
+   public Task<int> CountOfEquipment(string name);
+   public Task RentEquipment(RentEquipmentDto dto);
+   public Task<ICollection<Equipment>?> GetAvailableEquipment();
+   public Task<List<int>?> GetAvailableEquipmentIds();
+   public Task<List<int>> GetGameEquipmentIds(int gameId);
+   public Task<ICollection<Equipment>?> GetEquipmentByGameIdAsync(int gameId);
+   public Task DeleteAllEquipmentByGameIdAsync(int gameId);
+
 
 }

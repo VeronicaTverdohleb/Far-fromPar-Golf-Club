@@ -18,11 +18,12 @@ public class RentEquipmentController: ControllerBase
     }
     
     [HttpPost]
-    public async Task<ActionResult<Game>> RentEquipmentAsync(RentEquipmentDto dto, string username)
+    public async Task<ActionResult<Game>> RentEquipmentAsync([FromBody] RentEquipmentDto dto)
     {
         try
         {
-            await equipmentLogic.RentEquipment(dto, username);
+            Console.WriteLine("in controller");
+            await equipmentLogic.RentEquipment(dto);
             return Ok();
           
            

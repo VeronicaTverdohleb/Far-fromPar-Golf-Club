@@ -1,4 +1,6 @@
-﻿using Application.DaoInterfaces;
+﻿using System.Collections;
+using System.Diagnostics;
+using Application.DaoInterfaces;
 using Application.LogicInterfaces;
 using Shared.Dtos.EquipmentDto;
 using Shared.Dtos.GameDto;
@@ -10,6 +12,7 @@ public class EquipmentLogic: IEquipmentLogic
 {
     private readonly IEquipmentDao equipmentDao;
     private readonly IGameDao gameDao;
+    private readonly IUserDao userDao;
 
 
     public EquipmentLogic(IEquipmentDao equipmentDao, IGameDao gameDao)
@@ -104,12 +107,12 @@ public class EquipmentLogic: IEquipmentLogic
         return equipmentDao.GetEquipmentListByNameAsync(name);
     }
 
-    public async Task RentEquipment(RentEquipmentDto dto, string username)
+    public async Task RentEquipment(RentEquipmentDto dto)
     {
-            IEnumerable<Equipment> availableEquipment = await GetAvailableEquipment();
-            List<int> forRentEquipment = new List<int>();
-            IEnumerable<Game> userGames = await gameDao.GetGamesByUsername(username);
-            int gameId = userGames.FirstOrDefault()?.Id ?? 0;
+            IEnumerable<Equipment> availableEquipment = await GetAvailableEquipmentAsync();
+            List<int>? forRentEquipment = new List<int>();
+            Game? game = await gameDao.GetGameByIdAsync(dto.GameId);
+           
 
             foreach (int equipmentName in dto.EquipmentIds)
             {
@@ -121,7 +124,7 @@ public class EquipmentLogic: IEquipmentLogic
                 }
             }
 
-            RentEquipmentDto newRented = new RentEquipmentDto(gameId, forRentEquipment);
+            RentEquipmentDto newRented = new RentEquipmentDto(game.Id, forRentEquipment);
           
             
             await equipmentDao.RentEquipment(newRented);
@@ -149,10 +152,66 @@ public class EquipmentLogic: IEquipmentLogic
         
  
     }
-    public async Task<IEnumerable<Equipment>> GetAvailableEquipment()
+/*IEnumerable<Equipment> allEquipments = await equipmentDao.GetEquipmentByGameIdAsync(gameId);
+        foreach (var equipment in allEquipments)
+        {
+            equipment.Games.Clear(); // Assuming you have a collection of games in Equipment entity
+        }*/
+    public async Task DeleteAllEquipmentByGameIdAsync(int gameId)
     {
-        return await equipmentDao.GetAvailbaleEquipment();
+        
+        
+        
+       /* IEnumerable<Equipment> equipments = await GetEquipmentByGameIdAsync(gameId);
+      //  List<Equipment>? forRentEquipment = new List<Equipment>();
+        Game? game = await gameDao.GetGameByIdAsync(gameId);
+           
+        IEnumerable<Equipment> forRentEquipment = equipments.Except(game.Equipments);
+
+        foreach (var equipmentName in game.Equipments)
+        {
+            Equipment equipment = equipments.FirstOrDefault(eq => eq.Id == equipmentName.Id);
+            forRentEquipment = equipments.ToList();
+
+            if (equipment != null)
+            {
+                forRentEquipment.Remove(equipment);
+            }
+        }*/
+       Debug.WriteLine($"Deleting equipment for Game ID: {gameId}");
+
+        await equipmentDao.DeleteAllEquipmentByGameIdAsync(gameId);
+
     }
+    public Task<IEnumerable<Equipment>> GetAvailableEquipmentAsync()
+    {
+        return equipmentDao.GetAvailableEquipmentAsync();
+    }
+
+    public async Task<IEnumerable<Equipment>> GetEquipmentByGameIdAsync(int gameId)
+    {
+        Game? game = await gameDao.GetGameByIdAsync(gameId);
+        if (game == null)
+        {
+            throw new Exception($"Game with id {gameId} not found");
+
+        }
+
+        IEnumerable<Equipment> eInGame = await equipmentDao.GetEquipmentByGameIdAsync(game.Id);
+
+        return eInGame;
+    }
+
+    /* public async Task<List<int>> GetAvailableEquipmentIds()
+    {
+        return await equipmentDao.GetAvailableEquipmentIds();
+    }
+
+    public async Task<List<int>> GetGameEquipmentIds(int gameId)
+    {
+        return await equipmentDao.GetGameEquipmentIds(gameId);
+    }*/
+
 
     /*public async Task<Equipment> RentEquipment(RentEquipmentDto dto)
     {
