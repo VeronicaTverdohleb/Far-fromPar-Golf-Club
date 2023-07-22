@@ -2,7 +2,8 @@
 
 public class InstructorLesson
 {
+    public string Id { get; set; }
     public string InstructorName { get; set; }
-    public string Date { get; set; }
-    public string Time { get; set; }
+    public string LessonDate { get; set; }
+    public string LessonTime { get; set; }
 }

@@ -12,16 +12,19 @@ public class ScoreLogic : IScoreLogic
 {
     private readonly IScoreDao scoreDao;
     private readonly IUserDao userDao;
+    private readonly IGameDao gameDao;
 
     /// <summary>
     /// Constructor for the ScoreLogic
     /// </summary>
     /// <param name="scoreDao">Instantiating IScoreDao</param>
     /// <param name="userDao">Instantiating IUserDao</param>
-    public ScoreLogic(IScoreDao scoreDao, IUserDao userDao)
+    /// <param name="gameDao">Instantiating IGameDao</param>
+    public ScoreLogic(IScoreDao scoreDao, IUserDao userDao, IGameDao gameDao)
     {
         this.scoreDao = scoreDao;
         this.userDao = userDao;
+        this.gameDao = gameDao;
     }
     
     /// <summary>
@@ -36,6 +39,10 @@ public class ScoreLogic : IScoreLogic
         User? user = await userDao.GetByUsernameAsync(dto.PlayerUsername);
         if (user == null)
             throw new Exception($"User with username {dto.PlayerUsername} does not exist");
+
+        Game? game = await gameDao.GetGameByIdAsync(dto.GameId);
+        if (game == null)
+            throw new Exception($"Game with id {dto.GameId} does not exist");
         
         // If any of the strokes in the list are either 0 or more than 23, just set it to 23
         for (int i = 0; i < 18; i++)
@@ -57,7 +64,18 @@ public class ScoreLogic : IScoreLogic
         User? user = await userDao.GetByUsernameAsync(dto.PlayerUsername);
         if (user == null)
             throw new Exception($"User with username {dto.PlayerUsername} does not exist");
+        Game? game = await gameDao.GetGameByIdAsync(dto.GameId);
+        if (game == null)
+            throw new Exception($"Game with id {dto.GameId} does not exist");
 
+        if (dto.HolesAndStrokes.Count > 18)
+            throw new Exception("Too many scores! There are only 18 holes.");
+        foreach (int holeNo in dto.HolesAndStrokes.Keys)
+        {
+            if (holeNo < 1 || holeNo > 18)
+                throw new Exception($"The hole with Id {holeNo} does not exist");
+        }
+            
         await scoreDao.UpdateFromEmployeeAsync(dto);
     }
 }

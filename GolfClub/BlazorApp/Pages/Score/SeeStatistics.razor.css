@@ -44,3 +44,30 @@ table {
     padding: 10px 20px;
     background-color: lightgreen;
 }
+
+.headline_box {
+    display: flex;
+    justify-content: left;
+    margin-bottom: 20px;
+    margin-top: 15px;
+}
+
+.headline {
+    color: green;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.golfball {
+    width: 40px;
+    height: 40px;
+    margin-top: -5px;
+}
+
+.greenButton{
+    background-color:lightgreen;
+    width: 150px;
+    height: 50px;
+    font-size: medium;
+    border-radius: 10px;
+}

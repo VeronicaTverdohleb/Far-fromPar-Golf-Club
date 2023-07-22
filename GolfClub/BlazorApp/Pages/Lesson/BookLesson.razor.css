@@ -1,0 +1,23 @@
+﻿button{
+    background-color: greenyellow;
+    width: 150px;
+    height: 50px;
+    font-size: large;
+    border-radius: 10px;
+}
+
+.instructor{
+    background-color: #00bd00;
+    width: 400px;
+    border-style: solid;
+    border-color: black;
+}
+
+.bookLessonBtn{
+    background-color: greenyellow;
+    width: 130px;
+    height: 40px;
+    font-size: large;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}

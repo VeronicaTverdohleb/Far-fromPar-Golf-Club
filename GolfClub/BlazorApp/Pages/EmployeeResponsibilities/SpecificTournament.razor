@@ -5,7 +5,11 @@
 @inject ITournamentService TournamentService
 @inject IUserService UserService
 @inject NavigationManager navMgr
-<h3>@tournamentName</h3>
+<div class="headline_box">
+    <img src="img/golfball.png" class="golfball" alt="Golf Ball"/>
+    <h3 class="headline"> @tournamentName </h3>
+    <img src="img/golfball.png" class="golfball" alt="Golf Ball"/>
+</div>
 
 @if (tournament == null)
     {
@@ -31,14 +35,14 @@ else
             <option value="@player.Name">@player.Name</option>
         }
     </select>
-    <button @onclick="AddPlayer">register player</button>
+    <button @onclick="AddPlayer" class="greenButton">register player</button>
     <br/><br/>
-    <button @onclick="SwitchDeleteBool">Delete Tournament</button>
+    <button @onclick="SwitchDeleteBool" class="redButton">Delete Tournament</button>
     @if (delete)
     {
         <p>Are you sure? this will delete the tournament</p>
-        <button @onclick="DeleteTournament">Yes</button>
-        <button @onclick="SwitchDeleteBool">No</button>
+        <button @onclick="DeleteTournament" class="redButton">Yes</button>
+        <button @onclick="SwitchDeleteBool" class="greenButton">No</button>
     }
 }
 

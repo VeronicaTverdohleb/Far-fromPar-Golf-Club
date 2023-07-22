@@ -3,13 +3,15 @@
 public class Lesson
 {
     public int Id { get; set; }
-    public DateTime DateAndTime { get; set; }
+    public DateOnly Date { get; set; }
+    public string Time { get; set; }
     public User Player { get; set; }
     public string Instructor { get; set; }  // Instructor name
 
-    public Lesson(DateTime dateAndTime, User player, string instructor)
+    public Lesson(DateOnly date, string time, User player, string instructor)
     {
-        DateAndTime = dateAndTime;
+        Date = date;
+        Time = time;
         Player = player;
         Instructor = instructor;
     }

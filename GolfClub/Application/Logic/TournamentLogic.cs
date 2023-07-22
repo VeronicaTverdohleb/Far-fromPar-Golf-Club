@@ -16,6 +16,20 @@ public class TournamentLogic:ITournamentLogic
     
     public async Task<Tournament> CreateTournamentAsync(CreateTournamentDto dto)
     {
+        if (string.IsNullOrEmpty(dto.Name))
+        {
+            throw new Exception("Enter a name for the tournament!");
+        }
+
+        if (dto.EndDate < DateOnly.FromDateTime(DateTime.Today))
+        {
+            throw new Exception("The tournament would already be over!");
+        }
+
+        if (dto.StartDate > dto.EndDate)
+        {
+            throw new Exception("Incorrect start and end dates!");
+        }
         Tournament newTournament = new Tournament(dto.Name, dto.StartDate, dto.EndDate);
         Tournament created = await tournamentDao.CreateTournamentAsync(newTournament);
         return created;

@@ -32,6 +32,8 @@ builder.Services.AddScoped<IGameDao, GameDao>();
 builder.Services.AddScoped<IGameLogic, GameLogic>();
 builder.Services.AddScoped<IStatisticDao, StatisticDao>();
 builder.Services.AddScoped<IStatisticLogic, StatisticLogic>();
+builder.Services.AddScoped<ILessonDao, LessonDao>();
+builder.Services.AddScoped<ILessonLogic, LessonLogic>();
 
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>

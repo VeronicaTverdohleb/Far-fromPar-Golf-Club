@@ -4,7 +4,11 @@
 @using global::Shared.Model
 @inject ITournamentService TournamentService;
 @inject NavigationManager navMgr;
-<h3>ManageTournament</h3>
+<div class="headline_box">
+    <img src="img/golfball.png" class="golfball" alt="Golf Ball"/>
+    <h3 class="headline"> Manage Tournament </h3>
+    <img src="img/golfball.png" class="golfball" alt="Golf Ball"/>
+</div>
 <h4>Create new tournament</h4>
 <label>tournament name:</label>
 <input type="text" @bind="tournamentName"/><br/><br/>
@@ -12,7 +16,8 @@
 <input type="date" @bind="startDate"/><br/><br/>
 <label>end date:</label>
 <input type="date" @bind="endDate"/><br/><br/>
-<button @onclick="CreateTournament">Create Tournament</button><br/><br/>
+<button @onclick="CreateTournament" class="greenButton">Create Tournament</button><br/><br/>
+<p style="color: red;">@msg</p><br/><br/><br/>
 <h4>Manage existing tournament</h4>
 <label>Select tournament:</label>
 <select name="chooseTournament" id="chooseTournament" @onchange="SetSelectedTournament">
@@ -22,15 +27,15 @@
         <option value="@tournament.Name">@tournament.Name</option>
     }
 </select>
-<button @onclick="NavigateToTournament">Select Tournament</button>
+<button @onclick="NavigateToTournament" class="greenButton">Select Tournament</button>
 
-<p style="color: red;">@msg</p>
+
 
 
 
 @code {
-    private string tournamentName;
-    private string chosenTournamentName;
+    private string tournamentName="";
+    private string chosenTournamentName="";
     private DateOnly startDate = DateOnly.FromDateTime(DateTime.Today);
     private DateOnly endDate = DateOnly.FromDateTime(DateTime.Today);
     private ICollection<Tournament> tournaments = new List<Tournament>();
@@ -54,13 +59,14 @@
             try
             {
                 await TournamentService.CreateTournamentAsync(dto);
+                msg = "tournament created";
+                navMgr.NavigateTo($"ManageTournament/{tournamentName}");
             }
             catch (Exception e)
             {
                 msg = e.Message;
             }
-            msg = "tournament created";
-            navMgr.NavigateTo($"ManageTournament/{tournamentName}");
+            
         }
         
     }
