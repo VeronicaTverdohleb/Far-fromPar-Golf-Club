@@ -5,7 +5,7 @@ namespace Application.DaoInterfaces;
 
 public interface ITournamentDao
 {
-    Task<Tournament> CreateTournamentAsync(Tournament tournament);
+    Task<Tournament> CreateTournamentAsync(CreateTournamentDto dto);
     Task<Tournament?> GetTournamentByNameAsync(string name);
     Task DeleteTournamentAsync(string name);
     Task<IEnumerable<Tournament>> GetAllTournamentsAsync();

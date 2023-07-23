@@ -15,8 +15,9 @@ public class TournamentDao:ITournamentDao
         this.context = context;
     }
     
-    public async Task<Tournament> CreateTournamentAsync(Tournament tournament)
+    public async Task<Tournament> CreateTournamentAsync(CreateTournamentDto dto)
     {
+        Tournament tournament = new Tournament(dto.Name, dto.StartDate, dto.EndDate);
         EntityEntry<Tournament> created = await context.Tournaments.AddAsync(tournament);
         await context.SaveChangesAsync();
         return created.Entity;

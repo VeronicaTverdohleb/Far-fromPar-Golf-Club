@@ -30,8 +30,8 @@ public class TournamentLogic:ITournamentLogic
         {
             throw new Exception("Incorrect start and end dates!");
         }
-        Tournament newTournament = new Tournament(dto.Name, dto.StartDate, dto.EndDate);
-        Tournament created = await tournamentDao.CreateTournamentAsync(newTournament);
+        
+        Tournament created = await tournamentDao.CreateTournamentAsync(dto);
         return created;
     }
 
@@ -76,7 +76,6 @@ public class TournamentLogic:ITournamentLogic
                 throw new Exception("This player is already registered!");
             }
         }
-
         await tournamentDao.RegisterPlayerAsync(dto);
     }
 }
