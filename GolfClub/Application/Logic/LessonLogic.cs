@@ -4,7 +4,9 @@ using Shared.Dtos.LessonDto;
 using Shared.Model;
 
 namespace Application.Logic;
-
+/// <summary>
+/// This Class takes care of the business logic for LessonLogic
+/// </summary>
 public class LessonLogic:ILessonLogic
 {
     private readonly ILessonDao lessonDao;
@@ -15,7 +17,12 @@ public class LessonLogic:ILessonLogic
         this.lessonDao = lessonDao;
         this.userDao = userDao;
     }
-    
+    /// <summary>
+    /// Passes on the request to create a new lesson to the DataAccess
+    /// </summary>
+    /// <param name="dto">LessonCreationDto</param>
+    /// <returns>Lesson</returns>
+    /// <exception cref="Exception"></exception>
     public async Task<Lesson> CreateAsync(LessonCreationDto dto)
     {
         User? user = await userDao.GetByUsernameAsync(dto.PlayerUsername);
@@ -23,10 +30,8 @@ public class LessonLogic:ILessonLogic
         {
             throw new Exception("User not found");
         }
-
-        DateOnly dateOnly = DateOnly.ParseExact(dto.Date, "yyyy-mm-dd", null);
-        Lesson todo = new Lesson(dateOnly, dto.Time, user, dto.Instructor);
-        Lesson created = await lessonDao.CreateAsync(todo);
+        
+        Lesson created = await lessonDao.CreateAsync(dto, user);
         return created;
     }
 }

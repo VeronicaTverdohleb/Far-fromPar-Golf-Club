@@ -2,7 +2,9 @@
 using Shared.Model;
 
 namespace HttpClients.ClientInterfaces;
-
+/// <summary>
+/// Interface implemented by UserHttpClient
+/// </summary>
 public interface IUserService
 {
     public Task<ICollection<User>> GetAllUsersAsync();
