@@ -21,3 +21,56 @@
     height:30px;
     cursor: pointer;
 }
+
+.removeEquipmentFromGameBtn {
+    margin-left: 35px;
+    margin-top: 15px;
+    background-color: palevioletred;
+    width: 150px;
+    height: 50px;
+    font-size: medium;
+    border-radius: 10px;
+}
+
+.addEquipmentToGameBtn {
+    margin-left: 35px;
+    margin-top: 15px;
+    background-color: greenyellow;
+    width: 150px;
+    height: 50px;
+    font-size: medium;
+    border-radius: 10px;
+}
+
+
+.setEquipmentToBeAddedBtn{
+    margin-left: 35px;
+    margin-top: 15px;
+    background-color: white;
+    width: 100px;
+    height: 20px;
+    font-size: medium;
+    border-radius: 10px; 
+}
+
+.rentEquipment{
+    background-color: greenyellow;
+    width: 150px;
+    height: 50px;
+    font-size: medium;
+    border-radius: 10px;
+}
+
+.message{
+    display: block;
+    font-weight: bold;
+    color: green;
+    margin-bottom: 10px;
+}
+
+.error{
+    display: block;
+    font-weight: bold;
+    color: red;
+    margin-bottom: 10px;
+}

@@ -14,8 +14,6 @@ public interface IEquipmentDao
     public Task<List<Equipment>> GetEquipmentListByNameAsync(string name);
     public Task RentEquipment(RentEquipmentDto dto);
     public Task<IEnumerable<Equipment>> GetAvailableEquipmentAsync();
-    //public Task<List<int>> GetAvailableEquipmentIds();
-   // public Task<List<int>> GetGameEquipmentIds(int gameId);
     public Task<IEnumerable<Equipment>> GetEquipmentByGameIdAsync(int gameId);
-    public Task DeleteAllEquipmentByGameIdAsync(int gameId);
+    public Task DeleteAllEquipmentByGameIdAsync(RentEquipmentDto dto);
 }

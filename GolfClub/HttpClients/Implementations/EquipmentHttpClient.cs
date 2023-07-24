@@ -76,44 +76,9 @@ public class EquipmentHttpClient: IEquipmentService
             string content = await response.Content.ReadAsStringAsync();
             throw new Exception(content);
         }
-        /*HttpResponseMessage response = await client.DeleteAsync($"Equipment/{name}/{amount}");
-        if (!response.IsSuccessStatusCode)
-        {
-            string content = await response.Content.ReadAsStringAsync();
-            throw new Exception(content);
-        }
-         string requestUrl = $"/Equipment",name,amount;
-         HttpResponseMessage response = await client.PatchAsync(requestUrl, null);
-         if (!response.IsSuccessStatusCode)
-         {
-             string content = await response.Content.ReadAsStringAsync();
-             throw new Exception(content);
-         }
-         HttpResponseMessage response = await client.PatchAsync("/Equipment",name);
-         if (!response.IsSuccessStatusCode)
-         {
-             string content = await response.Content.ReadAsStringAsync();
-             throw new Exception(content);
-         }*/
+       
     }
-
-    public async Task<Equipment?> GetEquipmentByNameAsync(string name)
-    {
-        HttpResponseMessage response = await client.GetAsync($"/Equipment/{name}");
-        string content = await response.Content.ReadAsStringAsync();
-        if (!response.IsSuccessStatusCode)
-        {
-            throw new Exception(content);
-        }
-
-        Equipment equipment = JsonSerializer.Deserialize<Equipment>(content, 
-            new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            }
-        )!;
-        return equipment;
-    }
+    
 
     public async Task DeleteEquipmentAsync(string? name)
     {
@@ -125,31 +90,19 @@ public class EquipmentHttpClient: IEquipmentService
         }
     }
 
-    public async Task DeleteAllEquipmentByGameIdAsync(int gameId)
+    public async Task DeleteAllEquipmentByGameIdAsync(RentEquipmentDto dto)
     {
-        HttpResponseMessage response = await client.DeleteAsync("Equipment/");
+        string jsonDto = JsonSerializer.Serialize(dto);
+        Console.WriteLine(jsonDto);
+        StringContent body = new StringContent(jsonDto, Encoding.UTF8, "application/json");
+        HttpResponseMessage response = await client.PatchAsync("/Equipment", body);
         if (!response.IsSuccessStatusCode)
         {
             string content = await response.Content.ReadAsStringAsync();
             throw new Exception(content);
         } 
     }
-
-    public async Task<int> CountOfEquipment(string name)
-    {
-        HttpResponseMessage response = await client.PostAsJsonAsync("/Equipment",name);
-        string content = await response.Content.ReadAsStringAsync();
-
-        if (!response.IsSuccessStatusCode)
-        {
-             throw new Exception(content);
-        } 
-        int n= JsonSerializer.Deserialize<int>(content, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        })!;
-        return n; 
-    }
+    
 
     public async Task RentEquipment(RentEquipmentDto dto)
     {
@@ -164,7 +117,6 @@ public class EquipmentHttpClient: IEquipmentService
     public async Task<ICollection<Equipment>?> GetAvailableEquipment()
     {
         var response = await client.GetAsync("/Equipments");
-       // response.EnsureSuccessStatusCode();
         string content = await response.Content.ReadAsStringAsync();
         if (!response.IsSuccessStatusCode)
         {
@@ -179,20 +131,7 @@ public class EquipmentHttpClient: IEquipmentService
         return result;
 
     }
-
-    public async Task<List<int>?> GetAvailableEquipmentIds()
-    {
-        var response = await client.GetAsync("/RentEquipment");
-        response.EnsureSuccessStatusCode();
-        var responseStream = await response.Content.ReadAsStreamAsync();
-        var options = new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        };
-
-        var result = await JsonSerializer.DeserializeAsync<List<int>>(responseStream, options);
-        return result;
-    }
+    
 
     public async Task<List<int>> GetGameEquipmentIds(int gameId)
     {
@@ -211,7 +150,6 @@ public class EquipmentHttpClient: IEquipmentService
     public async Task<ICollection<Equipment>?> GetEquipmentByGameIdAsync(int gameId)
     {
         var response = await client.GetAsync($"/Equipments/{gameId}");
-        // response.EnsureSuccessStatusCode();
         string content = await response.Content.ReadAsStringAsync();
         if (!response.IsSuccessStatusCode)
         {

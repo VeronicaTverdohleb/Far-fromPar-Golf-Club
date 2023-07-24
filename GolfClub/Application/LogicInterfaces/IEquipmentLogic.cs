@@ -11,11 +11,8 @@ public interface IEquipmentLogic
     public Task<Equipment?> GetEquipmentByIdAsync(int id);
     public Task<Equipment?> GetEquipmentByNameAsync(string name);
     public Task DeleteEquipmentAsync(string name);
-    public Task<List<Equipment>> GetEquipmentListAsync(string name);
     public Task RentEquipment(RentEquipmentDto dto);
     public Task<IEnumerable<Equipment>> GetAvailableEquipmentAsync();
-   // public Task<List<int>> GetAvailableEquipmentIds();
-   // public Task<List<int>> GetGameEquipmentIds(int gameId);
     public Task<IEnumerable<Equipment>> GetEquipmentByGameIdAsync(int gameId);
-    public Task DeleteAllEquipmentByGameIdAsync(int gameId);
+    public Task DeleteAllEquipmentByGameIdAsync(RentEquipmentDto dto);
 }

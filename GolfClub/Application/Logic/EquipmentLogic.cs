@@ -1,9 +1,6 @@
-﻿using System.Collections;
-using System.Diagnostics;
-using Application.DaoInterfaces;
+﻿using Application.DaoInterfaces;
 using Application.LogicInterfaces;
 using Shared.Dtos.EquipmentDto;
-using Shared.Dtos.GameDto;
 using Shared.Model;
 
 namespace Application.Logic;
@@ -12,7 +9,7 @@ public class EquipmentLogic: IEquipmentLogic
 {
     private readonly IEquipmentDao equipmentDao;
     private readonly IGameDao gameDao;
-    private readonly IUserDao userDao;
+  
 
 
     public EquipmentLogic(IEquipmentDao equipmentDao, IGameDao gameDao)
@@ -36,7 +33,7 @@ public class EquipmentLogic: IEquipmentLogic
                 }
                 if (equipmentItem.Name.Length > 50)
                 {
-                    throw new Exception("Max Name Length Is 50 Characters");
+                    throw new Exception("Maximum name should be less than 50 characters");
                 }
             }
 
@@ -52,24 +49,24 @@ public class EquipmentLogic: IEquipmentLogic
 
     public async Task UpdateEquipmentAsync(string name, int amount)
     {
-      
+        if (amount <= 0)
+        {
+            throw new Exception($"Amount of {name} should be greater than zero.");
+        }
         for (int i = 0; i < amount; i++)
 
         {
             List<Equipment> findEquipment = await equipmentDao.GetEquipmentListByNameAsync(name);
+            if (findEquipment.Count == 0)
+            {
+                throw new Exception($"No equipment with name {name} found");
+            }
 
             Equipment equipmentToDelete = findEquipment.First();
 
             await equipmentDao.UpdateEquipmentAsync(equipmentToDelete.Name, amount);
             
-        }/*  List<Equipment> findEquipment = await equipmentDao.GetEquipmentListByNameAsync(name);
-        var entriesToDelete = findEquipment.Take(amount).ToList();
-        foreach (var entry in entriesToDelete)
-        {
-            await equipmentDao.DeleteEquipmentAsync(entry.Name);
-        }*/
-
-       
+        }
         
     }
 
@@ -112,7 +109,11 @@ public class EquipmentLogic: IEquipmentLogic
             IEnumerable<Equipment> availableEquipment = await GetAvailableEquipmentAsync();
             List<int>? forRentEquipment = new List<int>();
             Game? game = await gameDao.GetGameByIdAsync(dto.GameId);
-           
+            if (game == null)
+            {
+                throw new Exception($"Game with id {dto.GameId} not found.");
+            }
+
 
             foreach (int equipmentName in dto.EquipmentIds)
             {
@@ -121,11 +122,19 @@ public class EquipmentLogic: IEquipmentLogic
                 if (equipment != null)
                 {
                     forRentEquipment.Add(equipment.Id);
+                    if (forRentEquipment==null || !forRentEquipment.Any())
+                       {
+                           throw new Exception("Equipments need to be added");
+                                                                                                    
+                       }                                                                 
                 }
+               
             }
 
+           
+
             RentEquipmentDto newRented = new RentEquipmentDto(game.Id, forRentEquipment);
-          
+           
             
             await equipmentDao.RentEquipment(newRented);
         
@@ -137,6 +146,11 @@ public class EquipmentLogic: IEquipmentLogic
         while (true)
             {
                 List<Equipment> findEquipment = await equipmentDao.GetEquipmentListByNameAsync(name);
+                if (findEquipment == null)
+                {
+                    // Handle the case when the equipmentDao.GetEquipmentListByNameAsync returns null
+                    throw new Exception("No equipments with such name exist");
+                }
                 if (findEquipment.Count== 0)
                 {
                     break; // Exit the loop if no more equipment with the given name is found
@@ -145,42 +159,21 @@ public class EquipmentLogic: IEquipmentLogic
                 {
                     await equipmentDao.DeleteEquipmentAsync(equipment.Name);
                 }
-               
                 
-                Console.WriteLine("in logic");
             }
         
  
     }
-/*IEnumerable<Equipment> allEquipments = await equipmentDao.GetEquipmentByGameIdAsync(gameId);
-        foreach (var equipment in allEquipments)
-        {
-            equipment.Games.Clear(); // Assuming you have a collection of games in Equipment entity
-        }*/
-    public async Task DeleteAllEquipmentByGameIdAsync(int gameId)
+
+    public async Task DeleteAllEquipmentByGameIdAsync(RentEquipmentDto dto)
     {
-        
-        
-        
-       /* IEnumerable<Equipment> equipments = await GetEquipmentByGameIdAsync(gameId);
-      //  List<Equipment>? forRentEquipment = new List<Equipment>();
-        Game? game = await gameDao.GetGameByIdAsync(gameId);
-           
-        IEnumerable<Equipment> forRentEquipment = equipments.Except(game.Equipments);
-
-        foreach (var equipmentName in game.Equipments)
+        Game? game = await gameDao.GetGameByIdAsync(dto.GameId);
+        if (game == null)
         {
-            Equipment equipment = equipments.FirstOrDefault(eq => eq.Id == equipmentName.Id);
-            forRentEquipment = equipments.ToList();
+            throw new Exception($"Game with id {game.Id} not found.");
+        }
+        await equipmentDao.DeleteAllEquipmentByGameIdAsync(dto);
 
-            if (equipment != null)
-            {
-                forRentEquipment.Remove(equipment);
-            }
-        }*/
-       Debug.WriteLine($"Deleting equipment for Game ID: {gameId}");
-
-        await equipmentDao.DeleteAllEquipmentByGameIdAsync(gameId);
 
     }
     public Task<IEnumerable<Equipment>> GetAvailableEquipmentAsync()
@@ -196,40 +189,16 @@ public class EquipmentLogic: IEquipmentLogic
             throw new Exception($"Game with id {gameId} not found");
 
         }
+        if (game.Equipments == null )
+        {
+            throw new Exception($"Game with id {gameId} has no equipments added");
+
+        }
 
         IEnumerable<Equipment> eInGame = await equipmentDao.GetEquipmentByGameIdAsync(game.Id);
 
         return eInGame;
     }
 
-    /* public async Task<List<int>> GetAvailableEquipmentIds()
-    {
-        return await equipmentDao.GetAvailableEquipmentIds();
-    }
-
-    public async Task<List<int>> GetGameEquipmentIds(int gameId)
-    {
-        return await equipmentDao.GetGameEquipmentIds(gameId);
-    }*/
-
-
-    /*public async Task<Equipment> RentEquipment(RentEquipmentDto dto)
-    {
-        foreach (string eq in dto.EquipmentNames)
-        {
-            Equipment? existing = await equipmentDao.GetEquipmentByNameAsync(eq);
-            if (existing is { Name: null })
-            {
-                throw new Exception($"This equipment you try to use, does not exist!");
-
-            }
-
-            if (dto.EquipmentNames == null || !dto.EquipmentNames.Any())
-            {
-                throw new Exception("You need to select equipments in order to rent");
-
-            }
-        }
-        
-          }*/
+   
 }

@@ -16,7 +16,7 @@ public class EquipmentDao: IEquipmentDao
         this.context = context;
     }
 
-    public async Task<IEnumerable<Equipment>> CreateEquipmentAsync(IEnumerable<EquipmentBasicDto>  equipment, int amount)//call in the page
+    public async Task<IEnumerable<Equipment>> CreateEquipmentAsync(IEnumerable<EquipmentBasicDto>  equipment, int amount)
     {
         List<Equipment> addedEquipment = new List<Equipment>();
 
@@ -72,19 +72,7 @@ public class EquipmentDao: IEquipmentDao
         return found;
        
     }
-
-    public int GetCountOfEquipment(string name)
-    {
-        IQueryable<Equipment> q = context.Equipments.AsQueryable();
-        int count = 0;
-        if (name != null)
-        {
-            count = q.Where(e=>e.Name==name).GroupBy(e => e.Name).Count();
-                
-        }
-
-        return count;
-    }
+    
 
     public async Task<Equipment?> GetEquipmentByIdAsync(int id)
     {
@@ -113,42 +101,13 @@ public class EquipmentDao: IEquipmentDao
         await context.SaveChangesAsync();
     }
 
-    public async Task DeleteAllEquipmentByGameIdAsync(int gameId)
+    public async Task DeleteAllEquipmentByGameIdAsync(RentEquipmentDto dto)
     {
-        Debug.WriteLine($"Deleting equipment for Game ID: {gameId}");
-        Game? existing = await context.Games.FirstOrDefaultAsync(g => g.Id == gameId);
-        //IEnumerable<Equipment> rentedEquipmnet = await GetEquipmentByGameIdAsync(existing.Id);
-
-        if (existing == null)
-        {
-            throw new Exception("Game not found with the specified ID.");
-        }
-
-        existing.Equipments!.Clear(); // Clear all existing equipment associations for the game
-
+        Debug.WriteLine($"Deleting equipment for Game ID: {dto.GameId}");
+        Game? existing = await context.Games.FirstOrDefaultAsync(g => g.Id == dto.GameId);
+        existing!.Equipments!.Clear(); // Clear all existing equipment associations for the game
+        context.Games.Update(existing);
         await context.SaveChangesAsync();
-       /* Game? existing = await context.Games.FirstOrDefaultAsync(g => g.Id == gameId);
-        if (existing == null)
-        {
-            throw new Exception("Game not found with the specified ID.");
-        }
-        List<Equipment> rentedEquipment = new List<Equipment>();
-        var getRentedEquipment = await GetEquipmentByGameIdAsync(existing.Id);
-        foreach (var g in existing.Equipments )
-        {
-            Equipment? e = getRentedEquipment.FirstOrDefault(eq => eq.Id ==g.Id);
-            if (e != null)
-            {
-                rentedEquipment.Remove(e);
-            }
-        }
-        foreach (var equip in rentedEquipment)
-        {
-            existing.Equipments.Remove(
-                equip);
-        }
-
-        await context.SaveChangesAsync();*/
        
         
     }
@@ -172,25 +131,6 @@ public class EquipmentDao: IEquipmentDao
 
     }
     
-    public async Task<List<int>> GetAvailableEquipmentIds()
-    {
-        var result = await context.Equipments
-            .Where(e => !context.Games.Any(g => g.Equipments.Contains(e)))
-            .Select(e => e.Id)
-            .ToListAsync();
-
-        return result;
-    }
-
-    public async Task<List<int>> GetGameEquipmentIds(int gameId)
-    {
-      
-        var results = await context.Equipments
-            .Where(e => context.Games.Any(g => g.Equipments.Contains(e) && g.Id == gameId))
-            .Select(e => e.Id).ToListAsync();
-        return results;
-
-    }
 
     public async Task RentEquipment(RentEquipmentDto dto )
     {
