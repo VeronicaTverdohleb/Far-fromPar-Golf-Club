@@ -6,7 +6,9 @@ using Shared.Dtos;
 using Shared.Model;
 
 namespace HttpClients.Implementations;
-
+/// <summary>
+/// Class Responsible for making REST requests
+/// </summary>
 public class UserHttpClient : IUserService
 {
     private readonly HttpClient client;
@@ -15,7 +17,11 @@ public class UserHttpClient : IUserService
     {
         this.client = client;
     }
-    
+    /// <summary>
+    /// Method requests all users
+    /// </summary>
+    /// <returns>ICollection of users</returns>
+    /// <exception cref="Exception">throws exception if not successful</exception>
     public async Task<ICollection<User>> GetAllUsersAsync()
     {
         HttpResponseMessage response = await client.GetAsync("/User");
@@ -31,7 +37,12 @@ public class UserHttpClient : IUserService
         })!;
         return users;
     }
-
+    /// <summary>
+    /// Method requests a user by username
+    /// </summary>
+    /// <param name="username">string</param>
+    /// <returns>User</returns>
+    /// <exception cref="Exception">throws exception if not successful</exception>
     public async Task<User> GetByUsernameAsync(string username)
     {
         HttpResponseMessage response = await client.GetAsync($"/User/{username}");
@@ -49,7 +60,11 @@ public class UserHttpClient : IUserService
         )!;
         return user;
     }
-
+    /// <summary>
+    /// Request to create a new user
+    /// </summary>
+    /// <param name="user">UserCreationDto</param>
+    /// <exception cref="Exception">throws exception if not successful</exception>
     public async Task CreateAsync(UserCreationDto user)
     {
         HttpResponseMessage response = await client.PostAsJsonAsync("/User", user);
@@ -59,7 +74,11 @@ public class UserHttpClient : IUserService
             throw new Exception(content);
         }
     }
-
+    /// <summary>
+    /// Request to delete a user by username
+    /// </summary>
+    /// <param name="userName">string</param>
+    /// <exception cref="Exception">throws exception if not successful</exception>
     public async Task DeleteAsync(string userName)
     {
         HttpResponseMessage response = await client.DeleteAsync($"/User/{userName}");

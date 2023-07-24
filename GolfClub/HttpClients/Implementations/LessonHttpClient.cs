@@ -3,7 +3,9 @@ using HttpClients.ClientInterfaces;
 using Shared.Dtos.LessonDto;
 
 namespace HttpClients.Implementations;
-
+/// <summary>
+/// Class Responsible for making REST requests
+/// </summary>
 public class LessonHttpClient : ILessonService
 {
     private readonly HttpClient client;
@@ -13,9 +15,14 @@ public class LessonHttpClient : ILessonService
         this.client = client;
     }
 
+    /// <summary>
+    /// POST Request to create a Lesson
+    /// </summary>
+    /// <param name="dto">LessonCreationDto</param>
+    /// <exception cref="Exception">If IsSuccessStatusCode is false, throw Exception</exception>
     public async Task CreateAsync(LessonCreationDto dto)
     {
-        HttpResponseMessage response = await client.PostAsJsonAsync("/lesson", dto);
+        HttpResponseMessage response = await client.PostAsJsonAsync("/Lesson", dto);
         if (!response.IsSuccessStatusCode)
         {
             string content = await response.Content.ReadAsStringAsync();

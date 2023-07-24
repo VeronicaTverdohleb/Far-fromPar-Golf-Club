@@ -2,7 +2,9 @@
 using Shared.Model;
 
 namespace Application.LogicInterfaces;
-
+/// <summary>
+/// Interface implemented by UserLogic
+/// </summary>
 public interface IUserLogic
 {
     public Task<User> GetByUsernameAsync(string userName);
