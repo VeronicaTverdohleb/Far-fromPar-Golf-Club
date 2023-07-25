@@ -76,6 +76,11 @@ public class DataModelManager implements DataModel {
         }
     }
 
+    /**
+     * Deletes a lesson from database
+     * @param lessonId Int id
+     * @throws SQLException
+     */
     @Override
     public void deleteLesson(int lessonId) throws SQLException {
         try(Connection connection=getConnection()){

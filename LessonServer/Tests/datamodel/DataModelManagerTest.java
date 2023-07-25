@@ -86,4 +86,22 @@ class DataModelManagerTest {
 
         assertEquals(list1,actualResult);
     }
+
+    @Test public void testDeletingLesson_O() throws SQLException {
+        Instructor instructor = new Instructor("Cedric", 2);
+        Lesson l=new Lesson(1,date.toString(),"10.00",instructor);
+        ArrayList<Lesson> larray=new ArrayList<>();
+        larray.add(l);
+        ArrayList<Lesson> larray2=new ArrayList<>();
+
+        try {
+            dataModel.deleteLesson(2);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        ArrayList<Lesson> actualResult= dataModel.getLessons(date.toString());
+
+        assertEquals(larray2,actualResult);
+        assertNotEquals(larray, actualResult);
+    }
 }
