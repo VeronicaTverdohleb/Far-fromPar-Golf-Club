@@ -23,12 +23,13 @@
 }
 
 .removeEquipmentFromGameBtn {
+    position: relative;
     margin-left: 35px;
     margin-top: 15px;
     background-color: palevioletred;
     width: 150px;
     height: 50px;
-    font-size: medium;
+    font-size: small;
     border-radius: 10px;
 }
 
@@ -38,7 +39,7 @@
     background-color: greenyellow;
     width: 150px;
     height: 50px;
-    font-size: medium;
+    font-size: small;
     border-radius: 10px;
 }
 
@@ -49,7 +50,7 @@
     background-color: white;
     width: 100px;
     height: 20px;
-    font-size: medium;
+    font-size: small;
     border-radius: 10px; 
 }
 

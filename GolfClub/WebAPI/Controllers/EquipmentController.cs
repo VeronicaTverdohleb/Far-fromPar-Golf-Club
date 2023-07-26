@@ -7,7 +7,7 @@ namespace WebAPI.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class EquipmentController: ControllerBase
+public class EquipmentController : ControllerBase
 {
     private readonly IEquipmentLogic equipmentLogic;
 
@@ -16,17 +16,15 @@ public class EquipmentController: ControllerBase
     {
         this.equipmentLogic = equipmentLogic;
     }
-    
-     [HttpPost("/Equipment")]
-    public async Task<ActionResult<IEnumerable<Equipment>>> CreateEquipmentAsync(IEnumerable<EquipmentBasicDto>  equipment, int amount)
+
+    [HttpPost("/Equipment")]
+    public async Task<ActionResult<IEnumerable<Equipment>>> CreateEquipmentAsync(
+        IEnumerable<EquipmentBasicDto> equipment, int amount)
     {
         try
         {
             IEnumerable<Equipment> equipmentToCreate = await equipmentLogic.CreateEquipmentAsync(equipment, amount);
             return Created("/equipments", equipmentToCreate);
-            
-           
-
         }
         catch (Exception e)
         {
@@ -34,7 +32,7 @@ public class EquipmentController: ControllerBase
             return StatusCode(500, e.Message);
         }
     }
-    
+
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Equipment>>> GetEquipmentAsync([FromQuery] string? name)
     {
@@ -50,7 +48,7 @@ public class EquipmentController: ControllerBase
             return StatusCode(500, e.Message);
         }
     }
-    
+
     [HttpGet("{id:int}")]
     public async Task<ActionResult<Equipment>> GetEquipmentById([FromRoute] int id)
     {
@@ -80,25 +78,24 @@ public class EquipmentController: ControllerBase
             return StatusCode(500, e.Message);
         }
     }
-    
+
     [HttpGet("/Equipments")]
     public async Task<ActionResult<IEnumerable<Equipment>?>> GetAvailableEquipmentAsync()
     {
         try
         {
             var availableEquipment = await equipmentLogic.GetAvailableEquipmentAsync();
-            
-            return Ok(availableEquipment); 
+
+            return Ok(availableEquipment);
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
             return StatusCode(500, e.Message);
-             }
-       
+        }
     }
 
-    [HttpGet,Route("/Equipments/{gameId:int}")]
+    [HttpGet, Route("/Equipments/{gameId:int}")]
     public async Task<ActionResult<IEnumerable<Equipment>>> GetEquipmentByGameIdAsync([FromRoute] int gameId)
     {
         Console.WriteLine(gameId);
@@ -114,43 +111,8 @@ public class EquipmentController: ControllerBase
         }
     }
 
-    
-  /*  [HttpGet("RentEquipment")]
-    public async Task<ActionResult<List<int>>> GetAvailableEquipmentIds()
-    {
-        try
-        {
-            var availableEquipment = equipmentLogic.GetAvailableEquipmentIds();
-            
-            return Ok(availableEquipment); 
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            return StatusCode(500, e.Message);
-        }
-       
-    }
-    
-    [HttpGet("RentEquipment/{id:int}")]
-    public async Task<ActionResult<List<int>>> GetGameEquipmentIds(int id)
-    {
-        try
-        {
-            var availableEquipment = equipmentLogic.GetGameEquipmentIds(id);
-            
-            return Ok(availableEquipment); 
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            return StatusCode(500, e.Message);
-        }
-       
-    }*/
-   
 
-    [HttpDelete ("{name:required}/{amount:int}")]
+    [HttpDelete("{name:required}/{amount:int}")]
     public async Task<ActionResult> UpdateAsync(string name, int amount)
     {
         try
@@ -164,7 +126,8 @@ public class EquipmentController: ControllerBase
             return StatusCode(500, e.Message);
         }
     }
-    [HttpDelete ("{name:required}")]
+
+    [HttpDelete("{name:required}")]
     public async Task<ActionResult> DeleteEquipmentAsync([FromRoute] string name)
     {
         try
@@ -179,13 +142,13 @@ public class EquipmentController: ControllerBase
         }
     }
 
-    [HttpDelete]
-    public async Task<ActionResult> DeleteAllEquipmentByGameIdAsync([FromRoute]int gameId)
+    [HttpPatch]
+    public async Task<ActionResult> DeleteAllEquipmentByGameIdAsync([FromBody] RentEquipmentDto dto)
     {
         Console.WriteLine("In the controller");
         try
         {
-            await equipmentLogic.DeleteAllEquipmentByGameIdAsync(gameId);
+            await equipmentLogic.DeleteAllEquipmentByGameIdAsync(dto);
             return Ok();
         }
         catch (Exception e)
@@ -194,5 +157,4 @@ public class EquipmentController: ControllerBase
             return StatusCode(500, e.Message);
         }
     }
-
 }

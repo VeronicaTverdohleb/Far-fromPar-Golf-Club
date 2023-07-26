@@ -24,10 +24,16 @@
  <div class="button-row">
                 @if (!string.IsNullOrEmpty(error))
                 {
-                    <label style="color: red">@error</label>
+                    <label class="error" style="color: red">@error</label>
+                }
+                else
+                {
+                    <label class="message" style="color: green">@msg</label>
                 }
                 
-<button class="createEquipmentButton"  @onclick="CreateEquipment">Create</button>
+                <br/>
+                
+                <button class="createEquipmentButton"  @onclick="CreateEquipment">Create</button>
 </div>
     
     
@@ -47,7 +53,7 @@
     {
         try
         {
-            error = "";
+            msg = "";
             List<EquipmentBasicDto> equipmentList = new List<EquipmentBasicDto>();
 
 
@@ -64,7 +70,7 @@
                 
             
             
-            error = "Equipment created";
+            msg = "Equipment created";
             Equipments = await EquipmentService.getAllEquipmentAsync(null);
 
 

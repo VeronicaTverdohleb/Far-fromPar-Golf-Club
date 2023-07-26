@@ -21,18 +21,20 @@
     <br/>
     <div class="form-group field">
         <label>Equipment rented for the current game:</label>
+        <button class="removeEquipmentFromGameBtn" @onclick="ConfirmActionForReturn">Return Equipment</button>
+           
         @foreach (var equip in rentedEquipment)
         {
-            <li>@equip!.Name</li> 
+            <li>@equip!.Name</li>
         }
     </div>
-    <button class="removeEquipmentFromGameBtn" @onclick="ConfirmActionForReturn">Return Equipment</button>
+    <br/>
     <br/>
     <br/>
     <div>
         <label > Choose equipments to add to the game:</label >
 
-        <select class="setEquipmentToBeAddedBtn"   name="addEquipment" id="addEquipment" @onchange="SetEquipmentsToAddToGame">
+        <select class="setEquipmentToBeAddedBtn" name="addEquipment" id="addEquipment" @onchange="SetEquipmentsToAddToGame">
             <option>Choose:</option>
             @foreach (var e in equipmetCounts)
             {
@@ -62,9 +64,8 @@
                 {
                     if (i.Id == j)
                     {
-
                         <tr >
-                            <td > @i.Id   </td >
+                            <td > @i.Id </td >
                             <td > @i.Name </td >
                             <td >
                                 <img src="img/delete.png" class="funnel" @onclick="RemoveEquipment"/>
@@ -74,13 +75,12 @@
                     }
                 }
             }
-            
-                </tbody >
+
+            </tbody >
         </table>
     }
     <br/>
     <br/>
-
 
 
     <button @onclick="ConfirmAction" class="rentEquipment"> RentEquipment </button>
@@ -88,25 +88,27 @@
     {
         <label class="error"> @error </label>
     }
-    else 
+    else
     {
         <label class="message"> @msg </label>
     }
 }
 
 @code {
+
     [Parameter]
-        public int Id { get; set; }
-    private IEnumerable<Equipment?> _equipments=new List<Equipment>();
+    public int Id { get; set; }
+
+    private IEnumerable<Equipment?> _equipments = new List<Equipment>();
     private IEnumerable<Equipment?> rentedEquipment = new List<Equipment?>();
-    private IEnumerable<EquipmentBasicDto> equipmetCounts=new List<EquipmentBasicDto>();
+    private IEnumerable<EquipmentBasicDto> equipmetCounts = new List<EquipmentBasicDto>();
     private List<int> equipmentAvaialbleId = new List<int>();
     private Equipment? equipmentToAdd;
     private string error = "";
     private string msg = "";
     private Game? game;
-   
-   
+
+
     ///Method which gets called when accessing the page 
     protected override async Task OnInitializedAsync()
     {
@@ -114,10 +116,8 @@
         {
             game = await GameService.GetGameByIdAsync(Id)!;
             _equipments = (await EquipmentService.GetAvailableEquipment())!;
-            equipmetCounts=_equipments.GroupBy(e => e.Name).Select(e => new EquipmentBasicDto { Name = e.Key, Amount = e.Count() }).ToList();
+            equipmetCounts = _equipments.GroupBy(e => e.Name).Select(e => new EquipmentBasicDto { Name = e.Key, Amount = e.Count() }).ToList();
             rentedEquipment = (await EquipmentService.GetEquipmentByGameIdAsync(Id))!;
-
-
         }
         catch (Exception e)
         {
@@ -131,11 +131,10 @@
     {
         msg = "";
         try
-        { 
+        {
             Console.WriteLine("equipmentToAdd is null: " + (equipmentToAdd?.Id));
             equipmentAvaialbleId.Remove(equipmentToAdd.Id);
             msg = "Item removed";
-           
         }
         catch (Exception e)
         {
@@ -143,10 +142,10 @@
             error = e.Message;
         }
     }
-///Creates order with the list of ingredients
+
+    ///Creates order with the list of ingredients
     private async Task CreateOrder()
     {
-       
         msg = "";
         if (_equipments == null)
         {
@@ -156,17 +155,13 @@
         msg = "";
         try
         {
-            
-            RentEquipmentDto dto = new RentEquipmentDto(Id,equipmentAvaialbleId);
-           
+            RentEquipmentDto dto = new RentEquipmentDto(Id, equipmentAvaialbleId);
+
             try
             {
-                
                 await EquipmentService.RentEquipment(dto);
-                    
-                    msg = "Renting process finished successfully!";
-          
-               
+
+                msg = "Renting process finished successfully!";
             }
             catch (Exception e)
             {
@@ -179,12 +174,12 @@
             Console.WriteLine(e);
             error = e.Message;
         }
-     
     }
-///Asks for confirmation before renting the equipment
+
+    ///Asks for confirmation before renting the equipment
     private async Task ConfirmAction()
     {
-        bool confirmed = await jsRuntime.InvokeAsync<bool>("confirmAction","Please confirm the renting of the equipment");
+        bool confirmed = await jsRuntime.InvokeAsync<bool>("confirmAction", "Please confirm the renting of the equipment");
 
         if (confirmed)
         {
@@ -196,17 +191,17 @@
             await OnInitializedAsync();
         }
     }
-    
+
     private void SetEquipmentsToAddToGame(ChangeEventArgs e)
     {
         Console.WriteLine("SetEquipmentsToAddToGame method called");
 
         string selectedValue = e.Value?.ToString()!;
         Console.WriteLine("Selected Value: " + selectedValue);
-         equipmentToAdd = _equipments.FirstOrDefault(equipment => equipment != null && equipment.Name == selectedValue);
+        equipmentToAdd = _equipments.FirstOrDefault(equipment => equipment != null && equipment.Name == selectedValue);
         List<Equipment> toRemove = _equipments.ToList();
         toRemove.Remove(equipmentToAdd);
-        
+
 
         if (equipmentToAdd != null)
         {
@@ -217,11 +212,13 @@
             Console.WriteLine("Equipment Not Found!");
         }
     }
+
     private async Task AddEquipment()
     {
         msg = "";
         try
-        {Console.WriteLine("equipmentAvaialbleId is null: " + (equipmentAvaialbleId == null));
+        {
+            Console.WriteLine("equipmentAvaialbleId is null: " + (equipmentAvaialbleId == null));
             Console.WriteLine("equipmentToAdd is null: " + (equipmentToAdd?.Id));
             Console.WriteLine("equipmentAvaialbleId: " + string.Join(", ", equipmentAvaialbleId));
 
@@ -229,15 +226,14 @@
             if (equipmentToAdd != null && equipmentAvaialbleId != null && !equipmentAvaialbleId.Contains(equipmentToAdd.Id))
             {
                 equipmentAvaialbleId.Add(equipmentToAdd.Id);
-             
-                 
+
+
                 msg = "Equipment item added successfully!";
             }
             else
             {
                 error = "Equipment item already added!";
             }
-            
         }
         catch (Exception e)
         {
@@ -248,22 +244,16 @@
 
     private async Task ReturnEquipment()
     {
-      
-       
         msg = "";
         try
         {
-            
-             RentEquipmentDto dto = new RentEquipmentDto(Id,equipmentAvaialbleId);
-           
+            RentEquipmentDto dto = new RentEquipmentDto(Id, equipmentAvaialbleId);
+
             try
             {
-                
-                 await EquipmentService.DeleteAllEquipmentByGameIdAsync(dto);
-                    
+                await EquipmentService.DeleteAllEquipmentByGameIdAsync(dto);
+
                 msg = "Equipments returned successfully!";
-          
-               
             }
             catch (Exception e)
             {
@@ -277,10 +267,10 @@
             error = e.Message;
         }
     }
-    
+
     private async Task ConfirmActionForReturn()
     {
-        bool confirmed = await jsRuntime.InvokeAsync<bool>("confirmAction","Please confirm the return of the equipment");
+        bool confirmed = await jsRuntime.InvokeAsync<bool>("confirmAction", "Please confirm the return of the equipment");
 
         if (confirmed)
         {
@@ -292,4 +282,5 @@
             await OnInitializedAsync();
         }
     }
+
 }

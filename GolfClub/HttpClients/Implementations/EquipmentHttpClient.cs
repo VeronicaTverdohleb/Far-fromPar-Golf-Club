@@ -7,7 +7,7 @@ using Shared.Model;
 
 namespace HttpClients.Implementations;
 
-public class EquipmentHttpClient: IEquipmentService
+public class EquipmentHttpClient : IEquipmentService
 {
     private readonly HttpClient client;
 
@@ -19,20 +19,21 @@ public class EquipmentHttpClient: IEquipmentService
     public async Task<ICollection<Equipment?>> getAllEquipmentAsync(string? name)
     {
         string query = ConstructQuery(name);
-        HttpResponseMessage response = await client.GetAsync("/Equipment"+query);
+        HttpResponseMessage response = await client.GetAsync("/equipment" + query);
         string content = await response.Content.ReadAsStringAsync();
         if (!response.IsSuccessStatusCode)
         {
             throw new Exception(content);
         }
 
-        ICollection<Equipment?> equipments = JsonSerializer.Deserialize<ICollection<Equipment>>(content, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        })!;
-        return equipments; 
+        ICollection<Equipment?> equipments = JsonSerializer.Deserialize<ICollection<Equipment>>(content,
+            new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            })!;
+        return equipments;
     }
-    
+
     private static string ConstructQuery(string? name)
     {
         string query = "";
@@ -41,34 +42,32 @@ public class EquipmentHttpClient: IEquipmentService
             query += $"?Name={name}";
         }
 
-       
+
         if (!string.IsNullOrEmpty(name))
         {
             query += string.IsNullOrEmpty(query) ? "?" : "&";
             query += $"namecontains={name}";
         }
-        
+
 
         return query;
     }
 
-    public async Task CreateEquipmentAsync(IEnumerable<EquipmentBasicDto>  equipment, int amount)
+    public async Task CreateEquipmentAsync(IEnumerable<EquipmentBasicDto> equipment, int amount)
     {
-        HttpResponseMessage response = await client.PostAsJsonAsync("/Equipment", equipment);  
-        
-            
-            Console.WriteLine("in the http ");  
-            if (!response.IsSuccessStatusCode)
-            {
-                string content = await response.Content.ReadAsStringAsync();
-                throw new Exception(content);
-            }
+        HttpResponseMessage response = await client.PostAsJsonAsync("/Equipment", equipment);
 
 
+        Console.WriteLine("in the http ");
+        if (!response.IsSuccessStatusCode)
+        {
+            string content = await response.Content.ReadAsStringAsync();
+            throw new Exception(content);
+        }
     }
 
     public async Task UpdateEquipmentAmount(string name, int amount)
-    { 
+    {
         string requestUrl = $"/Equipment/{name}/{amount}";
         HttpResponseMessage response = await client.DeleteAsync(requestUrl);
         if (!response.IsSuccessStatusCode)
@@ -76,9 +75,8 @@ public class EquipmentHttpClient: IEquipmentService
             string content = await response.Content.ReadAsStringAsync();
             throw new Exception(content);
         }
-       
     }
-    
+
 
     public async Task DeleteEquipmentAsync(string? name)
     {
@@ -100,9 +98,9 @@ public class EquipmentHttpClient: IEquipmentService
         {
             string content = await response.Content.ReadAsStringAsync();
             throw new Exception(content);
-        } 
+        }
     }
-    
+
 
     public async Task RentEquipment(RentEquipmentDto dto)
     {
@@ -113,7 +111,7 @@ public class EquipmentHttpClient: IEquipmentService
             throw new Exception(content);
         }
     }
-    
+
     public async Task<ICollection<Equipment>?> GetAvailableEquipment()
     {
         var response = await client.GetAsync("/Equipments");
@@ -124,14 +122,13 @@ public class EquipmentHttpClient: IEquipmentService
         }
 
         ICollection<Equipment> result = JsonSerializer.Deserialize<ICollection<Equipment>>(content,
-        new JsonSerializerOptions
+            new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             })!;
         return result;
-
     }
-    
+
 
     public async Task<List<int>> GetGameEquipmentIds(int gameId)
     {

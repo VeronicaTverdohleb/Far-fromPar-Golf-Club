@@ -7,7 +7,7 @@ using Shared.Model;
 
 namespace DataAccess.DAOs;
 
-public class EquipmentDao: IEquipmentDao
+public class EquipmentDao : IEquipmentDao
 {
     private readonly DataContext context;
 
@@ -16,7 +16,7 @@ public class EquipmentDao: IEquipmentDao
         this.context = context;
     }
 
-    public async Task<IEnumerable<Equipment>> CreateEquipmentAsync(IEnumerable<EquipmentBasicDto>  equipment, int amount)
+    public async Task<IEnumerable<Equipment>> CreateEquipmentAsync(IEnumerable<EquipmentBasicDto> equipment, int amount)
     {
         List<Equipment> addedEquipment = new List<Equipment>();
 
@@ -24,16 +24,14 @@ public class EquipmentDao: IEquipmentDao
         {
             for (int i = 0; i <= amount; i++)
             {
-
                 Equipment newEquipment = new Equipment(equipmentItem.Name)
                 {
                     Name = equipmentItem.Name
-
                 };
 
 
                 EntityEntry<Equipment> added = await context.Equipments.AddAsync(newEquipment);
-               
+
 
                 addedEquipment.Add(added.Entity);
                 await context.SaveChangesAsync();
@@ -41,8 +39,6 @@ public class EquipmentDao: IEquipmentDao
         }
 
         return addedEquipment;
-       
-       
     }
 
     public async Task UpdateEquipmentAsync(string? name, int amount)
@@ -57,11 +53,12 @@ public class EquipmentDao: IEquipmentDao
 
     public Task<IEnumerable<Equipment>> GetEquipmentsAsync(SearchEquipmentDto searchParameters)
     {
-      IEnumerable<Equipment> list = context.Equipments.ToList();
-      if (!string.IsNullOrEmpty(searchParameters.NameContains))
-      {
-          list = list.Where(e => e.Name.Contains(searchParameters.NameContains, StringComparison.OrdinalIgnoreCase));
-      }
+        IEnumerable<Equipment> list = context.Equipments.ToList();
+        if (!string.IsNullOrEmpty(searchParameters.NameContains))
+        {
+            list = list.Where(e => e.Name.Contains(searchParameters.NameContains, StringComparison.OrdinalIgnoreCase));
+        }
+
         return Task.FromResult(list);
     }
 
@@ -70,9 +67,8 @@ public class EquipmentDao: IEquipmentDao
         var found = await context.Equipments
             .AsNoTracking().SingleOrDefaultAsync(e => e.Name == name);
         return found;
-       
     }
-    
+
 
     public async Task<Equipment?> GetEquipmentByIdAsync(int id)
     {
@@ -82,6 +78,7 @@ public class EquipmentDao: IEquipmentDao
         {
             throw new Exception($"Equipment with id {id} not found");
         }
+
         return found;
     }
 
@@ -108,19 +105,16 @@ public class EquipmentDao: IEquipmentDao
         existing!.Equipments!.Clear(); // Clear all existing equipment associations for the game
         context.Games.Update(existing);
         await context.SaveChangesAsync();
-       
-        
     }
 
     public Task<IEnumerable<Equipment>> GetAvailableEquipmentAsync()
     {
-        IEnumerable<Equipment> result = context.Equipments.Where(e=>!context.Games.Any(g=>g.Equipments.Contains(e))).AsEnumerable();
+        IEnumerable<Equipment> result = context.Equipments.Where(e => !context.Games.Any(g => g.Equipments.Contains(e)))
+            .AsEnumerable();
 
         return Task.FromResult(result);
-
-
     }
-    
+
     public Task<IEnumerable<Equipment>> GetEquipmentByGameIdAsync(int gameId)
     {
         IEnumerable<Equipment> result = context.Equipments
@@ -128,20 +122,20 @@ public class EquipmentDao: IEquipmentDao
             .AsEnumerable();
 
         return Task.FromResult(result);
-
     }
-    
 
-    public async Task RentEquipment(RentEquipmentDto dto )
+
+    public async Task RentEquipment(RentEquipmentDto dto)
     {
         Game? existing = await context.Games.FirstOrDefaultAsync(g => g.Id == dto.GameId);
         if (existing == null)
         {
             throw new Exception("Game not found with the specified ID.");
         }
+
         List<Equipment> forRentEquipment = new List<Equipment>();
         var availableEquipment = await GetAvailableEquipmentAsync();
-        foreach (int equipment in dto.EquipmentIds )
+        foreach (int equipment in dto.EquipmentIds)
         {
             Equipment? e = availableEquipment.FirstOrDefault(eq => eq.Id == equipment);
             if (e != null)
@@ -149,17 +143,12 @@ public class EquipmentDao: IEquipmentDao
                 forRentEquipment.Add(e);
             }
         }
+
         foreach (var equipment in forRentEquipment)
         {
             existing.Equipments.Add(equipment);
         }
 
         await context.SaveChangesAsync();
-
     }
-   
-
-
-        
-
 }

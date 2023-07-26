@@ -9,12 +9,11 @@ namespace WebAPI.Controllers;
 public class RentEquipmentController: ControllerBase
 {
     private readonly IEquipmentLogic equipmentLogic;
-    //private readonly IGameLogic gameLogic;
 
-    public RentEquipmentController(IEquipmentLogic equipmentLogic)//, IGameLogic gameLogic)
+    public RentEquipmentController(IEquipmentLogic equipmentLogic)
     {
         this.equipmentLogic = equipmentLogic;
-        //this.gameLogic = gameLogic;
+      
     }
     
     [HttpPost]
@@ -36,21 +35,6 @@ public class RentEquipmentController: ControllerBase
         }
     }
     
-   /* [HttpGet]
-    public async Task<ActionResult<IEnumerable<Equipment>>> GetAvailableEquipment()
-    {
-        try
-        {
-            var availableEquipment = equipmentLogic.GetAvailableEquipment();
-            
-            return Ok(availableEquipment); 
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            return StatusCode(500, e.Message);
-        }
-       
-    }*/
+ 
     
 }

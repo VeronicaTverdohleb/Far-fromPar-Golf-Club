@@ -9,28 +9,22 @@
     <img src="img/golfball.png" class="golfball" alt="Golf Ball"/>
     <h3 class="headline"> Manage Equipment </h3>
     <img src="img/golfball.png" class="golfball" alt="Golf Ball"/>
-</div>       
-<button class="addNewButton"  @onclick="@(() => navMgr.NavigateTo("/AddEquipment"))">Add new equipment</button>
-<div class="filter-bar">
-    <div class="filters-container">
-        <img src="img/@(doShowFilters ? "clear_" : "")funnel.png" class="funnel" @onclick="@(() => doShowFilters = !doShowFilters)" alt="Funnel"/>
-        @if (doShowFilters)
-        {
-            <div class="filter">
-                <label>Name:</label>
-                <input type="text" @bind="_nameFilter"/>
-            </div>
-        }
-    </div>
 </div>
+ <br/>
+   
+<button class="addNewButton" @onclick="@(() => navMgr.NavigateTo("/AddEquipment"))">Add new equipment</button>
+ <br/>
 
-<div>
-    <button @onclick="LoadEquipmentItems">Load</button>
+
     @if (!string.IsNullOrEmpty(msg))
     {
         <label style="color: green">@msg</label>
     }
-</div>
+    else
+    {
+        <label class="error" style="color: red">@error</label>
+    }
+
 @if (equipmetsounts != null)
 {
     <table class="equipment-table">
@@ -54,12 +48,12 @@
                 </td>
                 <td>
                     <img src="img/add.png" class="funnel" @onclick="@(() => ShowUpdateFormPlus(e.Name))"/>
-                    
+
                 </td>
-                
+
                 <td>
                     <img src="img/clear_add.png" class="funnel" @onclick="@(() => ShowUpdateFormMinus(e.Name))"/>
-                     
+
                 </td>
             </tr>
             @if (showUpdateFormPlus && e.Name == selectedEquipmentName)
@@ -68,7 +62,7 @@
                     <td colspan="20">
                         <div class="update-form">
                             <div class="form-group field">
-                                <label>Add more equipment items:</label> 
+                                <label>Add more equipment items:</label>
                                 <br/>
                                 <label>Name:</label>
                                 <input type="text" @bind="selectedEquipmentName" readonly/>
@@ -88,47 +82,51 @@
                     </td>
                 </tr>
             }
-           
-            @if (showUpdateFormMinus && e.Name == selectedEquipmentName){
+
+            @if (showUpdateFormMinus && e.Name == selectedEquipmentName)
+            {
                 <tr>
-        <td colspan="5">
-        <div class="update-form">
-            <div class="form-group field">
-                <label>Remove some equipment items:</label>
-                <br/>
-                <label>Name: </label>
-                <input type="text" @bind="selectedEquipmentName" readonly/>
-            </div>
-            <div class="form-group field">
-                <label>Amount:</label>
-                <input type="text" @bind="upAmount1"/>
-            </div>
-            <div class="button-row">
-                @if (!string.IsNullOrEmpty(error))
-                {
-                    <label style="color: red">@error</label>
-                }
-                <button class="createEquipmentButton" @onclick="UpdateLessEquipment">Update</button>
-            </div>
-        </div>
-        </td>
-                        </tr>
+                    <td colspan="5">
+                        <div class="update-form">
+                            <div class="form-group field">
+                                <label>Remove some equipment items:</label>
+                                <br/>
+                                <label>Name: </label>
+                                <input type="text" @bind="selectedEquipmentName" readonly/>
+                            </div>
+                            <div class="form-group field">
+                                <label>Amount:</label>
+                                <input type="text" @bind="upAmount1"/>
+                            </div>
+                            <div class="button-row">
+                                @if (!string.IsNullOrEmpty(error))
+                                {
+                                    <label class="error" style="color: red">@error</label>
+                                }
+                                else
+                                {
+                                    <label class="message" style="color: green">@msg</label>
+                                }
+                                <button class="createEquipmentButton" @onclick="UpdateLessEquipment">Update</button>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
             }
         }
         </tbody>
     </table>
-    <br/> <br/> <br/>
-    
-
+    <br/>
+    <br/>
+    <br/>
 }
+
 @code {
     private ICollection<EquipmentBasicDto> equipmetsounts;
-    private ICollection<Equipment?> equipments;
-    private ICollection<int> amounts;
+    private IEnumerable<Equipment?> equipments;
     private int amount;
     private string name;
-    private bool doShowFilters1 = false;
-    private bool doShowFilters2 = false;
+    private string error = "";
     private string msg = "";
     private bool doShowFilters = false;
     private string? _nameFilter;
@@ -136,61 +134,49 @@
     private int upAmount;
     private string upName1;
     private int upAmount1;
-    private string error = "";
     private bool showUpdateFormMinus = false;
     private bool showUpdateFormPlus = false;
     private string selectedEquipmentName = "";
-    /* <td>
-                <img src="img/delete.png" class="funnel" @onclick="@(() => ConfirmAction(e.Equipments))"/> 
-                
-                </td> */
+
     protected override async Task OnInitializedAsync()
     {
         equipments = await EquipmentService.getAllEquipmentAsync(null);
-        
+
         equipmetsounts = equipments.GroupBy(e => e.Name).Select(e => new EquipmentBasicDto { Name = e.Key, Amount = e.Count() }).ToList();
-       
-       
     }
-    
+
     private async Task LoadEquipmentItems()
     {
         try
         {
-            equipments= await EquipmentService.getAllEquipmentAsync(_nameFilter);
-           // equipmetsounts = equipments.GroupBy(e => e.Name).Select(e => new EquipmentBasicDto { Name = e.Key, Amount = e.Count() }).ToList();
-            //await OnInitializedAsync();
-
+            equipments = await EquipmentService.getAllEquipmentAsync(_nameFilter);
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
-            msg = e.Message;
+            error = e.Message;
         }
     }
 
-    private async Task ConfirmAction(string? name )
+    private async Task ConfirmAction(string? name)
     {
         bool confirmed = await jsRuntime.InvokeAsync<bool>("confirmAction", "Are you sure you want to proceed?");
 
         if (confirmed)
         {
-           
-                await EquipmentService.DeleteEquipmentAsync(name);
-              
-            
+            await EquipmentService.DeleteEquipmentAsync(name);
+
+
             equipments = await EquipmentService.getAllEquipmentAsync(null);
             await OnInitializedAsync();
-
         }
         else
         {
             LoadEquipmentItems();
         }
     }
-    
-    
-    
+
+
     private async Task UpdateMoreEquipment()
     {
         try
@@ -199,27 +185,16 @@
             List<EquipmentBasicDto> equipmentList = new List<EquipmentBasicDto>();
 
 
-
             for (int i = 0; i < upAmount; i++)
             {
                 EquipmentBasicDto basicDto = new(upName);
                 equipmentList.Add(basicDto);
-                
-
             }
             await EquipmentService.CreateEquipmentAsync(equipmentList, amount);
 
-            error = "Equipment updated";
+            msg = "Equipment updated";
             equipments = await EquipmentService.getAllEquipmentAsync(null);
             await OnInitializedAsync();
-
-                
-            
-            
-         
-           
-
-
         }
         catch (Exception e)
         {
@@ -227,19 +202,15 @@
             error = e.Message;
         }
     }
-    
+
     private async Task UpdateLessEquipment()
     {
-       
-           
-        await EquipmentService.UpdateEquipmentAmount(upName1,upAmount1);
+        await EquipmentService.UpdateEquipmentAmount(upName1, upAmount1);
         equipments = await EquipmentService.getAllEquipmentAsync(null);
-        error = "Equipment updated";
+        msg = "Equipment updated";
         await OnInitializedAsync();
-            
-
-      
     }
+
     private void ShowUpdateFormPlus(string equipmentName)
     {
         selectedEquipmentName = equipmentName;
@@ -249,6 +220,7 @@
         showUpdateFormPlus = true;
         showUpdateFormMinus = false;
     }
+
     private void ShowUpdateFormMinus(string equipmentName)
     {
         selectedEquipmentName = equipmentName;
@@ -259,20 +231,8 @@
         showUpdateFormPlus = false;
     }
 
-    /* private async Task<List<EquipmentBasicDto>> GetEquipmentData()
-    {
-        ICollection<EquipmentBasicDto> equipmentList = await  EquipmentService.getAllEquipmentAsync(null);
 
-        var equipmentData = new List<EquipmentBasicDto>();
-        foreach (var equipment in equipmentList)
-        {
-           int amount= await EquipmentService.CountOfEquipment(equipment.Name);
-            equipmentData.Add(new EquipmentBasicDto{Name=equipment.Name, Amount = amount});
-        }
 
-        return equipmentData;
-    }*/
-    
-   
+
 
 }
