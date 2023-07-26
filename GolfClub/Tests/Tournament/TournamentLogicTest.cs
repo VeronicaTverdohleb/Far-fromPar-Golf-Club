@@ -206,11 +206,11 @@ public class TournamentLogicTest
         DateOnly start = DateOnly.FromDateTime(DateTime.Today);
         DateOnly end = DateOnly.FromDateTime(DateTime.Today);
         string name = "Steve Grand Prix";
-        User player = new User("Cedric", "Cedric", "test", "test");
+        Shared.Model.User player = new  Shared.Model.User("Cedric", "Cedric", "test", "test");
         Shared.Model.Tournament tournament = new Shared.Model.Tournament(name, start, end);
-        tournament.Players = new List<User>();
+        tournament.Players = new List< Shared.Model.User>();
         ICollection<Shared.Model.Tournament> tournaments = new List<Shared.Model.Tournament>();
-        ICollection<Shared.Model.User> players = new List<User>();
+        ICollection<Shared.Model.User> players = new List< Shared.Model.User>();
         tournaments.Add(tournament);
         players.Add(player);
         RegisterPlayerDto dto = new RegisterPlayerDto(player.UserName, tournament.Name);
@@ -230,12 +230,12 @@ public class TournamentLogicTest
         DateOnly start = DateOnly.FromDateTime(DateTime.Today);
         DateOnly end = DateOnly.FromDateTime(DateTime.Today);
         string name = "Steve Grand Prix";
-        User player = new User("Cedric", "Cedric", "test", "test");
+        Shared.Model.User player = new  Shared.Model.User("Cedric", "Cedric", "test", "test");
         Shared.Model.Tournament tournament = new Shared.Model.Tournament(name, start, end);
-        tournament.Players = new List<User>();
+        tournament.Players = new List< Shared.Model.User>();
         tournament.Players.Add(player);
         ICollection<Shared.Model.Tournament> tournaments = new List<Shared.Model.Tournament>();
-        ICollection<Shared.Model.User> players = new List<User>();
+        ICollection<Shared.Model.User> players = new List< Shared.Model.User>();
         tournaments.Add(tournament);
         players.Add(player);
         RegisterPlayerDto dto = new RegisterPlayerDto(player.UserName, tournament.Name);
@@ -258,12 +258,12 @@ public class TournamentLogicTest
         DateOnly start = DateOnly.FromDateTime(DateTime.Today);
         DateOnly end = DateOnly.FromDateTime(DateTime.Today);
         string name = "Steve Grand Prix";
-        User player = new User("Cedric", "Cedric", "test", "test");
+        Shared.Model.User player = new  Shared.Model.User("Cedric", "Cedric", "test", "test");
         Shared.Model.Tournament tournament = new Shared.Model.Tournament(name, start, end);
-        tournament.Players = new List<User>();
+        tournament.Players = new List< Shared.Model.User>();
         tournament.Players.Add(player);
         ICollection<Shared.Model.Tournament> tournaments = new List<Shared.Model.Tournament>();
-        ICollection<Shared.Model.User> players = new List<User>();
+        ICollection<Shared.Model.User> players = new List< Shared.Model.User>();
         tournaments.Add(tournament);
         players.Add(player);
 

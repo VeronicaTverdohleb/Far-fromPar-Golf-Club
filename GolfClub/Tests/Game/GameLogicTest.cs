@@ -28,10 +28,10 @@ public class GameLogicTest
     public void CreateAsyncTest_O()
     {
         // Arrange
-        User user = new User("Petra Hrabakova", "Petra123", "123", "Member");
+        Shared.Model.User user = new Shared.Model.User("Petra Hrabakova", "Petra123", "123", "Member");
         string[] usernames = { user.UserName };
         ICollection<string> playerUsernames = usernames.ToList();
-        ICollection<User> users = new List<User>();
+        ICollection< Shared.Model.User> users = new List< Shared.Model.User>();
         users.Add(user);
 
         Shared.Model.Score score1 = new Shared.Model.Score("Petra123", 2, 5);
@@ -57,10 +57,10 @@ public class GameLogicTest
     public void CreateAsyncTest_M()
     {
         // Arrange
-        User user = new User("Petra Hrabakova", "Petra123", "123", "Member");
+        Shared.Model.User user = new  Shared.Model.User("Petra Hrabakova", "Petra123", "123", "Member");
         string[] usernames = { user.UserName };
         ICollection<string> playerUsernames = usernames.ToList();
-        ICollection<User> users = new List<User>();
+        ICollection< Shared.Model.User> users = new List< Shared.Model.User>();
         users.Add(user);
 
         Shared.Model.Score score1 = new Shared.Model.Score("Petra123", 2, 5);
@@ -90,10 +90,10 @@ public class GameLogicTest
     public void CreateAsyncTest_E()
     {
         // Arrange
-        User user = new User("Petra Hrabakova", "Petra123", "123", "Member");
+        Shared.Model.User user = new  Shared.Model.User("Petra Hrabakova", "Petra123", "123", "Member");
         string[] usernames = { user.UserName };
         ICollection<string> playerUsernames = usernames.ToList();
-        ICollection<User> users = new List<User>();
+        ICollection< Shared.Model.User> users = new List< Shared.Model.User>();
         users.Add(user);
 
         Shared.Model.Score score1 = new Shared.Model.Score("Petra123", 2, 0);
@@ -120,8 +120,8 @@ public class GameLogicTest
     public void GetActiveGameByUsernameAsync_Z()
     {
         // Arrange
-        User user = new User("Petra Hrabakova", "Petra123", "123", "Member");
-        ICollection<User> users = new List<User>();
+        Shared.Model.User user = new  Shared.Model.User("Petra Hrabakova", "Petra123", "123", "Member");
+        ICollection< Shared.Model.User> users = new List< Shared.Model.User>();
         users.Add(user);
         
         Shared.Model.Score score1 = new Shared.Model.Score("Petra123", 2, 6);
@@ -136,7 +136,7 @@ public class GameLogicTest
         gameDaoMock.Setup(ga => ga.GetGamesByUsername(user.UserName))
             .Returns(Task.FromResult<IEnumerable<Shared.Model.Game>>(games));
         userDaoMock.Setup(u => u.GetByUsernameAsync(user.UserName))
-            .Returns(Task.FromResult<User?>(user));
+            .Returns(Task.FromResult< Shared.Model.User?>(user));
 
         // Assert
         var response = gameLogic.GetActiveGameByUsernameAsync(user.UserName);
@@ -149,8 +149,8 @@ public class GameLogicTest
     public void GetActiveGameByUsernameAsync_O()
     {
         // Arrange
-        User user = new User("Petra Hrabakova", "Petra123", "123", "Member");
-        ICollection<User> users = new List<User>();
+        Shared.Model.User user = new  Shared.Model.User("Petra Hrabakova", "Petra123", "123", "Member");
+        ICollection< Shared.Model.User> users = new List< Shared.Model.User>();
         users.Add(user);
 
         Shared.Model.Score score1 = new Shared.Model.Score("Petra123", 2, 0);
@@ -164,7 +164,7 @@ public class GameLogicTest
         gameDaoMock.Setup(ga => ga.GetGamesByUsername(user.UserName))
             .Returns(Task.FromResult<IEnumerable<Shared.Model.Game>>(games));
         userDaoMock.Setup(u => u.GetByUsernameAsync(user.UserName))
-            .Returns(Task.FromResult<User?>(user));
+            .Returns(Task.FromResult< Shared.Model.User?>(user));
 
         // Assert
         var response = gameLogic.GetActiveGameByUsernameAsync(user.UserName);
@@ -176,11 +176,11 @@ public class GameLogicTest
     public void GetActiveGameByUsernameAsync_E()
     {
         // Arrange
-        User user = new User("Petra Hrabakova", "Petra123", "123", "Member");
+        Shared.Model.User user = new  Shared.Model.User("Petra Hrabakova", "Petra123", "123", "Member");
 
         // Act
         userDaoMock.Setup(u => u.GetByUsernameAsync(user.UserName))
-            .Returns(Task.FromResult<User?>(null));
+            .Returns(Task.FromResult< Shared.Model.User?>(null));
 
         // Assert
         var e = Assert.ThrowsAsync<Exception>(() => gameLogic.GetActiveGameByUsernameAsync(user.UserName));
@@ -191,8 +191,8 @@ public class GameLogicTest
     public void GetActiveGameByUsernameAsync_NoScores_O()
     {
         // Arrange
-        User user = new User("Petra Hrabakova", "Petra123", "123", "Member");
-        ICollection<User> users = new List<User>();
+        Shared.Model.User user = new  Shared.Model.User("Petra Hrabakova", "Petra123", "123", "Member");
+        ICollection< Shared.Model.User> users = new List< Shared.Model.User>();
         users.Add(user);
         
         Shared.Model.Game game = new Shared.Model.Game(null, null, users);
@@ -203,7 +203,7 @@ public class GameLogicTest
         gameDaoMock.Setup(ga => ga.GetGamesByUsername(user.UserName))
             .Returns(Task.FromResult<IEnumerable<Shared.Model.Game>>(games));
         userDaoMock.Setup(u => u.GetByUsernameAsync(user.UserName))
-            .Returns(Task.FromResult<User?>(user));
+            .Returns(Task.FromResult< Shared.Model.User?>(user));
 
         // Assert
         var response = gameLogic.GetActiveGameByUsernameAsync(user.UserName);
@@ -217,13 +217,13 @@ public class GameLogicTest
     public void GetAllGamesByUsernameAsync_Z()
     {
         // Arrange
-        User user = new User("Petra Hrabakova", "Petra123", "123", "Member");
+        Shared.Model.User user = new  Shared.Model.User("Petra Hrabakova", "Petra123", "123", "Member");
         
         // Act
         gameDaoMock.Setup(ga => ga.GetGamesByUsername(user.UserName))
             .Returns(Task.FromResult<IEnumerable<Shared.Model.Game>>(null));
         userDaoMock.Setup(u => u.GetByUsernameAsync(user.UserName))
-            .Returns(Task.FromResult<User?>(user));
+            .Returns(Task.FromResult< Shared.Model.User?>(user));
         
         // Assert
         var response = gameLogic.GetAllGamesByUsernameAsync(user.UserName);
@@ -234,8 +234,8 @@ public class GameLogicTest
     public void GetAllGamesByUsernameAsync_O()
     {
         // Arrange
-        User user = new User("Petra Hrabakova", "Petra123", "123", "Member");
-        ICollection<User> users = new List<User>();
+        Shared.Model.User user = new  Shared.Model.User("Petra Hrabakova", "Petra123", "123", "Member");
+        ICollection< Shared.Model.User> users = new List< Shared.Model.User>();
         users.Add(user);
 
         Shared.Model.Game game = new Shared.Model.Game(null, null, users);
@@ -246,7 +246,7 @@ public class GameLogicTest
         gameDaoMock.Setup(ga => ga.GetGamesByUsername(user.UserName))
             .Returns(Task.FromResult<IEnumerable<Shared.Model.Game>>(games));
         userDaoMock.Setup(u => u.GetByUsernameAsync(user.UserName))
-            .Returns(Task.FromResult<User?>(user));
+            .Returns(Task.FromResult< Shared.Model.User?>(user));
         
         // Assert
         var response = gameLogic.GetAllGamesByUsernameAsync(user.UserName);
@@ -259,8 +259,8 @@ public class GameLogicTest
     public void GetAllGamesByUsernameAsync_M()
     {
         // Arrange
-        User user = new User("Petra Hrabakova", "Petra123", "123", "Member");
-        ICollection<User> users = new List<User>();
+        Shared.Model.User user = new  Shared.Model.User("Petra Hrabakova", "Petra123", "123", "Member");
+        ICollection< Shared.Model.User> users = new List< Shared.Model.User>();
         users.Add(user);
 
         Shared.Model.Game game1 = new Shared.Model.Game(null, null, users);
@@ -273,7 +273,7 @@ public class GameLogicTest
         gameDaoMock.Setup(ga => ga.GetGamesByUsername(user.UserName))
             .Returns(Task.FromResult<IEnumerable<Shared.Model.Game>>(games));
         userDaoMock.Setup(u => u.GetByUsernameAsync(user.UserName))
-            .Returns(Task.FromResult<User?>(user));
+            .Returns(Task.FromResult< Shared.Model.User?>(user));
         
         // Assert
         var response = gameLogic.GetAllGamesByUsernameAsync(user.UserName);
@@ -286,11 +286,11 @@ public class GameLogicTest
     public void GetAllGamesByUsernameAsync_E()
     {
         // Arrange
-        User user = new User("Petra Hrabakova", "Petra123", "123", "Member");
+        Shared.Model.User user = new  Shared.Model.User("Petra Hrabakova", "Petra123", "123", "Member");
 
         // Act
         userDaoMock.Setup(u => u.GetByUsernameAsync(user.UserName))
-            .Returns(Task.FromResult<User?>(null));
+            .Returns(Task.FromResult< Shared.Model.User?>(null));
 
         // Assert
         var e = Assert.ThrowsAsync<Exception>(() => gameLogic.GetAllGamesByUsernameAsync(user.UserName));
@@ -303,8 +303,8 @@ public class GameLogicTest
     public void GetGameByIdAsync_O()
     {
         // Arrange
-        User user = new User("Petra Hrabakova", "Petra123", "123", "Member");
-        ICollection<User> users = new List<User>();
+        Shared.Model.User user = new  Shared.Model.User("Petra Hrabakova", "Petra123", "123", "Member");
+        ICollection< Shared.Model.User> users = new List< Shared.Model.User>();
         users.Add(user);
 
         Shared.Model.Game game = new Shared.Model.Game(null, null, users);
@@ -331,6 +331,7 @@ public class GameLogicTest
         var e = Assert.ThrowsAsync<Exception>(() => gameLogic.GetGameByIdAsync(1));
         Assert.That(e.Message, Is.EqualTo($"Game with id 1 not found"));
     }
+    
 
     
     
