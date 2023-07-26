@@ -38,12 +38,12 @@ public class UserLogicTest
         Assert.DoesNotThrowAsync(() => userLogic.CreateAsync(dto));
 
     }
-
+    
     [Test] public async Task CreateAsyncTest_EmptyName()
     {
         //Arrange
-        Shared.Model.User user = new Shared.Model.User("","Cudevlin", "1234", "Member");
-        UserCreationDto dto = new UserCreationDto("", "Cudevlin", "1234");
+        Shared.Model.User user = new Shared.Model.User("Devlin","Cudevlin", "1234", "Member");
+        UserCreationDto dto = new UserCreationDto("Devlin", "Cudevlin", "1234");
 
         //Act
         userDaoMock.Setup(m => m.CreateAsync(dto)).Returns(Task.FromResult<Shared.Model.User>(null));
@@ -83,26 +83,7 @@ public class UserLogicTest
         Assert.That(e.Message, Is.EqualTo($"Enter a password for the user!"));
 
     }
-    /*
-    [Test] public async Task CreateAsyncTest_UserAlreadyExists()
-    {
-        //Arrange
-        Shared.Model.User user = new Shared.Model.User("Devlin","Cudevlin", "1234", "Member");
-        UserCreationDto dto = new UserCreationDto("Devlin", "Cudevlin", "1234");
-        UserCreationDto dto1 = new UserCreationDto("Steve", "Cudevlin", "1234");
 
-        //Act
-        userDaoMock.Setup(m => m.CreateAsync(dto)).Returns(Task.FromResult(user));
-        userDaoMock.Setup(m => m.CreateAsync(dto1)).Returns(Task.FromResult<Shared.Model.User>(null));
-
-        //Assert
-        var e = Assert.ThrowsAsync<Exception>(() => userLogic.CreateAsync(dto1));
-        Console.WriteLine(e);
-        Assert.That(e.Message, Is.EqualTo("User already exists!"));
-
-    }
-    */
-    
     [Test]
     public async Task GetByUsernameAsync_Z()
     {
@@ -181,5 +162,30 @@ public class UserLogicTest
         //Arrange
         Assert.That(response.Result, Is.EqualTo(users));
         Assert.DoesNotThrowAsync(() => userLogic.GetAllUsersAsync());
+    }
+
+    [Test]
+    public void DeleteAsyncTest_Z()
+    {
+        //Arrange
+
+        //Act
+        userDaoMock.Setup(t => t.DeleteAsync("testName"));
+        
+        //Assert
+        var e = Assert.ThrowsAsync<Exception>(() => userLogic.DeleteAsync("testName"));
+        Assert.That(e.Message, Is.EqualTo("User with the Username testName does not exist"));
+    }
+
+    [Test]
+    public void DeleteAsyncTest_O()
+    {
+        //Arrange
+        Shared.Model.User user = new Shared.Model.User("Devlin", "userName", "1234", "Member");
+        //Act
+        userDaoMock.Setup(t => t.GetByUsernameAsync("userName")).Returns(Task.FromResult(user));
+        
+        //Assert
+        Assert.DoesNotThrowAsync(()=>userLogic.DeleteAsync("userName"));
     }
 }

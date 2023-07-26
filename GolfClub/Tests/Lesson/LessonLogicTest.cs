@@ -72,4 +72,22 @@ public class LessonLogicTest
         Assert.That(response1, Is.EqualTo(lesson1));
         Assert.DoesNotThrowAsync(() => lessonLogic.CreateAsync(dto1));
     }
+
+    [Test]
+    public async Task CreateAsync_UserNotFound()
+    {
+        User user = new User("Devlin", "CuDevlin", "1234", "Member");
+        LessonCreationDto dto = new LessonCreationDto("2023-07-21", "10.00", "CuDevlin", "Petra");
+        DateOnly dateOnly = new DateOnly(2023, 07, 21);
+        Lesson lesson = new Lesson(dateOnly, "10.00", user, "Petra");
+        
+        //Act
+        lessonDaoMock.Setup(l => l.CreateAsync(dto, user)).Returns(Task.FromResult(lesson));
+        userDaoMock.Setup(lu => lu.GetByUsernameAsync("CuDevlin")).Returns(Task.FromResult<User?>(null));
+
+
+        //Assert
+        var e = Assert.ThrowsAsync<Exception>(() => lessonLogic.CreateAsync(dto));
+        Assert.That(e.Message, Is.EqualTo("User not found"));
+    }
 }

@@ -31,8 +31,8 @@ public class ScoreLogicTest
     public void UpdateFromMemberAsync_O()
     {
         // Arrange
-        Shared.Model.User user = new  Shared.Model.User("Petra Hrabakova", "Petra123", "123", "Member");
-        ICollection< Shared.Model.User> users = new List< Shared.Model.User>();
+        Shared.Model.User user = new Shared.Model.User("Petra Hrabakova", "Petra123", "123", "Member");
+        ICollection<Shared.Model.User> users = new List<Shared.Model.User>();
         users.Add(user);
         Shared.Model.Game game = new Shared.Model.Game(null, null, users) {Id = 1};
         int[] strokes = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 
@@ -41,7 +41,7 @@ public class ScoreLogicTest
         
         // Act
         userDaoMock.Setup(u => u.GetByUsernameAsync(user.UserName))
-            .Returns(Task.FromResult< Shared.Model.User?>(user));
+            .Returns(Task.FromResult<Shared.Model.User?>(user));
         gameDaoMock.Setup(g => g.GetGameByIdAsync(game.Id))
             .Returns(Task.FromResult<Shared.Model.Game?>(game));
         
@@ -54,8 +54,8 @@ public class ScoreLogicTest
     public void UpdateFromMember_M()
     {
         // Arrange
-        Shared.Model. User user = new  Shared.Model.User("Petra Hrabakova", "Petra123", "123", "Member");
-        ICollection< Shared.Model.User> users = new List< Shared.Model.User>();
+        Shared.Model.User user = new Shared.Model.User("Petra Hrabakova", "Petra123", "123", "Member");
+        ICollection<Shared.Model.User> users = new List<Shared.Model.User>();
         users.Add(user);
         Shared.Model.Game game1 = new Shared.Model.Game(null, null, users) {Id = 1};
         Shared.Model.Game game2 = new Shared.Model.Game(null, null, users) {Id = 2};
@@ -66,7 +66,7 @@ public class ScoreLogicTest
         
         // Act
         userDaoMock.Setup(u => u.GetByUsernameAsync(user.UserName))
-            .Returns(Task.FromResult< Shared.Model.User?>(user));
+            .Returns(Task.FromResult<Shared.Model.User?>(user));
         gameDaoMock.Setup(g => g.GetGameByIdAsync(game1.Id))
             .Returns(Task.FromResult<Shared.Model.Game?>(game1));
         gameDaoMock.Setup(g => g.GetGameByIdAsync(game2.Id))
@@ -84,8 +84,8 @@ public class ScoreLogicTest
     public void UpdateFromMemberAsync_B()
     {
         // Arrange
-        Shared.Model.User user = new  Shared.Model.User("Petra Hrabakova", "Petra123", "123", "Member");
-        ICollection< Shared.Model.User> users = new List< Shared.Model.User>();
+        Shared.Model.User user = new Shared.Model.User("Petra Hrabakova", "Petra123", "123", "Member");
+        ICollection<Shared.Model.User> users = new List<Shared.Model.User>();
         users.Add(user);
         int[] strokes = { 0, 0, 0, 25, 27, 28, 29, 30, 20, 20, 
             20, 12, 13, 14, 15, 16, 17, 18 };  // Some strokes are out of the range of allowed number of strokes
@@ -95,7 +95,7 @@ public class ScoreLogicTest
         
         // Act
         userDaoMock.Setup(u => u.GetByUsernameAsync(user.UserName))
-            .Returns(Task.FromResult< Shared.Model.User?>(user));
+            .Returns(Task.FromResult<Shared.Model.User?>(user));
         gameDaoMock.Setup(g => g.GetGameByIdAsync(1))
             .Returns(Task.FromResult<Shared.Model.Game?>(game));
 
@@ -108,14 +108,14 @@ public class ScoreLogicTest
     public void UpdateFromMemberAsync_E_UserNotFound()
     {
         // Arrange
-        Shared.Model.User user = new  Shared.Model.User("Petra Hrabakova", "Petra123", "123", "Member");
+        Shared.Model.User user = new Shared.Model.User("Petra Hrabakova", "Petra123", "123", "Member");
         int[] strokes = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 
             11, 12, 13, 14, 15, 16, 17, 18 };  // Has to be 18 strokes because the Member can only update all 18 at a time
         ScoreBasicDto dto = new ScoreBasicDto(user.UserName, strokes.ToList(), 1);
         
         // Act
         userDaoMock.Setup(u => u.GetByUsernameAsync(user.UserName))
-            .Returns(Task.FromResult< Shared.Model.User?>(null));
+            .Returns(Task.FromResult<Shared.Model.User?>(null));
 
         // Assert 
         var e = Assert.ThrowsAsync<Exception>(() => scoreLogic.UpdateFromMemberAsync(dto));
@@ -127,14 +127,14 @@ public class ScoreLogicTest
     public void UpdateFromMemberAsync_E_GameNotFound()
     {
         // Arrange
-        Shared.Model.User user = new  Shared.Model.User("Petra Hrabakova", "Petra123", "123", "Member");
+        Shared.Model.User user = new Shared.Model.User("Petra Hrabakova", "Petra123", "123", "Member");
         int[] strokes = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 
             11, 12, 13, 14, 15, 16, 17, 18 };  // Has to be 18 strokes because the Member can only update all 18 at a time
         ScoreBasicDto dto = new ScoreBasicDto(user.UserName, strokes.ToList(), 1);
         
         // Act
         userDaoMock.Setup(u => u.GetByUsernameAsync(user.UserName))
-            .Returns(Task.FromResult< Shared.Model.User?>(user));
+            .Returns(Task.FromResult<Shared.Model.User?>(user));
         gameDaoMock.Setup(g => g.GetGameByIdAsync(1))
             .Returns(Task.FromResult<Shared.Model.Game?>(null));
 
@@ -149,8 +149,8 @@ public class ScoreLogicTest
     public void UpdateFromEmployeeAsync_O()
     {
         // Arrange
-        Shared.Model.User user = new  Shared.Model.User("Petra Hrabakova", "Petra123", "123", "Member");
-        ICollection< Shared.Model.User> users = new List< Shared.Model.User>();
+        Shared.Model.User user = new Shared.Model.User("Petra Hrabakova", "Petra123", "123", "Member");
+        ICollection<Shared.Model.User> users = new List<Shared.Model.User>();
         users.Add(user);
         Shared.Model.Game game = new Shared.Model.Game(null, null, users) {Id = 1};
         Dictionary<int, int> strokesAndHoles = new Dictionary<int, int>();
@@ -159,7 +159,7 @@ public class ScoreLogicTest
         
         // Act
         userDaoMock.Setup(u => u.GetByUsernameAsync(user.UserName))
-            .Returns(Task.FromResult< Shared.Model.User?>(user));
+            .Returns(Task.FromResult<Shared.Model.User?>(user));
         gameDaoMock.Setup(g => g.GetGameByIdAsync(game.Id))
             .Returns(Task.FromResult<Shared.Model.Game?>(game));
         
@@ -172,7 +172,7 @@ public class ScoreLogicTest
     {
         // Arrange
         Shared.Model.User user = new Shared.Model.User("Petra Hrabakova", "Petra123", "123", "Member");
-        ICollection< Shared.Model.User> users = new List< Shared.Model.User>();
+        ICollection<Shared.Model.User> users = new List<Shared.Model.User>();
         users.Add(user);
         Shared.Model.Game game = new Shared.Model.Game(null, null, users) {Id = 1};
         Dictionary<int, int> strokesAndHoles = new Dictionary<int, int>();
@@ -183,7 +183,7 @@ public class ScoreLogicTest
         
         // Act
         userDaoMock.Setup(u => u.GetByUsernameAsync(user.UserName))
-            .Returns(Task.FromResult< Shared.Model.User?>(user));
+            .Returns(Task.FromResult<Shared.Model.User?>(user));
         gameDaoMock.Setup(g => g.GetGameByIdAsync(game.Id))
             .Returns(Task.FromResult<Shared.Model.Game?>(game));
         
@@ -196,8 +196,8 @@ public class ScoreLogicTest
     public void UpdateFromEmployee_B_TooManyScores()
     {
         // Arrange
-        Shared.Model.User user = new  Shared.Model.User("Petra Hrabakova", "Petra123", "123", "Member");
-        ICollection< Shared.Model.User> users = new List< Shared.Model.User>();
+        Shared.Model.User user = new Shared.Model.User("Petra Hrabakova", "Petra123", "123", "Member");
+        ICollection<Shared.Model.User> users = new List<Shared.Model.User>();
         users.Add(user);
         Shared.Model.Game game = new Shared.Model.Game(null, null, users) {Id = 1};
         Dictionary<int, int> strokesAndHoles = new Dictionary<int, int>();
@@ -225,7 +225,7 @@ public class ScoreLogicTest
         
         // Act
         userDaoMock.Setup(u => u.GetByUsernameAsync(user.UserName))
-            .Returns(Task.FromResult< Shared.Model.User?>(user));
+            .Returns(Task.FromResult<Shared.Model.User?>(user));
         gameDaoMock.Setup(g => g.GetGameByIdAsync(game.Id))
             .Returns(Task.FromResult<Shared.Model.Game?>(game));
         
@@ -238,8 +238,8 @@ public class ScoreLogicTest
     [Test]
     public void UpdateFromEmployee_B_WrongHoleNumber()
     {
-        Shared.Model.User user = new  Shared.Model.User("Petra Hrabakova", "Petra123", "123", "Member");
-        ICollection< Shared.Model.User> users = new List< Shared.Model.User>();
+        Shared.Model.User user = new Shared.Model.User("Petra Hrabakova", "Petra123", "123", "Member");
+        ICollection<Shared.Model.User> users = new List<Shared.Model.User>();
         users.Add(user);
         Shared.Model.Game game = new Shared.Model.Game(null, null, users) {Id = 1};
         Dictionary<int, int> strokesAndHoles = new Dictionary<int, int>();
@@ -249,7 +249,7 @@ public class ScoreLogicTest
         
         // Act
         userDaoMock.Setup(u => u.GetByUsernameAsync(user.UserName))
-            .Returns(Task.FromResult< Shared.Model.User?>(user));
+            .Returns(Task.FromResult<Shared.Model.User?>(user));
         gameDaoMock.Setup(g => g.GetGameByIdAsync(game.Id))
             .Returns(Task.FromResult<Shared.Model.Game?>(game));
         
@@ -263,14 +263,14 @@ public class ScoreLogicTest
     public void UpdateFromEmployee_E_UserNotFound()
     {
         // Arrange
-        Shared.Model.User user = new  Shared.Model.User("Petra Hrabakova", "Petra123", "123", "Member");
+        Shared.Model.User user = new Shared.Model.User("Petra Hrabakova", "Petra123", "123", "Member");
         Dictionary<int, int> strokesAndHoles = new Dictionary<int, int>();
         strokesAndHoles.Add(1, 10); // One score only in this Test Case
         ScoreUpdateDto dto = new ScoreUpdateDto(user.UserName, strokesAndHoles, 1);
         
         // Act
         userDaoMock.Setup(u => u.GetByUsernameAsync(user.UserName))
-            .Returns(Task.FromResult< Shared.Model.User?>(null));
+            .Returns(Task.FromResult<Shared.Model.User?>(null));
 
         // Assert 
         var e = Assert.ThrowsAsync<Exception>(() => scoreLogic.UpdateFromEmployeeAsync(dto));
@@ -281,14 +281,14 @@ public class ScoreLogicTest
     public void UpdateFromEmployee_E_GameNotFound()
     {
         // Arrange
-        Shared.Model.User user = new  Shared.Model.User("Petra Hrabakova", "Petra123", "123", "Member");
+        Shared.Model.User user = new Shared.Model.User("Petra Hrabakova", "Petra123", "123", "Member");
         Dictionary<int, int> strokesAndHoles = new Dictionary<int, int>();
         strokesAndHoles.Add(1, 10); // One score only in this Test Case
         ScoreUpdateDto dto = new ScoreUpdateDto(user.UserName, strokesAndHoles, 1);
         
         // Act
         userDaoMock.Setup(u => u.GetByUsernameAsync(user.UserName))
-            .Returns(Task.FromResult< Shared.Model.User?>(user));
+            .Returns(Task.FromResult<Shared.Model.User?>(user));
         gameDaoMock.Setup(g => g.GetGameByIdAsync(1))
             .Returns(Task.FromResult<Shared.Model.Game?>(null));
 
