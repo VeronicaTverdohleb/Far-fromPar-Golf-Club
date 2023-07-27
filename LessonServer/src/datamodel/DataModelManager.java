@@ -9,7 +9,7 @@ import java.util.Date;
 
 /**
  * Implements DataModel interface
- * Connects to the database in order to retrieve vendors
+ * Connects to the database to retrieve lessons
  */
 public class DataModelManager implements DataModel {
 
@@ -76,6 +76,11 @@ public class DataModelManager implements DataModel {
         }
     }
 
+    /**
+     * Method to delete a lesson
+     * @param lessonId int
+     * @throws SQLException
+     */
     @Override
     public void deleteLesson(int lessonId) throws SQLException {
         try(Connection connection=getConnection()){
