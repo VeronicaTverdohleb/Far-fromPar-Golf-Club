@@ -1,5 +1,8 @@
 ﻿namespace Shared.Model;
 
+/// <summary>
+/// Model Class used in Lesson-related use cases
+/// </summary>
 public class InstructorLesson
 {
     public string Id { get; set; }

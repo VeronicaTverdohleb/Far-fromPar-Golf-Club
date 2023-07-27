@@ -12,6 +12,10 @@ public class LessonDao:ILessonDao
 
     private readonly DataContext context;
 
+    /// <summary>
+    /// Instantiates DataContext
+    /// </summary>
+    /// <param name="context">DataContext</param>
     public LessonDao(DataContext context)
     {
         this.context = context;

@@ -1,7 +1,9 @@
 using Shared.Model;
 
 namespace Shared.Dtos.LessonDto;
-
+/// <summary>
+/// Data Transfer Object used in Lesson-related use cases
+/// </summary>
 public class LessonCreationDto
 {
     public string Date { get; set; }

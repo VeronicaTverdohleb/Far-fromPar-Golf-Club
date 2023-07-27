@@ -12,6 +12,10 @@ public class UserDao : IUserDao
 {
     private readonly DataContext context;
     
+    /// <summary>
+    /// Instantiates DataContext
+    /// </summary>
+    /// <param name="context">DataContext</param>
     public UserDao(DataContext context)
     {
         this.context = context;
