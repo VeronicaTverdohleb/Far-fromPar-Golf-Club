@@ -1,7 +1,9 @@
 ﻿using System.Text.Json.Serialization;
 
 namespace Shared.Model;
-
+/// <summary>
+/// Model Class used in User-related use cases and for DB creation
+/// </summary>
 public class User
 {
     public string Name { get; set; }

@@ -1,5 +1,7 @@
 ﻿namespace Shared.Dtos;
-
+/// <summary>
+/// Data Transfer Object used in User-related use cases
+/// </summary>
 public class UserCreationDto
 {
 

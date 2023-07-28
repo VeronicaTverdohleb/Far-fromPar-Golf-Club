@@ -1,5 +1,7 @@
 ﻿namespace Shared.Model;
-
+/// <summary>
+/// Model Class used in Lesson-related use cases and for DB creation
+/// </summary>
 public class Lesson
 {
     public int Id { get; set; }

@@ -14,6 +14,10 @@ public class LessonController : ControllerBase
 {
     private readonly ILessonLogic lessonLogic;
 
+    /// <summary>
+    /// Instantiates LessonLogic
+    /// </summary>
+    /// <param name="lessonLogic">ILessonLogic</param>
     public LessonController(ILessonLogic lessonLogic)
     {
         this.lessonLogic = lessonLogic;

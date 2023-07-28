@@ -13,6 +13,10 @@ public class UserHttpClient : IUserService
 {
     private readonly HttpClient client;
 
+    /// <summary>
+    /// Instantiates HttpClient
+    /// </summary>
+    /// <param name="client">HttpClient</param>
     public UserHttpClient(HttpClient client)
     {
         this.client = client;

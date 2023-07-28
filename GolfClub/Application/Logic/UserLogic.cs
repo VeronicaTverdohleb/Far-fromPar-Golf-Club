@@ -11,6 +11,10 @@ public class UserLogic : IUserLogic
 {
     private readonly IUserDao _userDao;
 
+    /// <summary>
+    /// Single argument constructor
+    /// </summary>
+    /// <param name="_userDao">IUserDao</param>
     public UserLogic(IUserDao _userDao)
     {
         this._userDao = _userDao;

@@ -12,6 +12,11 @@ public class LessonLogic:ILessonLogic
     private readonly ILessonDao lessonDao;
     private readonly IUserDao userDao;
 
+    /// <summary>
+    /// 2 Argument constructor
+    /// </summary>
+    /// <param name="lessonDao">ILessonDao</param>
+    /// <param name="userDao">IUserDao</param>
     public LessonLogic(ILessonDao lessonDao, IUserDao userDao)
     {
         this.lessonDao = lessonDao;

@@ -10,6 +10,10 @@ public class LessonHttpClient : ILessonService
 {
     private readonly HttpClient client;
 
+    /// <summary>
+    /// Instantiates HttpClient
+    /// </summary>
+    /// <param name="client">HttpClient</param>
     public LessonHttpClient(HttpClient client)
     {
         this.client = client;
