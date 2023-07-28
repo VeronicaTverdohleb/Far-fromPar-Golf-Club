@@ -5,18 +5,35 @@ using Shared.Model;
 
 namespace Application.Logic;
 
+/// <summary>
+/// This class takes care of the business logic for Equipment-related responsibilities
+/// </summary>
 public class EquipmentLogic : IEquipmentLogic
 {
     private readonly IEquipmentDao equipmentDao;
     private readonly IGameDao gameDao;
 
 
+    /// <summary>
+    /// Constructor for EquipmentLogic
+    /// </summary>
+    /// <param name="equipmentDao"></param>
+    /// <param name="gameDao"></param>
     public EquipmentLogic(IEquipmentDao equipmentDao, IGameDao gameDao)
     {
         this.equipmentDao = equipmentDao;
         this.gameDao = gameDao;
     }
 
+    /// <summary>
+    /// This method is the business logic for creating an equipment.
+    /// It takes a list of equipments and an amount
+    /// Throws exceptions if the equipment list is empty, the name field is empty and if the name has more than 50 characters
+    /// </summary>
+    /// <param name="equipment"></param>
+    /// <param name="amount"></param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
     public async Task<IEnumerable<Equipment>> CreateEquipmentAsync(IEnumerable<EquipmentBasicDto> equipment, int amount)
     {
         if (equipment == null || !equipment.Any())
@@ -42,6 +59,13 @@ public class EquipmentLogic : IEquipmentLogic
         return created;
     }
 
+    /// <summary>
+    /// This method takes the equipment name and the amount and deletes that amount of equipment
+    /// Throws exceptions whenever the amount is 0 and if the equipment with the requested name does not exist
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="amount"></param>
+    /// <exception cref="Exception"></exception>
     public async Task UpdateEquipmentAsync(string name, int amount)
     {
         if (amount <= 0)
@@ -64,12 +88,23 @@ public class EquipmentLogic : IEquipmentLogic
         }
     }
 
-
+    /// <summary>
+    /// Gets all the equipment based on the search parameter, which is name
+    /// </summary>
+    /// <param name="searchParameters"></param>
+    /// <returns></returns>
     public Task<IEnumerable<Equipment>> GetEquipmentAsync(SearchEquipmentDto searchParameters)
     {
         return equipmentDao.GetEquipmentsAsync(searchParameters);
     }
 
+    /// <summary>
+    /// Gets all equipments based on the id
+    /// Throws exception if no equipment with such id found
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
     public async Task<Equipment?> GetEquipmentByIdAsync(int id)
     {
         Equipment? findEquipment = await equipmentDao.GetEquipmentByIdAsync(id);
@@ -81,6 +116,13 @@ public class EquipmentLogic : IEquipmentLogic
         return new Equipment(findEquipment.Name);
     }
 
+    /// <summary>
+    /// Gets all the equipment by the name
+    /// Throws exception if no equipment with such name found
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
     public async Task<Equipment?> GetEquipmentByNameAsync(string name)
     {
         Equipment? findEquipment = await equipmentDao.GetEquipmentByNameAsync(name);
@@ -92,7 +134,13 @@ public class EquipmentLogic : IEquipmentLogic
         return new Equipment(findEquipment.Name);
     }
 
-
+    /// <summary>
+    /// This method is the business logic for renting equipment.
+    /// Takes the game id and a list of equipment ids from the dto
+    /// Throws exceptions if no game with the specified id found and if the equipment list is empty
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <exception cref="Exception"></exception>
     public async Task RentEquipment(RentEquipmentDto dto)
     {
         IEnumerable<Equipment> availableEquipment = await GetAvailableEquipmentAsync();
@@ -118,6 +166,13 @@ public class EquipmentLogic : IEquipmentLogic
         await equipmentDao.RentEquipment(newRented);
     }
 
+    /// <summary>
+    /// This method is the business logic for deleting equipment.
+    /// This method deletes all equipments based on the provided name
+    /// Throws exception if no equipment with such name exists
+    /// </summary>
+    /// <param name="name"></param>
+    /// <exception cref="Exception"></exception>
     public async Task DeleteEquipmentAsync(string name)
     {
         List<Equipment> findEquipment = await equipmentDao.GetEquipmentListByNameAsync(name);
@@ -133,6 +188,12 @@ public class EquipmentLogic : IEquipmentLogic
         }
     }
 
+    /// <summary>
+    /// This method deletes all the equipments associated with a game id
+    /// Throws exception if dto is null
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <exception cref="Exception"></exception>
     public async Task DeleteAllEquipmentByGameIdAsync(RentEquipmentDto dto)
     {
         if (dto == null)
@@ -144,11 +205,22 @@ public class EquipmentLogic : IEquipmentLogic
         await equipmentDao.DeleteAllEquipmentByGameIdAsync(dto);
     }
 
+    /// <summary>
+    ///This method gets all the equipment which is not associated with any game id
+    /// </summary>
+    /// <returns></returns>
     public Task<IEnumerable<Equipment>> GetAvailableEquipmentAsync()
     {
         return equipmentDao.GetAvailableEquipmentAsync();
     }
 
+    /// <summary>
+    /// This method gets the equipment associated with a game id
+    /// Throws exceptions if no game with such id found and if that game does not have equipments
+    /// </summary>
+    /// <param name="gameId"></param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
     public async Task<IEnumerable<Equipment>> GetEquipmentByGameIdAsync(int gameId)
     {
         Game? game = await gameDao.GetGameByIdAsync(gameId);

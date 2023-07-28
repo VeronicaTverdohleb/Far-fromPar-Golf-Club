@@ -2,7 +2,9 @@
 using Shared.Model;
 
 namespace Application.DaoInterfaces;
-
+/// <summary>
+/// Interface implemented by EquipmentDao
+/// </summary>
 public interface IEquipmentDao
 {
     public Task<IEnumerable<Equipment>> CreateEquipmentAsync(IEnumerable<EquipmentBasicDto>  equipment, int amount);

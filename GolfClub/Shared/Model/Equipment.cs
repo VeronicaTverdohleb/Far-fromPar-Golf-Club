@@ -2,6 +2,9 @@
 
 namespace Shared.Model;
 
+/// <summary>
+/// Model Class used in Equipment-related use cases and for DB creation
+/// </summary>
 public class Equipment
 {
 

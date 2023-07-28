@@ -22,7 +22,7 @@
     <div class="form-group field">
         <label>Equipment rented for the current game:</label>
         <button class="removeEquipmentFromGameBtn" @onclick="ConfirmActionForReturn">Return Equipment</button>
-           
+
         @foreach (var equip in rentedEquipment)
         {
             <li>@equip!.Name</li>
@@ -109,7 +109,7 @@
     private Game? game;
 
 
-    ///Method which gets called when accessing the page 
+    ///Method which gets called when an employee accesses the page 
     protected override async Task OnInitializedAsync()
     {
         try
@@ -126,7 +126,7 @@
         }
     }
 
-    ///Removes the selected item
+    ///Removes the selected equipment
     private async Task RemoveEquipment()
     {
         msg = "";
@@ -134,7 +134,7 @@
         {
             Console.WriteLine("equipmentToAdd is null: " + (equipmentToAdd?.Id));
             equipmentAvaialbleId.Remove(equipmentToAdd.Id);
-            msg = "Item removed";
+            msg = "Equipment item removed";
         }
         catch (Exception e)
         {
@@ -144,7 +144,7 @@
     }
 
     ///Creates order with the list of ingredients
-    private async Task CreateOrder()
+    private async Task RentEquipments()
     {
         msg = "";
         if (_equipments == null)
@@ -183,7 +183,7 @@
 
         if (confirmed)
         {
-            await CreateOrder();
+            await RentEquipments();
             await OnInitializedAsync();
         }
         else
@@ -192,6 +192,7 @@
         }
     }
 
+    ///Selects the equipment when the employee selects one from the dropdown list and presses the button
     private void SetEquipmentsToAddToGame(ChangeEventArgs e)
     {
         Console.WriteLine("SetEquipmentsToAddToGame method called");
@@ -213,6 +214,7 @@
         }
     }
 
+    ///Adds the equipment selected to a list
     private async Task AddEquipment()
     {
         msg = "";
@@ -242,6 +244,7 @@
         }
     }
 
+    ///Returns the rented equipment
     private async Task ReturnEquipment()
     {
         msg = "";
@@ -268,6 +271,7 @@
         }
     }
 
+    ///Asks for confirmation before returning the equipment
     private async Task ConfirmActionForReturn()
     {
         bool confirmed = await jsRuntime.InvokeAsync<bool>("confirmAction", "Please confirm the return of the equipment");

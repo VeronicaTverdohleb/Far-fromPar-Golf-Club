@@ -1,5 +1,8 @@
 namespace Shared.Dtos.EquipmentDto;
 
+/// <summary>
+/// Data Transfer Object used in Equipment-related use cases
+/// </summary>
 public class RentEquipmentDto
 {
     public int GameId { get; }

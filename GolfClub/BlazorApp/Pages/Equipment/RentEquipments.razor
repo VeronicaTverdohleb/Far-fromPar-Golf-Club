@@ -24,9 +24,9 @@
     <h5 class="gamecard_note">Click on the card to manage the player's rented equipment</h5>
 }
 @foreach (Game game in playerGames)
-{ 
+{
     <div class="game_card">
-        
+
         <a class="game_card_anchor" @onclick=@(() => GoRent(@game.Id))>
             <label class="game_card_label">Game ID:</label>@game.Id
             <hr>
@@ -49,26 +49,22 @@
             <label class="game_card_label">Equipments:</label>
             @if (game.Equipments == null || !game.Equipments.Any())
             {
-
                 <p>No Equipments in this Game.</p>
-             
-
             }
             else
             {
                 <p>@selectedUsername's Equipments:</p>
                 <table class="score_table">
                     <tr>
-                        <th>Rented equipmnet exist for this game</th>
+                        <th>Rented equipments exist for this game</th>
                         @foreach (var e in rentedEquipment)
                         {
                             {
-                                <li>@e!.Name</li> 
+                                <li>@e!.Name</li>
                             }
                         }
                     </tr>
                 </table>
-                
             }
 
         </a>
@@ -81,8 +77,7 @@
     private string selectedUsername = "";
     private ICollection<Game> playerGames = new List<Game>();
 
-
-
+    /// When an employee inserts a playerUsername, the player's info gets fetched via the GameService and EquipmentService methods
     private async Task GetPlayerEquipment()
     {
         playerGames = new List<Game>();
@@ -99,11 +94,7 @@
             foreach (Game g in playerGames)
             {
                 rentedEquipment = (await EquipmentService.GetEquipmentByGameIdAsync(g.Id))!;
-   
             }
-           
-          
-            
         }
         catch (Exception e)
         {
@@ -113,11 +104,12 @@
         if (!error.Equals("No user found") && !playerGames.Any())
             error = "This player has no scores";
     }
-  
+
+    ///When  an employee clicks on a game card it gets redirected to the "RentEquipment" web page
     private void GoRent(int id)
-    {   
+    {
         NavMgr.NavigateTo($"/RentEquipment/{id}");
     }
 
-   
+
 }

@@ -11,32 +11,33 @@
     <img src="img/golfball.png" class="golfball" alt="Golf Ball"/>
 </div>
 <div class="filter-bar">
-<div class="filters-container">
+    <div class="filters-container">
         <div class="form-group field">
-        <label>Name:</label>
-        <input type="text" @bind="newEquipmentName"/>
+            <label>Name:</label>
+            <input type="text" @bind="newEquipmentName"/>
+        </div>
+        <br/>
+        <div class="form-group field">
+            <label>Amount :</label>
+            <input type="text" @bind="amount"/>
+        </div>
     </div>
-    <br/>
-    <div class="form-group field">
-        <label>Amount :</label>
-        <input type="text" @bind="amount" />
-    </div>  </div>  </div>  
- <div class="button-row">
-                @if (!string.IsNullOrEmpty(error))
-                {
-                    <label class="error" style="color: red">@error</label>
-                }
-                else
-                {
-                    <label class="message" style="color: green">@msg</label>
-                }
-                
-                <br/>
-                
-                <button class="createEquipmentButton"  @onclick="CreateEquipment">Create</button>
 </div>
-    
-    
+<div class="button-row">
+    @if (!string.IsNullOrEmpty(error))
+    {
+        <label class="error" style="color: red">@error</label>
+    }
+    else
+    {
+        <label class="message" style="color: green">@msg</label>
+    }
+
+    <br/>
+
+    <button class="createEquipmentButton" @onclick="CreateEquipment">Create</button>
+</div>
+
 
 @code {
     private bool doShowFilters1 = false;
@@ -49,6 +50,7 @@
     private IEnumerable<Equipment?> Equipments = new List<Equipment?>();
     private IEnumerable<EquipmentBasicDto> equipmentBasicDtos = new List<EquipmentBasicDto>();
 
+    ///Creates new equipment when employee fills in the name and amount fields and clicks on the button
     private async Task CreateEquipment()
     {
         try
@@ -57,30 +59,23 @@
             List<EquipmentBasicDto> equipmentList = new List<EquipmentBasicDto>();
 
 
-
             for (int i = 0; i < amount; i++)
             {
                 EquipmentBasicDto basicDto = new(newEquipmentName);
                 equipmentList.Add(basicDto);
-                
-
             }
             await EquipmentService.CreateEquipmentAsync(equipmentList, amount);
-            
-                
-            
-            
+
+
             msg = "Equipment created";
-            Equipments = await EquipmentService.getAllEquipmentAsync(null);
-
-
+            Equipments = await EquipmentService.GetAllEquipmentAsync(null);
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
             error = e.Message;
         }
-        }
+    }
 
 
 }

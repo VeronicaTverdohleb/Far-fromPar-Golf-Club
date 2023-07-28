@@ -2,9 +2,11 @@
 
 namespace Shared.Dtos.EquipmentDto;
 
+/// <summary>
+/// Data Transfer Object used in Equipment-related use cases
+/// </summary>
 public class EquipmentBasicDto
 {
-    public int Id { get; set; }
     public string? Name { get; set; }
     public int Amount { get; set; }
 

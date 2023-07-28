@@ -10,20 +10,20 @@
     <h3 class="headline"> Manage Equipment </h3>
     <img src="img/golfball.png" class="golfball" alt="Golf Ball"/>
 </div>
- <br/>
-   
+<br/>
+
 <button class="addNewButton" @onclick="@(() => navMgr.NavigateTo("/AddEquipment"))">Add new equipment</button>
- <br/>
+<br/>
 
 
-    @if (!string.IsNullOrEmpty(msg))
-    {
-        <label style="color: green">@msg</label>
-    }
-    else
-    {
-        <label class="error" style="color: red">@error</label>
-    }
+@if (!string.IsNullOrEmpty(msg))
+{
+    <label style="color: green">@msg</label>
+}
+else
+{
+    <label class="error" style="color: red">@error</label>
+}
 
 @if (equipmetsounts != null)
 {
@@ -138,9 +138,10 @@
     private bool showUpdateFormPlus = false;
     private string selectedEquipmentName = "";
 
+    ///Method which gets called when an employee accesses the page 
     protected override async Task OnInitializedAsync()
     {
-        equipments = await EquipmentService.getAllEquipmentAsync(null);
+        equipments = await EquipmentService.GetAllEquipmentAsync(null);
 
         equipmetsounts = equipments.GroupBy(e => e.Name).Select(e => new EquipmentBasicDto { Name = e.Key, Amount = e.Count() }).ToList();
     }
@@ -149,7 +150,7 @@
     {
         try
         {
-            equipments = await EquipmentService.getAllEquipmentAsync(_nameFilter);
+            equipments = await EquipmentService.GetAllEquipmentAsync(_nameFilter);
         }
         catch (Exception e)
         {
@@ -158,6 +159,7 @@
         }
     }
 
+    ///Asks for confirmation before deleting an equipment
     private async Task ConfirmAction(string? name)
     {
         bool confirmed = await jsRuntime.InvokeAsync<bool>("confirmAction", "Are you sure you want to proceed?");
@@ -167,7 +169,7 @@
             await EquipmentService.DeleteEquipmentAsync(name);
 
 
-            equipments = await EquipmentService.getAllEquipmentAsync(null);
+            equipments = await EquipmentService.GetAllEquipmentAsync(null);
             await OnInitializedAsync();
         }
         else
@@ -176,7 +178,7 @@
         }
     }
 
-
+    ///Updates the equipment when the employee wants to add more items
     private async Task UpdateMoreEquipment()
     {
         try
@@ -193,7 +195,7 @@
             await EquipmentService.CreateEquipmentAsync(equipmentList, amount);
 
             msg = "Equipment updated";
-            equipments = await EquipmentService.getAllEquipmentAsync(null);
+            equipments = await EquipmentService.GetAllEquipmentAsync(null);
             await OnInitializedAsync();
         }
         catch (Exception e)
@@ -203,14 +205,16 @@
         }
     }
 
+    ///Updates the equipment when the employee wants to remove some items
     private async Task UpdateLessEquipment()
     {
         await EquipmentService.UpdateEquipmentAmount(upName1, upAmount1);
-        equipments = await EquipmentService.getAllEquipmentAsync(null);
+        equipments = await EquipmentService.GetAllEquipmentAsync(null);
         msg = "Equipment updated";
         await OnInitializedAsync();
     }
 
+    ///Shows the update form when the employee clicks on the plus icon
     private void ShowUpdateFormPlus(string equipmentName)
     {
         selectedEquipmentName = equipmentName;
@@ -221,6 +225,7 @@
         showUpdateFormMinus = false;
     }
 
+    ///Shows the update form when the employee clicks on the minus icon
     private void ShowUpdateFormMinus(string equipmentName)
     {
         selectedEquipmentName = equipmentName;

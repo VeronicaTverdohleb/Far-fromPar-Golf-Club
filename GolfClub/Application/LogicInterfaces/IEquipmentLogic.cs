@@ -3,6 +3,9 @@ using Shared.Model;
 
 namespace Application.LogicInterfaces;
 
+/// <summary>
+/// Interface implemented by EquipmentLogic
+/// </summary>
 public interface IEquipmentLogic
 {
     public Task<IEnumerable<Equipment>> CreateEquipmentAsync(IEnumerable<EquipmentBasicDto> equipment, int amount);
