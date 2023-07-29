@@ -43,14 +43,14 @@ public class UserLogicTest
     {
         //Arrange
         Shared.Model.User user = new Shared.Model.User("Devlin","Cudevlin", "1234", "Member");
-        UserCreationDto dto = new UserCreationDto("Devlin", "Cudevlin", "1234");
+        UserCreationDto dto = new UserCreationDto("Devlin", "", "1234");
 
         //Act
         userDaoMock.Setup(m => m.CreateAsync(dto)).Returns(Task.FromResult<Shared.Model.User>(null));
 
         //Assert
         var e = Assert.ThrowsAsync<Exception>(() => userLogic.CreateAsync(dto));
-        Assert.That(e.Message, Is.EqualTo($"Enter a name for the user!"));
+        Assert.That(e.Message, Is.EqualTo($"Enter a username for the user!"));
 
     }
     
