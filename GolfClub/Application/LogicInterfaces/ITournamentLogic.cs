@@ -3,6 +3,9 @@ using Shared.Model;
 
 namespace Application.LogicInterfaces;
 
+/// <summary>
+/// Interface implemented by TournamentLogic
+/// </summary>
 public interface ITournamentLogic
 {
     public Task<Tournament> CreateTournamentAsync(CreateTournamentDto dto);

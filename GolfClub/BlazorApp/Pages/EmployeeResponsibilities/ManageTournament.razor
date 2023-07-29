@@ -41,12 +41,14 @@
     private ICollection<Tournament> tournaments = new List<Tournament>();
     private string msg = "";
 
+    //Method that is ran upon loading the page
     protected override async Task OnInitializedAsync()
     {
         var tournamentCollection = await TournamentService.GetAllTournamentsAsync();
         tournaments = tournamentCollection.OrderBy(t => t.Name).ToList();
     }
 
+    //creates a tournament with the given information
     private async Task CreateTournament()
     {
         CreateTournamentDto dto = new CreateTournamentDto(tournamentName, startDate, endDate);
@@ -71,6 +73,7 @@
         
     }
 
+    //Sets the variable that keeps track of the currently selected tournament.
     private void SetSelectedTournament(ChangeEventArgs e)
     {
         if (!string.IsNullOrEmpty(e.Value.ToString()))
@@ -80,6 +83,7 @@
         }
     }
 
+    //Method that is called upon creation of a tournament. it loads the webpage holding the information of the tournament
     private void NavigateToTournament()
     {
         if (!string.IsNullOrEmpty(chosenTournamentName))

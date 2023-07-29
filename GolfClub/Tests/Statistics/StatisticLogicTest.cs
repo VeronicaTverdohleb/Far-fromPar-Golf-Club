@@ -21,6 +21,7 @@ public class StatisticLogicTest
         statisticLogic = new StatisticLogic(statisticDaoMock.Object);
     }
     
+    //Test to get all scores from a player when that player has no scores
     [Test]
     public void GetAllScoresByPlayerTest_Z()
     {
@@ -37,6 +38,7 @@ public class StatisticLogicTest
         Assert.DoesNotThrowAsync(() => statisticLogic.GetAllScoresByPlayerAsync(name));
     }
     
+    //Tests getting all scores by a player when that player has one
     [Test]
     public void GetAllScoresByPlayerTest_O()
     {
@@ -57,6 +59,7 @@ public class StatisticLogicTest
         Assert.DoesNotThrowAsync(() => statisticLogic.GetAllScoresByPlayerAsync(name));
     }
     
+    //Tests to get all scores from a player when that player has many scores
     [Test]
     public void GetAllScoresByPlayerTest_M()
     {
@@ -82,6 +85,8 @@ public class StatisticLogicTest
         Assert.DoesNotThrowAsync(() => statisticLogic.GetAllScoresByPlayerAsync(name));
     }
     
+    
+    //Test to get all scores from a tournament when that tournament has no scores
     [Test]
     public void GetAllScoresByTournamentTest_Z()
     {
@@ -99,6 +104,7 @@ public class StatisticLogicTest
         Assert.DoesNotThrowAsync(() => statisticLogic.GetAllScoresByPlayerAsync(tournamentName));
     }
     
+    //Test to get all scores from a tournament when that tournament has one
     [Test]
     public void GetAllScoresByTournamentTest_O()
     {
@@ -120,6 +126,7 @@ public class StatisticLogicTest
         Assert.DoesNotThrowAsync(() => statisticLogic.GetAllScoresByPlayerAsync(tournamentName));
     }
     
+    //Test to get all scores from a tournament when that tournament has many
     [Test]
     public void GetAllScoresByTournamentTest_M()
     {

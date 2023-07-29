@@ -2,7 +2,9 @@
 using Shared.Model;
 
 namespace Application.DaoInterfaces;
-
+/// <summary>
+/// Interface implemented by TournamentDao
+/// </summary>
 public interface ITournamentDao
 {
     Task<Tournament> CreateTournamentAsync(CreateTournamentDto dto);

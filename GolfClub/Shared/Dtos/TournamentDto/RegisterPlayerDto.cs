@@ -1,5 +1,8 @@
 ﻿namespace Shared.Dtos.TournamentDto;
 
+/// <summary>
+/// Data Transfer Object used when registering a player to a tournament
+/// </summary>
 public class RegisterPlayerDto
 {
 

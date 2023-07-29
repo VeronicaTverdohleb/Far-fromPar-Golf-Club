@@ -7,6 +7,9 @@ using Shared.Model;
 
 namespace HttpClients.Implementations;
 
+/// <summary>
+/// Class responsible for making REST requests to the Web API
+/// </summary>
 public class TournamentHttpClient:ITournamentService
 {
     private readonly HttpClient client;
@@ -16,6 +19,11 @@ public class TournamentHttpClient:ITournamentService
         this.client = client;
     }
     
+    /// <summary>
+    /// Method making a POST request in order to create a new tournament.
+    /// </summary>
+    /// <param name="dto">dto with the necessary information to create a tournament</param>
+    /// <exception cref="Exception"></exception>
     public async Task CreateTournamentAsync(CreateTournamentDto dto)
     {
         HttpResponseMessage response = await client.PostAsJsonAsync("/Tournament", dto);
@@ -26,6 +34,12 @@ public class TournamentHttpClient:ITournamentService
         }
     }
 
+    /// <summary>
+    /// Method making a GET request to get a tournament by its name
+    /// </summary>
+    /// <param name="name">The name of the tournament</param>
+    /// <returns>The tournament with the given name</returns>
+    /// <exception cref="Exception"></exception>
     public async Task<Tournament> GetTournamentByNameAsync(string name)
     {
         Console.WriteLine(name);
@@ -43,6 +57,11 @@ public class TournamentHttpClient:ITournamentService
         return tournament;
     }
 
+    /// <summary>
+    /// Method making a DELETE request to remove a tournament by its name
+    /// </summary>
+    /// <param name="name">the name of the tournament</param>
+    /// <exception cref="Exception"></exception>
     public async Task DeleteTournamentAsync(string name)
     {
         HttpResponseMessage response = await client.DeleteAsync($"/Tournament/{name}");
@@ -53,6 +72,11 @@ public class TournamentHttpClient:ITournamentService
         }
     }
 
+    /// <summary>
+    /// Method making a GET request requesting all of the tournaments.
+    /// </summary>
+    /// <returns>An ICollection of all Tournament objects</returns>
+    /// <exception cref="Exception"></exception>
     public async Task<ICollection<Tournament>> GetAllTournamentsAsync()
     {
         HttpResponseMessage response = await client.GetAsync($"/Tournament");
@@ -70,6 +94,12 @@ public class TournamentHttpClient:ITournamentService
         return tournaments;
     }
 
+    /// <summary>
+    /// Method making a GET request requesting all the players that are registered to a given tournament
+    /// </summary>
+    /// <param name="name">name of the tournament</param>
+    /// <returns>An ICollection of User objects that are registered to the tournament with the given name</returns>
+    /// <exception cref="Exception"></exception>
     public async Task<ICollection<User>> GetAllTournamentPlayersAsync(string name)
     {
         HttpResponseMessage response = await client.GetAsync($"/Tournament/{name}/Players");
@@ -87,6 +117,11 @@ public class TournamentHttpClient:ITournamentService
         return players;
     }
 
+    /// <summary>
+    /// Method that makes a PATCH request in order to add a player to a tournament
+    /// </summary>
+    /// <param name="dto">dto containing the information needed to register a player to a given tournament</param>
+    /// <exception cref="Exception"></exception>
     public async Task AddPlayerAsync(RegisterPlayerDto dto)
     {
         string dtoAsJson = JsonSerializer.Serialize(dto);

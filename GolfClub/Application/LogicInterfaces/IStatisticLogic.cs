@@ -2,6 +2,9 @@
 
 namespace Application.LogicInterfaces;
 
+/// <summary>
+/// Interface implemented by StatisticLogic
+/// </summary>
 public interface IStatisticLogic
 {
     Task<IEnumerable<Score>> GetAllScoresByPlayerAsync(string playerName);

@@ -4,6 +4,7 @@ using Shared.Model;
 
 namespace WebAPI.Controllers;
 
+//API controller for requests regarding statistics.
 [ApiController]
 [Route("[controller]")]
 public class StatisticController:ControllerBase
@@ -15,6 +16,11 @@ public class StatisticController:ControllerBase
         this.statisticLogic = statisticLogic;
     }
 
+    /// <summary>
+    /// GET Method that gets all scores by a given player
+    /// </summary>
+    /// <param name="playerName">the name of the player</param>
+    /// <returns>An IEnumerable of Score objects from the given player</returns>
     [HttpGet("/Statistic/{playerName}")]
     public async Task<ActionResult<IEnumerable<Score>>> GetAllScoresByPlayerAsync([FromRoute] string playerName)
     {
@@ -30,6 +36,11 @@ public class StatisticController:ControllerBase
         }
     }
     
+    /// <summary>
+    /// GET method that gets all scores from a given tournament.
+    /// </summary>
+    /// <param name="tournamentName">the name of the tournament</param>
+    /// <returns>An IEnumerable of Score objects that are linked to the tournament</returns>
     [HttpGet("/StatisticT/{tournamentName}")]
     public async Task<ActionResult<IEnumerable<Score>>> GetAllScoresByTournamentAsync([FromRoute] string tournamentName)
     {

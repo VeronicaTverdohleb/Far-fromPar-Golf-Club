@@ -4,6 +4,9 @@ using Shared.Model;
 
 namespace HttpClients.Implementations;
 
+/// <summary>
+/// Class responsible for making REST requests to the Web API
+/// </summary>
 public class StatisticHttpClient:IStatisticService
 {
     private readonly HttpClient client;
@@ -13,6 +16,12 @@ public class StatisticHttpClient:IStatisticService
         this.client = client;
     }
 
+    /// <summary>
+    /// Method that makes a GET request requesting all scores by a given player
+    /// </summary>
+    /// <param name="playerName">name of the player</param>
+    /// <returns>An ICollection of all Score objects from a certain player</returns>
+    /// <exception cref="Exception"></exception>
     public async Task<ICollection<Score>> GetAllScoresByPlayerAsync(string playerName)
     {
         HttpResponseMessage response = await client.GetAsync($"/Statistic/{playerName}");
@@ -29,6 +38,12 @@ public class StatisticHttpClient:IStatisticService
         return scores;
     }
 
+    /// <summary>
+    /// Method that makes a GET request that gets all the scores by a given tournament name
+    /// </summary>
+    /// <param name="tournamentName">the name of the tournament</param>
+    /// <returns>An ICollection of Score objects from the given tournament</returns>
+    /// <exception cref="Exception"></exception>
     public async Task<ICollection<Score>> GetAllScoresByTournamentAsync(string tournamentName)
     {
         HttpResponseMessage response = await client.GetAsync($"/StatisticT/{tournamentName}");

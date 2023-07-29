@@ -22,6 +22,7 @@ public class TournamentLogicTest
         tournamentLogic = new TournamentLogic(tournamentDaoMock.Object);
     }
     
+    //Test to create a new tournament
     [Test]
     public async Task CreateTournamentAsyncTest_O()
     {
@@ -44,6 +45,7 @@ public class TournamentLogicTest
         Assert.DoesNotThrowAsync(() => tournamentLogic.CreateTournamentAsync(dto));
     }
     
+    //Tests creating a tournament with no name
     [Test]
     public void CreateTournamentEmptyNameAsyncTest_O()
     {
@@ -63,6 +65,7 @@ public class TournamentLogicTest
         Assert.That(e.Message, Is.EqualTo($"Enter a name for the tournament!"));
     }
     
+    //Tests creating a tournament taking place in the past
     [Test]
     public void CreateTournamentInPastAsyncTest_O()
     {
@@ -83,6 +86,7 @@ public class TournamentLogicTest
         Assert.That(e.Message, Is.EqualTo($"The tournament would already be over!"));
     }
     
+    //Tests creating a tournament where the start date is after the end date
     [Test]
     public void CreateTournamentReversedDatesTest_O()
     {
@@ -103,6 +107,7 @@ public class TournamentLogicTest
         Assert.That(e.Message, Is.EqualTo($"Incorrect start and end dates!"));
     }
     
+    //Tests getting a tournament by its name
     [Test]
     public void GetTournamentByNameTest_O()
     {
@@ -124,6 +129,7 @@ public class TournamentLogicTest
         Assert.DoesNotThrowAsync(() => tournamentLogic.CreateTournamentAsync(dto));
     }
     
+    //Tests getting a tournament by its name when it doesn't exist
     [Test]
     public void GetTournamentByNameTest_Z()
     {
@@ -137,6 +143,7 @@ public class TournamentLogicTest
         Assert.That(e.Message, Is.EqualTo($"Tournament with name testName not found"));
     }
     
+    //Tests deleting an existing tournament
     [Test]
     public void DeleteTournament_O()
     {
@@ -157,6 +164,7 @@ public class TournamentLogicTest
         Assert.DoesNotThrowAsync(()=>tournamentLogic.DeleteTournamentAsync(name));
     }
     
+    //Tests deleting a tournament that doesn't exist
     [Test]
     public void DeleteTournament_Z()
     {
@@ -170,6 +178,7 @@ public class TournamentLogicTest
         Assert.That(e.Message, Is.EqualTo("Tournament with name testName doesn't exist"));
     }
     
+    //Tests getting all tournaments when there are many
     [Test]
     public void GetAllTournamentsTest_M()
     {
@@ -199,6 +208,7 @@ public class TournamentLogicTest
         Assert.DoesNotThrowAsync(() => tournamentLogic.GetAllTournamentsAsync());
     }
     
+    //Tests getting all registered players to a tournament when there is one
     [Test]
     public void RegisterTournamentPlayerTest_O()
     {
@@ -223,6 +233,7 @@ public class TournamentLogicTest
         Assert.DoesNotThrowAsync(() => tournamentLogic.RegisterPlayerAsync(dto));
     }
     
+    //Tests registering a player to a tournament that it is already registered to
     [Test]
     public void RegisterTournamentPlayerAlreadyRegisteredTest_O()
     {
@@ -251,6 +262,7 @@ public class TournamentLogicTest
         Assert.That(e.Message, Is.EqualTo("This player is already registered!"));
     }
     
+    //Tests getting the registered players in a tournament if there is one
     [Test]
     public void GetTournamentPlayersTest_O()
     {

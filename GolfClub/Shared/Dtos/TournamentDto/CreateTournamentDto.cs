@@ -2,6 +2,9 @@
 
 namespace Shared.Dtos.TournamentDto;
 
+/// <summary>
+/// Data Transfer Object used when creating a new tournament
+/// </summary>
 public class CreateTournamentDto
 {
     public string Name { get; set; }

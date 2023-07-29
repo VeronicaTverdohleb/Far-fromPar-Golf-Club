@@ -2,6 +2,9 @@
 
 namespace HttpClients.ClientInterfaces;
 
+/// <summary>
+/// Interface implemented by StatisticHttpClient
+/// </summary>
 public interface IStatisticService
 {
    public Task<ICollection<Score>> GetAllScoresByPlayerAsync(string playerName);

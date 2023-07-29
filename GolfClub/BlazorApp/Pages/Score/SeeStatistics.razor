@@ -107,6 +107,7 @@
     private IEnumerable<Claim>? userClaims;
     private string loggedInMemberUsername = "";
 
+    //Method that is run upon loading the page
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthState;
@@ -123,6 +124,7 @@
         tournaments = tournamentCollection.OrderBy(t => t.Name).ToList();
     }
     
+    //Method that sets the currently selected statistic variable.
     private void SetSelectedStatistic(ChangeEventArgs e)
     {
         if (!string.IsNullOrEmpty(e.Value.ToString()))
@@ -131,6 +133,7 @@
         }
     }
 
+    //Method that fetches the statistic that is currently selected.
     private async Task LoadStatistic()
     {
         chosenScoreTotal = 0;
@@ -167,6 +170,7 @@
         }
     }
 
+    //Method that gets all the scores from the current user
     public async Task GetAllScores(string name)
     {
         msg = "";
@@ -190,6 +194,7 @@
         }
     }
 
+    //Method that gets the personal best of the current user.
     public async Task GetPersonalBest(string name)
     {
         msg = "";
@@ -227,6 +232,7 @@
         
     }
 
+    //Method that gets all the personal bests from all players and ranks them
     public async Task GetLeaderBoard()
     {
         msg = "";
@@ -276,6 +282,7 @@
         }
     }
 
+    //Method that gets all the scores for a given tournament.
     public async Task GetTournamentScores()
     {
         msg = "";

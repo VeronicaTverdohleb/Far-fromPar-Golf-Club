@@ -3,6 +3,9 @@ using Shared.Model;
 
 namespace HttpClients.ClientInterfaces;
 
+/// <summary>
+/// Interface implemented by TournamentHttpClient
+/// </summary>
 public interface ITournamentService
 {
     public Task CreateTournamentAsync(CreateTournamentDto dto);
