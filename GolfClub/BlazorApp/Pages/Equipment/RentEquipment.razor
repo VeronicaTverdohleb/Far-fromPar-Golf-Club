@@ -2,6 +2,7 @@
 @using global::Shared.Model
 @using HttpClients.ClientInterfaces
 @using global::Shared.Dtos.EquipmentDto
+@using Microsoft.AspNetCore.Components
 @inject IEquipmentService EquipmentService
 @inject IGameService GameService
 @inject IJSRuntime jsRuntime
@@ -35,7 +36,7 @@
         <label > Choose equipments to add to the game:</label >
 
         <select class="setEquipmentToBeAddedBtn" name="addEquipment" id="addEquipment" @onchange="SetEquipmentsToAddToGame">
-            <option>Choose:</option>
+            <option>@selectedValue</option>
             @foreach (var e in equipmetCounts)
             {
                 <option value="@e.Name"> @e.Name </option>
@@ -83,7 +84,7 @@
     <br/>
 
 
-    <button @onclick="ConfirmAction" class="rentEquipment"> RentEquipment </button>
+    <button @onclick="ConfirmAction" class="rentEquipment"> Rent Equipment </button>
     @if (!string.IsNullOrEmpty(error))
     {
         <label class="error"> @error </label>
@@ -107,6 +108,8 @@
     private string error = "";
     private string msg = "";
     private Game? game;
+    string selectedValue = "Choose:";
+    //private EquipmentBasicDto selectedOption;
 
 
     ///Method which gets called when an employee accesses the page 
@@ -118,6 +121,7 @@
             _equipments = (await EquipmentService.GetAvailableEquipment())!;
             equipmetCounts = _equipments.GroupBy(e => e.Name).Select(e => new EquipmentBasicDto { Name = e.Key, Amount = e.Count() }).ToList();
             rentedEquipment = (await EquipmentService.GetEquipmentByGameIdAsync(Id))!;
+    //selectedOption = equipmetCounts.FirstOrDefault()!;
         }
         catch (Exception e)
         {
@@ -160,6 +164,7 @@
             try
             {
                 await EquipmentService.RentEquipment(dto);
+    // await OnInitializedAsync();
 
                 msg = "Renting process finished successfully!";
             }
@@ -184,7 +189,9 @@
         if (confirmed)
         {
             await RentEquipments();
-            await OnInitializedAsync();
+            equipmentAvaialbleId.Clear();
+
+            navMgr.NavigateTo(navMgr.Uri, forceLoad: true);
         }
         else
         {
@@ -197,7 +204,7 @@
     {
         Console.WriteLine("SetEquipmentsToAddToGame method called");
 
-        string selectedValue = e.Value?.ToString()!;
+        selectedValue = e.Value?.ToString()!;
         Console.WriteLine("Selected Value: " + selectedValue);
         equipmentToAdd = _equipments.FirstOrDefault(equipment => equipment != null && equipment.Name == selectedValue);
         List<Equipment> toRemove = _equipments.ToList();
@@ -228,6 +235,9 @@
             if (equipmentToAdd != null && equipmentAvaialbleId != null && !equipmentAvaialbleId.Contains(equipmentToAdd.Id))
             {
                 equipmentAvaialbleId.Add(equipmentToAdd.Id);
+                selectedValue = "Choose:";
+                List<Equipment> toRemove = _equipments.ToList();
+                toRemove.Remove(equipmentToAdd);
 
 
                 msg = "Equipment item added successfully!";
